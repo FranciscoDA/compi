@@ -1,0 +1,57 @@
+<project name="compilador" default="run">
+	<!-- location of development tools necessary for the build -->
+	<property name="lib.dir" value="jflex/lib"/>
+    
+	<!-- override these if you want to use your own versions -->
+	<property name="bootstrap.jflex.jar" value="${lib.dir}/jflex-1.6.1.jar" />
+	<property name="cup.jar" value="${lib.dir}/java-cup-11a.jar" />
+	
+	<taskdef classname="jflex.anttask.JFlexTask" name="jflex">
+		<classpath>
+			<pathelement location="${bootstrap.jflex.jar}"/>
+		</classpath>
+  	</taskdef>
+	<taskdef classname="java_cup.anttask.CUPTask" name="cup">
+		<classpath>
+			<pathelement location="${cup.jar}"/>
+		</classpath>  	
+	</taskdef>
+
+	<target name="build" depends="realclean,compile" />
+
+	<target name="run" depends="compile">
+		<java classname="compilador.Main" dir="bin" fork="true">  
+		</java>
+	</target>
+
+  <target name="compile" depends="scanner,cup">
+    <javac srcdir="src" destdir="bin">
+    	<classpath>
+    		<pathelement location="${bootstrap.jflex.jar}"/>
+			<pathelement location="${cup.jar}"/>
+    	</classpath>
+	</javac>
+  </target>
+
+  <target name="scanner">
+  	<jflex file="flex/java.flex" destdir="src" />
+  </target>
+  <target name="cup">
+    <cup srcfile="./flex/java12.cup" interface="true" destdir="src"/>
+  </target>
+
+  <target name="genclean">
+    <delete file="Scanner.java"/>
+    <delete file="src/sym.java" />
+    <delete file="src/parser.java" />
+  </target>
+
+  <target name="clean">
+    <delete>
+      <fileset dir="." includes="**/*~"/>
+      <fileset dir="." includes="**/*.class"/>
+    </delete>
+  </target>
+
+  <target name="realclean" depends="clean,genclean" />
+</project>

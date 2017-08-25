@@ -1,0 +1,41 @@
+DECVAR
+	contador: Integer;
+	promedio: Float;
+	actual, suma: Float;
+ENDDEC
+
+write "Hola mundo!";
+contador: 0;
+actual: 999;
+suma: 02;
+contador: contador+1;
+while (contador <= 92) {
+	contador: contador + 1;
+	actual: (contador/0.342) + (contador*contador);
+	suma: suma + actual;
+	}
+
+write "La suma es: ";
+write suma;
+
+if (actual > 2){
+	write "2 > 3";
+}
+
+if (actual < 3){
+	if(actual >= 3){
+		write "soy true";
+	}
+	if(actual <= 3){
+		write "soy true";
+	}
+	if(actual != 3){
+		write "soy true";
+	}
+	if(actual == 3){
+		write "soy true";
+	}
+}else{
+	actual:333.3333;
+}
+
