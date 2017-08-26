@@ -25,7 +25,7 @@
 	</path>
 
 	<target name="run" depends="compile">
-		<java classname="compilador.Main" fork="true">
+		<java classname="compilador.Main" fork="false">
 			<classpath>
 				<pathelement location="bin" />
 			</classpath>
@@ -39,17 +39,17 @@
 	</javac>
   </target>
 
-  <target name="scanner">
-  	<jflex file="flex/java.flex" destdir="src" />
+  <target name="scanner" depends="cup">
+  	<jflex file="${basedir}/flex/java.flex" destdir="src" />
   </target>
   <target name="cup">
-    <cup srcfile="./flex/java12.cup" interface="true" destdir="src"/>
+    <cup srcfile="${basedir}/flex/java12.cup" interface="true" destdir="${basedir}/src"/>
   </target>
 
   <target name="genclean">
-    <delete file="Scanner.java"/>
-    <delete file="src/sym.java" />
-    <delete file="src/parser.java" />
+    <delete file="src/compilador/Scanner.java"/>
+    <delete file="src/compilador/sym.java" />
+    <delete file="src/compilador/parser.java" />
   </target>
 
   <target name="clean">
