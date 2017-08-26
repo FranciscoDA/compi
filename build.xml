@@ -18,18 +18,24 @@
 	</taskdef>
 
 	<target name="build" depends="realclean,compile" />
+	
+	<path id="framework">
+		<pathelement location="${bootstrap.jflex.jar}"/>
+		<pathelement location="${cup.jar}"/>
+	</path>
 
 	<target name="run" depends="compile">
-		<java classname="compilador.Main" dir="bin" fork="true">  
+		<java classname="compilador.Main" fork="true">
+			<classpath>
+				<pathelement location="bin" />
+			</classpath>
+			<classpath refid="framework" />
 		</java>
 	</target>
 
   <target name="compile" depends="scanner,cup">
     <javac srcdir="src" destdir="bin">
-    	<classpath>
-    		<pathelement location="${bootstrap.jflex.jar}"/>
-			<pathelement location="${cup.jar}"/>
-    	</classpath>
+    	<classpath refid="framework" />
 	</javac>
   </target>
 
