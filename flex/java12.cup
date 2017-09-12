@@ -73,6 +73,10 @@ terminal SEMICOLON, MULT, COMMA, LBRACE, RBRACE, EQ, LPAREN, RPAREN, COLON;
 
 terminal IF, ELSE; // if_then_statement, if_then_else_statement
 terminal WHILE; // while_statement, do_statement
+terminal PRINT;
+
+terminal TRUNC;
+terminal PLUSTRUNC;
 
 
 terminal PLUS, MINUS, COMP, NOT, DIV, MOD;
@@ -88,6 +92,7 @@ terminal java.lang.Boolean BOOLEAN_LITERAL;
 terminal java.lang.Character CHARACTER_LITERAL;
 terminal java.lang.String STRING_LITERAL;
 terminal java.lang.String IDENTIFIER; // name
+//terminal java.lang.String COMMENT_LITERAL;
 terminal NULL_LITERAL;
 
 // strictfp keyword, new in Java 1.2

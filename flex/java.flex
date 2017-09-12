@@ -36,6 +36,10 @@ import java_cup.runtime.*;
 %cupdebug
 
 %{
+  final int MAX_STRING = 30;
+  final int MAX_INT = Short.MAX_VALUE;
+  final float MAX_FLOAT = Float.MAX_VALUE;
+
   StringBuilder string = new StringBuilder();
   
   private Symbol symbol(int type) {
@@ -63,6 +67,28 @@ import java_cup.runtime.*;
 
     return result;
   }
+
+  private boolean verify_real(String x) {
+      float f = Float.parseFloat(x);
+      if (f < -MAX_FLOAT || f > MAX_FLOAT) {
+          throw new NumberFormatException();
+      }
+      return true;
+  }
+  private boolean verify_int(String x) {
+      int i = Integer.parseInt(x);
+      if (i < -MAX_INT || i > MAX_INT) {
+          throw new NumberFormatException();
+      }
+      return true;
+  }
+  private boolean verify_string(String x) {
+      if (x.length() > MAX_STRING) {
+          throw new NumberFormatException();
+      }
+      return true;
+  }
+
 %}
 
 /* main character classes */
@@ -72,24 +98,15 @@ InputCharacter = [^\r\n]
 WhiteSpace = {LineTerminator} | [ \t\f]
 
 /* comments */
-Comment = {TraditionalComment} | {EndOfLineComment} | 
-          {DocumentationComment}
+Comment = "</" ~"/>"
 
-TraditionalComment = "/*" [^*] ~"*/" | "/*" "*"+ "/"
-EndOfLineComment = "//" {InputCharacter}* {LineTerminator}?
-DocumentationComment = "/*" "*"+ [^/*] ~"*/"
+
 
 /* identifiers */
 Identifier = [:jletter:][:jletterdigit:]*
 
 /* integer literals */
 DecIntegerLiteral = 0 | [1-9][0-9]*
-
-HexIntegerLiteral = 0 [xX] 0* {HexDigit} {1,8}
-HexDigit          = [0-9a-fA-F]
-
-OctIntegerLiteral = 0+ [1-3]? {OctDigit} {1,15}
-OctDigit          = [0-7]
     
 /* floating point literals */        
 DoubleLiteral = ({FLit1}|{FLit2}|{FLit3}) {Exponent}?
@@ -109,17 +126,21 @@ SingleCharacter = [^\r\n\'\\]
 
 <YYINITIAL> {
 
+  /* comments */
+  {Comment}                      {/**/}
+
   /* keywords */
-  "DECVAR"                       { return symbol(DECVAR); }
-  "ENDDEC"                       { return symbol(ENDDEC); }
+  "VAR"                          { return symbol(DECVAR); }
+  "ENDVAR"                       { return symbol(ENDDEC); }
   "Integer"                      { return symbol(INTEGER); }
   "Float"                        { return symbol(FLOAT); }
   
-  "while"                        { return symbol(WHILE); }
-  "if"                           { return symbol(IF); }
-  "else"                         { return symbol(ELSE); }
-  
-  /* separators */
+  "WHILE"                        { return symbol(WHILE); }
+  "IF"                           { return symbol(IF); }
+  "ELSE"                         { return symbol(ELSE); }
+  "PRINT"                        { return symbol(PRINT); }
+  "PLUSTRUNC"                    { return symbol(PLUSTRUNC); }
+  "TRUNC"                        { return symbol(TRUNC); }
   "("                            { return symbol(LPAREN); }
   ")"                            { return symbol(RPAREN); }
   "{"                            { return symbol(LBRACE); }
@@ -155,17 +176,18 @@ SingleCharacter = [^\r\n\'\\]
 
   /* numeric literals */
 
-  /* This is matched together with the minus, because the number is too big to 
-     be represented by a positive integer. */
-  "-2147483648"                  { return symbol(INTEGER_LITERAL, new Integer(Integer.MIN_VALUE)); }
+
   
-  {DecIntegerLiteral}            { return symbol(INTEGER_LITERAL, new Integer(yytext())); }
-  {HexIntegerLiteral}            { return symbol(INTEGER_LITERAL, new Integer((int) parseLong(2, yylength(), 16))); }
-  {OctIntegerLiteral}            { return symbol(INTEGER_LITERAL, new Integer((int) parseLong(0, yylength(), 8))); }  
-  {DoubleLiteral}                { return symbol(FLOATING_POINT_LITERAL, new Double(yytext())); }
+  {DecIntegerLiteral}            {
+                                    verify_int(yytext());
+                                    return symbol(INTEGER_LITERAL, new Integer(yytext())); }
+
+  {DoubleLiteral}                {
+                                    verify_real(yytext());
+                                    return symbol(FLOATING_POINT_LITERAL, new Double(yytext()));
+                                 }
   
-  /* comments */
-  {Comment}                      { /* ignore */ }
+
 
   /* whitespace */
   {WhiteSpace}                   { /* ignore */ }
@@ -175,7 +197,11 @@ SingleCharacter = [^\r\n\'\\]
 }
 
 <STRING> {
-  \"                             { yybegin(YYINITIAL); return symbol(STRING_LITERAL, string.toString()); }
+  \"                             {
+                                    yybegin(YYINITIAL);
+                                    verify_string(string.toString());
+                                    return symbol(STRING_LITERAL, string.toString());
+                                 }
   
   {StringCharacter}+             { string.append( yytext() ); }
   
@@ -188,8 +214,6 @@ SingleCharacter = [^\r\n\'\\]
   "\\\""                         { string.append( '\"' ); }
   "\\'"                          { string.append( '\'' ); }
   "\\\\"                         { string.append( '\\' ); }
-  \\[0-3]?{OctDigit}?{OctDigit}  { char val = (char) Integer.parseInt(yytext().substring(1),8);
-                        				   string.append( val ); }
   
   /* error cases */
   \\.                            { throw new RuntimeException("Illegal escape sequence \""+yytext()+"\""); }
@@ -208,9 +232,6 @@ SingleCharacter = [^\r\n\'\\]
   "\\\""\'                       { yybegin(YYINITIAL); return symbol(CHARACTER_LITERAL, '\"');}
   "\\'"\'                        { yybegin(YYINITIAL); return symbol(CHARACTER_LITERAL, '\'');}
   "\\\\"\'                       { yybegin(YYINITIAL); return symbol(CHARACTER_LITERAL, '\\'); }
-  \\[0-3]?{OctDigit}?{OctDigit}\' { yybegin(YYINITIAL); 
-			                              int val = Integer.parseInt(yytext().substring(1,yylength()-1),8);
-			                            return symbol(CHARACTER_LITERAL, (char)val); }
   
   /* error cases */
   \\.                            { throw new RuntimeException("Illegal escape sequence \""+yytext()+"\""); }
