@@ -1,5 +1,6 @@
 package constructs;
 
-public class IfStatement {
-
+public class IfStatement extends Statement {
+	private Expression _condition;
+	private Statement _branch;
 }

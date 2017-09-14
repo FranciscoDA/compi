@@ -1,48 +1,11 @@
 package compilador;
 import java_cup.runtime.*;
 
-
-/* August 1999 - modified by Gerwin Klein <lsf@jflex.de>
-                 to interface with JFlex scanners,
-                 allows empty semicolon in class decls.
-  
-  changed productions:
-
-  class_member_declaration ::=
-	  	field_declaration
-  	|	method_declaration
-    [..]
-  	|	interface_declaration
-    | SEMICOLON
-  	;
-
-  interface_member_declaration ::=
-  		constant_declaration
-	  |	abstract_method_declaration
-  	|	class_declaration
-  	|	interface_declaration
-    | SEMICOLON
-	  ;
-
-*/
-
-
 /* Java 1.2 parser for CUP.  
  * Copyright (C) 1998 C. Scott Ananian <cananian@alumni.princeton.edu>
  * This program is released under the terms of the GPL; see the file
  * COPYING for more details.  There is NO WARRANTY on this code.
  */
-
-/*
-JDK 1.2 Features added:
-  strictfp modifier.
-  explicit_constructor_invocation ::= ...
-        | primary DOT THIS LPAREN argument_list_opt RPAREN SEMICOLON ;
-  field_access ::= ...
-        |       name DOT SUPER DOT IDENTIFIER ;
-  method_invocation ::= ...
-        |       name DOT SUPER DOT IDENTIFIER LPAREN argument_list_opt RPAREN ;
-*/
 
 parser code  {: 
   public void report_error(String message, Object info) {
@@ -105,14 +68,12 @@ non terminal declaration_list;
 non terminal type_declaration_outer;
 non terminal type_declaration_inner;
 
-non terminal expression;
-non terminal term;
-non terminal factor;
+non terminal constructs.Expression expression, term, factor;
 
-non terminal statement;
-non terminal if_statement;
-non terminal while_statement;
-non terminal statement_list;
+non terminal constructs.Statement      statement;
+non terminal constructs.IfStatement    if_statement;
+non terminal constructs.WhileStatement while_statement;
+non terminal constructs.Statement      statement_list;
 
 non terminal function_call;
 non terminal argument_list;
@@ -156,6 +117,7 @@ type_declaration_inner ::=
 expression ::=
 	expression PLUS term
 	| expression MINUS term
+	| MINUS term
 	| term
 	;
 
