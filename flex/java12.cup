@@ -63,20 +63,22 @@ parser code  {:
 :};
 
 terminal DECVAR;
-terminal ENDDEC;
+terminal ENDVAR;
 terminal INTEGER;
 terminal FLOAT;
-terminal BOOLEAN;
 
-terminal LBRACK, RBRACK; // array_type
+terminal LBRACK, RBRACK;
 terminal SEMICOLON, MULT, COMMA, LBRACE, RBRACE, EQ, LPAREN, RPAREN, COLON;
 
-terminal IF, ELSE; // if_then_statement, if_then_else_statement
-terminal WHILE; // while_statement, do_statement
+terminal IF, ELSE, THEN;
+terminal WHILE, DO;
+terminal END;
 terminal PRINT;
 
-terminal TRUNC;
-terminal PLUSTRUNC;
+terminal LINE_TERMINATOR;
+
+/*terminal TRUNC;
+terminal PLUSTRUNC;*/
 
 
 terminal PLUS, MINUS, COMP, NOT, DIV, MOD;
@@ -88,127 +90,123 @@ terminal OROR; // conditional_or_expression
 
 terminal java.lang.Number INTEGER_LITERAL;
 terminal java.lang.Number FLOATING_POINT_LITERAL;
-terminal java.lang.Boolean BOOLEAN_LITERAL;
-terminal java.lang.Character CHARACTER_LITERAL;
 terminal java.lang.String STRING_LITERAL;
 terminal java.lang.String IDENTIFIER; // name
-//terminal java.lang.String COMMENT_LITERAL;
-terminal NULL_LITERAL;
 
-// strictfp keyword, new in Java 1.2
-terminal STRICTFP;
 
-// Reserved but unused:
-terminal CONST, GOTO;
 
-// 19.2) The Syntactic Grammar
 non terminal goal;
-// 19.3) Lexical Structure
+
+non terminal type_name;
 non terminal literal;
-// 19.4) Types, Values, and Variables
-non terminal type, primitive_type, numeric_type;
-non terminal integral_type, floating_point_type;
-non terminal reference_type;
-non terminal class_or_interface_type;
-non terminal class_type, interface_type;
-non terminal array_type;
-// 19.5) Names
-non terminal name, simple_name, qualified_name;
-// 19.6) Packages
-non terminal compilation_unit;
-non terminal package_declaration_opt, package_declaration;
-non terminal import_declarations_opt, import_declarations;
-non terminal type_declarations_opt, type_declarations;
-non terminal import_declaration;
-non terminal single_type_import_declaration;
-non terminal type_import_on_demand_declaration;
-non terminal type_declaration;
-// 19.7) Productions used only in the LALR(1) grammar
-non terminal modifiers_opt, modifiers, modifier;
-// 19.8.1) Class Declaration
-non terminal class_declaration, super_cl, super_opt;
-non terminal interfaces, interfaces_opt, interface_type_list;
-non terminal class_body;
-non terminal class_body_declarations, class_body_declarations_opt;
-non terminal class_body_declaration, class_member_declaration;
-// 19.8.2) Field Declarations
-non terminal field_declaration, variable_declarators, variable_declarator;
-non terminal variable_declarator_id, variable_initializer;
-// 19.8.3) Method Declarations
-non terminal method_declaration, method_header, method_declarator;
-non terminal formal_parameter_list_opt, formal_parameter_list;
-non terminal formal_parameter;
-non terminal throws_opt, throws;
-non terminal class_type_list, method_body;
-// 19.8.4) Static Initializers
-non terminal static_initializer;
-// 19.8.5) Constructor Declarations
-non terminal constructor_declaration, constructor_declarator;
-non terminal constructor_body;
-non terminal explicit_constructor_invocation;
-// 19.9.1) Interface Declarations
-non terminal interface_declaration;
-non terminal extends_interfaces_opt, extends_interfaces;
-non terminal interface_body;
-non terminal interface_member_declarations_opt, interface_member_declarations;
-non terminal interface_member_declaration, constant_declaration;
-non terminal abstract_method_declaration;
-// 19.10) Arrays
-non terminal array_initializer;
-non terminal variable_initializers;
-// 19.11) Blocks and Statements
-non terminal block;
-non terminal block_statements_opt, block_statements, block_statement;
-non terminal local_variable_declaration_statement, local_variable_declaration;
-non terminal statement, statement_no_short_if;
-non terminal statement_without_trailing_substatement;
-non terminal empty_statement;
-non terminal labeled_statement, labeled_statement_no_short_if;
-non terminal expression_statement, statement_expression;
-non terminal if_then_statement;
-non terminal if_then_else_statement, if_then_else_statement_no_short_if;
-non terminal switch_statement, switch_block;
-non terminal switch_block_statement_groups;
-non terminal switch_block_statement_group;
-non terminal switch_labels, switch_label;
-non terminal while_statement, while_statement_no_short_if;
-non terminal do_statement;
-non terminal for_statement, for_statement_no_short_if;
-non terminal for_init_opt, for_init;
-non terminal for_update_opt, for_update;
-non terminal statement_expression_list;
-non terminal identifier_opt;
-non terminal break_statement, continue_statement;
-non terminal return_statement, throw_statement;
-non terminal synchronized_statement, try_statement;
-non terminal catches_opt, catches, catch_clause;
-non terminal finally;
-// 19.12) Expressions
-non terminal primary, primary_no_new_array;
-non terminal class_instance_creation_expression;
-non terminal argument_list_opt, argument_list;
-non terminal array_creation_expression;
-non terminal dim_exprs, dim_expr, dims_opt, dims;
-non terminal field_access, method_invocation, array_access;
-non terminal postfix_expression;
-non terminal postincrement_expression, postdecrement_expression;
-non terminal unary_expression, unary_expression_not_plus_minus;
-non terminal preincrement_expression, predecrement_expression;
-non terminal cast_expression;
-non terminal multiplicative_expression, additive_expression;
-non terminal shift_expression, relational_expression, equality_expression;
-non terminal and_expression, exclusive_or_expression, inclusive_or_expression;
-non terminal conditional_and_expression, conditional_or_expression;
-non terminal conditional_expression, assignment_expression;
-non terminal assignment;
-non terminal left_hand_side;
-non terminal assignment_operator;
-non terminal expression_opt, expression;
-non terminal constant_expression;
+
+non terminal declaration_block;
+non terminal declaration_list;
+non terminal type_declaration_outer;
+non terminal type_declaration_inner;
+
+non terminal expression;
+non terminal term;
+non terminal factor;
+
+non terminal statement;
+non terminal if_statement;
+non terminal while_statement;
+non terminal statement_list;
+
+non terminal function_call;
+non terminal argument_list;
+non terminal bracketed_argument_list;
 
 
-start with goal;
+goal ::=
+	declaration_block statement_list
+	| statement_list
+	;
 
-// 19.2) The Syntactic Grammar
-goal ::=	compilation_unit
+type_name ::=
+	INTEGER
+	| FLOAT
+	;
+
+literal ::=
+	INTEGER_LITERAL
+	| FLOATING_POINT_LITERAL
+	| STRING_LITERAL
+	;
+
+declaration_block ::=
+	DECVAR declaration_list ENDVAR LINE_TERMINATOR
+	;
+
+declaration_list ::=
+	declaration_list type_declaration_outer
+	| type_declaration_outer
+	;
+
+type_declaration_outer ::=
+	LBRACK type_declaration_inner RBRACK LINE_TERMINATOR
+	;
+	
+type_declaration_inner ::=
+	IDENTIFIER RBRACK EQ LBRACK type_name
+	| IDENTIFIER COMMA type_declaration_inner COMMA type_name
+	;
+
+expression ::=
+	expression PLUS term
+	| expression MINUS term
+	| term
+	;
+
+term ::=
+	term MULT factor
+	| term DIV factor
+	| factor
+	;
+
+factor ::=
+	IDENTIFIER
+	| literal
+	| function_call
+	| LPAREN expression RPAREN
+	;
+
+statement ::=
+	IDENTIFIER COLON EQ expression LINE_TERMINATOR
+	| function_call LINE_TERMINATOR
+	| PRINT STRING_LITERAL LINE_TERMINATOR
+	| PRINT IDENTIFIER LINE_TERMINATOR
+	| if_statement
+	| while_statement
+	;
+
+if_statement ::=
+	IF expression THEN LINE_TERMINATOR statement_list END IF LINE_TERMINATOR
+	| IF expression THEN statement
+	;
+
+while_statement ::=
+	WHILE expression DO LINE_TERMINATOR statement_list END WHILE LINE_TERMINATOR
+	| WHILE expression DO statement
+	;
+
+
+statement_list ::=
+	statement_list statement
+	;
+
+
+function_call ::=
+	IDENTIFIER LPAREN argument_list RPAREN
+	| IDENTIFIER LPAREN bracketed_argument_list RPAREN
+	;
+
+argument_list ::=
+	expression
+	| argument_list COMMA expression
+	;
+
+bracketed_argument_list ::=
+	LBRACK argument_list RBRACK
 	;

@@ -100,20 +100,17 @@ WhiteSpace = {LineTerminator} | [ \t\f]
 /* comments */
 Comment = "</" ~"/>"
 
-
-
 /* identifiers */
-Identifier = [:jletter:][:jletterdigit:]*
+Identifier = [a-zA-Z_][a-zA-Z_0-9]*
 
 /* integer literals */
 DecIntegerLiteral = 0 | [1-9][0-9]*
     
 /* floating point literals */        
-DoubleLiteral = ({FLit1}|{FLit2}|{FLit3}) {Exponent}?
+DoubleLiteral = ({FLit1}|{FLit2}) {Exponent}?
 
 FLit1    = [0-9]+ \. [0-9]* 
-FLit2    = \. [0-9]+ 
-FLit3    = [0-9]+ 
+FLit2    = \. [0-9]+  
 Exponent = [eE] [+-]? [0-9]+
 
 /* string and character literals */
@@ -131,16 +128,19 @@ SingleCharacter = [^\r\n\'\\]
 
   /* keywords */
   "VAR"                          { return symbol(DECVAR); }
-  "ENDVAR"                       { return symbol(ENDDEC); }
-  "Integer"                      { return symbol(INTEGER); }
-  "Float"                        { return symbol(FLOAT); }
+  "ENDVAR"                       { return symbol(ENDVAR); }
+  "INTEGER"                      { return symbol(INTEGER); }
+  "FLOAT"                        { return symbol(FLOAT); }
   
   "WHILE"                        { return symbol(WHILE); }
   "IF"                           { return symbol(IF); }
   "ELSE"                         { return symbol(ELSE); }
+  "THEN"                         { return symbol(THEN); }
+  "END"                          { return symbol(END); }
+  "DO"                           { return symbol(DO); }
   "PRINT"                        { return symbol(PRINT); }
-  "PLUSTRUNC"                    { return symbol(PLUSTRUNC); }
-  "TRUNC"                        { return symbol(TRUNC); }
+  //"PLUSTRUNC"                    { return symbol(PLUSTRUNC); }
+  //"TRUNC"                        { return symbol(TRUNC); }
   "("                            { return symbol(LPAREN); }
   ")"                            { return symbol(RPAREN); }
   "{"                            { return symbol(LBRACE); }
@@ -171,29 +171,27 @@ SingleCharacter = [^\r\n\'\\]
   /* string literal */
   \"                             { yybegin(STRING); string.setLength(0); }
 
-  /* character literal */
-  \'                             { yybegin(CHARLITERAL); }
-
   /* numeric literals */
 
 
   
   {DecIntegerLiteral}            {
                                     verify_int(yytext());
-                                    return symbol(INTEGER_LITERAL, new Integer(yytext())); }
+                                    return symbol(INTEGER_LITERAL, new Integer(yytext()));
+                                 }
 
   {DoubleLiteral}                {
                                     verify_real(yytext());
                                     return symbol(FLOATING_POINT_LITERAL, new Double(yytext()));
                                  }
   
-
+  {Identifier}                   { return symbol(IDENTIFIER, yytext()); }
+  
+  {LineTerminator}               { return symbol(LINE_TERMINATOR); }
 
   /* whitespace */
   {WhiteSpace}                   { /* ignore */ }
-
-  /* identifiers */ 
-  {Identifier}                   { return symbol(IDENTIFIER, yytext()); }  
+   
 }
 
 <STRING> {
@@ -220,25 +218,6 @@ SingleCharacter = [^\r\n\'\\]
   {LineTerminator}               { throw new RuntimeException("Unterminated string at end of line"); }
 }
 
-<CHARLITERAL> {
-  {SingleCharacter}\'            { yybegin(YYINITIAL); return symbol(CHARACTER_LITERAL, yytext().charAt(0)); }
-  
-  /* escape sequences */
-  "\\b"\'                        { yybegin(YYINITIAL); return symbol(CHARACTER_LITERAL, '\b');}
-  "\\t"\'                        { yybegin(YYINITIAL); return symbol(CHARACTER_LITERAL, '\t');}
-  "\\n"\'                        { yybegin(YYINITIAL); return symbol(CHARACTER_LITERAL, '\n');}
-  "\\f"\'                        { yybegin(YYINITIAL); return symbol(CHARACTER_LITERAL, '\f');}
-  "\\r"\'                        { yybegin(YYINITIAL); return symbol(CHARACTER_LITERAL, '\r');}
-  "\\\""\'                       { yybegin(YYINITIAL); return symbol(CHARACTER_LITERAL, '\"');}
-  "\\'"\'                        { yybegin(YYINITIAL); return symbol(CHARACTER_LITERAL, '\'');}
-  "\\\\"\'                       { yybegin(YYINITIAL); return symbol(CHARACTER_LITERAL, '\\'); }
-  
-  /* error cases */
-  \\.                            { throw new RuntimeException("Illegal escape sequence \""+yytext()+"\""); }
-  {LineTerminator}               { throw new RuntimeException("Unterminated character literal at end of line"); }
-}
-
 /* error fallback */
-[^]                              { throw new RuntimeException("Illegal character \""+yytext()+
-                                                              "\" at line "+yyline+", column "+yycolumn); }
+[^]                              { throw new RuntimeException("Illegal character \""+yytext()+"\" at line "+yyline+", column "+yycolumn); }
 <<EOF>>                          { return symbol(EOF); }
