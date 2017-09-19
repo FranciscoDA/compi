@@ -21,12 +21,15 @@ public class Main {
 				Symbol s = sc.debug_next_token();
 				while (s.sym != sym.EOF) {
 					System.out.println("Sym: " + s.toString());
+					if (s.sym == sym.LINE_TERMINATOR) {
+						System.out.println();
+					}
 					if (s.sym == sym.IDENTIFIER) {
 					    ts.put(s.value.toString(), new SymbolTableEntry(s.value.toString(), null, null));
                     }
 					s = sc.debug_next_token();
 				}
-				System.out.println(ts.toString());
+				System.out.println();System.out.println("TABLA DE SÍMBOLOS:");System.out.println(ts.toString());
 			}
 			catch (RuntimeException ex) {
 				ex.printStackTrace();
