@@ -31,22 +31,21 @@ terminal INTEGER;
 terminal FLOAT;
 
 terminal LBRACK, RBRACK;
-terminal SEMICOLON, MULT, COMMA, LBRACE, RBRACE, EQ, LPAREN, RPAREN, COLON;
+terminal SEMICOLON, MULT, COMMA, LBRACE, RBRACE, ASSIGN, LPAREN, RPAREN, COLON;
 
 terminal IF, ELSE, THEN;
 terminal WHILE, DO;
 terminal END;
 terminal PRINT;
 
-terminal LINE_TERMINATOR;
-
-/*terminal TRUNC;
-terminal PLUSTRUNC;*/
+terminal TRUNC;
+terminal PLUSTRUNC;
 
 
 terminal PLUS, MINUS, COMP, NOT, DIV, MOD;
 terminal LT, GT, LTEQ, GTEQ; // relational_expression
 terminal EQEQ, NOTEQ; // equality_expression
+terminal EQ;
 
 terminal ANDAND; // conditional_and_expression
 terminal OROR; // conditional_or_expression
@@ -58,7 +57,7 @@ terminal java.lang.String IDENTIFIER; // name
 
 
 
-non terminal goal;
+non terminal Boolean goal;
 
 non terminal type_name;
 non terminal literal;
@@ -69,6 +68,7 @@ non terminal type_declaration_outer;
 non terminal type_declaration_inner;
 
 non terminal constructs.Expression expression, term, factor;
+non terminal condition;
 
 non terminal constructs.Statement      statement;
 non terminal constructs.IfStatement    if_statement;
@@ -79,10 +79,12 @@ non terminal function_call;
 non terminal argument_list;
 non terminal bracketed_argument_list;
 
+start with goal;
+
 
 goal ::=
-	declaration_block statement_list
-	| statement_list
+	declaration_block statement_list {: RESULT = true; :}
+	| statement_list                 {: RESULT = false; :}
 	;
 
 type_name ::=
@@ -93,11 +95,10 @@ type_name ::=
 literal ::=
 	INTEGER_LITERAL
 	| FLOATING_POINT_LITERAL
-	| STRING_LITERAL
 	;
 
 declaration_block ::=
-	DECVAR declaration_list ENDVAR LINE_TERMINATOR
+	DECVAR declaration_list ENDVAR
 	;
 
 declaration_list ::=
@@ -106,7 +107,7 @@ declaration_list ::=
 	;
 
 type_declaration_outer ::=
-	LBRACK type_declaration_inner RBRACK LINE_TERMINATOR
+	LBRACK type_declaration_inner RBRACK
 	;
 	
 type_declaration_inner ::=
@@ -134,41 +135,43 @@ factor ::=
 	| LPAREN expression RPAREN
 	;
 
+condition ::=
+	expression LTEQ expression
+	| expression LT expression
+	| expression GTEQ expression
+	| expression GT expression
+	| expression EQEQ expression
+	| expression NOTEQ expression
+	; 
+
 statement ::=
-	IDENTIFIER COLON EQ expression LINE_TERMINATOR
-	| function_call LINE_TERMINATOR
-	| PRINT STRING_LITERAL LINE_TERMINATOR
-	| PRINT IDENTIFIER LINE_TERMINATOR
+	IDENTIFIER ASSIGN expression
+	| PRINT STRING_LITERAL
 	| if_statement
 	| while_statement
 	;
 
 if_statement ::=
-	IF expression THEN LINE_TERMINATOR statement_list END IF LINE_TERMINATOR
-	| IF expression THEN statement
+	IF condition THEN statement_list END IF
+	| IF condition THEN statement_list ELSE statement_list END IF
 	;
 
 while_statement ::=
-	WHILE expression DO LINE_TERMINATOR statement_list END WHILE LINE_TERMINATOR
-	| WHILE expression DO statement
+	WHILE condition DO statement_list END WHILE
 	;
 
 
 statement_list ::=
 	statement_list statement
+	| statement
 	;
 
 
 function_call ::=
-	IDENTIFIER LPAREN argument_list RPAREN
-	| IDENTIFIER LPAREN bracketed_argument_list RPAREN
+	PLUSTRUNC LPAREN LBRACK argument_list RBRACK RPAREN
 	;
 
 argument_list ::=
-	expression
-	| argument_list COMMA expression
-	;
-
-bracketed_argument_list ::=
-	LBRACK argument_list RBRACK
+	argument_list COMMA TRUNC LPAREN expression RPAREN
+	| TRUNC LPAREN expression RPAREN
 	;

@@ -8,6 +8,8 @@ import java.nio.file.Paths;
 
 import java.util.HashMap;
 
+import com.sun.org.apache.xerces.internal.util.SynchronizedSymbolTable;
+
 import java_cup.runtime.Symbol;
 
 public class Main {
@@ -17,13 +19,20 @@ public class Main {
 		try {
 			BufferedReader br = Files.newBufferedReader(PRUEBA_PATH);
 			Scanner sc = new Scanner(br);
+			parser par = new parser(sc);
+			try {
+				Symbol s = par.debug_parse();
+				System.out.println(s.toString());
+				System.out.println(s.value);
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+			/*
 			try {
 				Symbol s = sc.debug_next_token();
 				while (s.sym != sym.EOF) {
 					System.out.println("Sym: " + s.toString());
-					if (s.sym == sym.LINE_TERMINATOR) {
-						System.out.println();
-					}
 					if (s.sym == sym.IDENTIFIER) {
 					    ts.put(s.value.toString(), new SymbolTableEntry(s.value.toString(), null, null));
                     }
@@ -33,7 +42,7 @@ public class Main {
 			}
 			catch (RuntimeException ex) {
 				ex.printStackTrace();
-			}
+			}*/
 		}
 		catch (IOException ex) {
 			System.err.println("No se pudo abrir el archivo de prueba " + PRUEBA_PATH.toString());

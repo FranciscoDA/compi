@@ -92,13 +92,14 @@ import java_cup.runtime.*;
 %}
 
 /* main character classes */
-LineTerminator = \r|\n|\r\n
 InputCharacter = [^\r\n]
 
-WhiteSpace = {LineTerminator} | [ \t\f]
+WhiteSpace = [ \t\f\r\n]
 
 /* comments */
 Comment = "</" ~"/>"
+
+
 
 /* identifiers */
 Identifier = [a-zA-Z_][a-zA-Z_0-9]*
@@ -107,17 +108,13 @@ Identifier = [a-zA-Z_][a-zA-Z_0-9]*
 DecIntegerLiteral = 0 | [1-9][0-9]*
     
 /* floating point literals */        
-DoubleLiteral = ({FLit1}|{FLit2}) {Exponent}?
+DoubleLiteral = ({FLit1}|{FLit2})
 
 FLit1    = [0-9]+ \. [0-9]* 
 FLit2    = \. [0-9]+  
-Exponent = [eE] [+-]? [0-9]+
 
 /* string and character literals */
-StringCharacter = [^\r\n\"\\]
-SingleCharacter = [^\r\n\'\\]
 
-%state STRING, CHARLITERAL
 
 %%
 
@@ -139,8 +136,8 @@ SingleCharacter = [^\r\n\'\\]
   "END"                          { return symbol(END); }
   "DO"                           { return symbol(DO); }
   "PRINT"                        { return symbol(PRINT); }
-  //"PLUSTRUNC"                    { return symbol(PLUSTRUNC); }
-  //"TRUNC"                        { return symbol(TRUNC); }
+  "PLUSTRUNC"                    { return symbol(PLUSTRUNC); }
+  "TRUNC"                        { return symbol(TRUNC); }
   "("                            { return symbol(LPAREN); }
   ")"                            { return symbol(RPAREN); }
   "{"                            { return symbol(LBRACE); }
@@ -148,11 +145,12 @@ SingleCharacter = [^\r\n\'\\]
   "["                            { return symbol(LBRACK); }
   "]"                            { return symbol(RBRACK); }
   ";"                            { return symbol(SEMICOLON); }
-  ":"                            { return symbol(COLON); }
+  ":="                           { return symbol(ASSIGN); }
+  "="                            { return symbol(EQ); }
   ","                            { return symbol(COMMA); }
   
   /* operators */
-  "="                            { return symbol(EQ); }
+  
   ">"                            { return symbol(GT); }
   "<"                            { return symbol(LT); }
   "!"                            { return symbol(NOT); }
@@ -169,7 +167,12 @@ SingleCharacter = [^\r\n\'\\]
   "%"                            { return symbol(MOD); }
   
   /* string literal */
-  \"                             { yybegin(STRING); string.setLength(0); }
+  "\"" [^\"\n\r]* "\""                    {
+                                    verify_string(yytext());
+                                    return symbol(STRING_LITERAL, new String(
+                                    	yytext().substring(1, yytext().length()-1)
+                                    ));
+                                 }
 
   /* numeric literals */
 
@@ -186,36 +189,10 @@ SingleCharacter = [^\r\n\'\\]
                                  }
   
   {Identifier}                   { return symbol(IDENTIFIER, yytext()); }
-  
-  {LineTerminator}               { return symbol(LINE_TERMINATOR); }
 
   /* whitespace */
   {WhiteSpace}                   { /* ignore */ }
    
-}
-
-<STRING> {
-  \"                             {
-                                    yybegin(YYINITIAL);
-                                    verify_string(string.toString());
-                                    return symbol(STRING_LITERAL, string.toString());
-                                 }
-  
-  {StringCharacter}+             { string.append( yytext() ); }
-  
-  /* escape sequences */
-  "\\b"                          { string.append( '\b' ); }
-  "\\t"                          { string.append( '\t' ); }
-  "\\n"                          { string.append( '\n' ); }
-  "\\f"                          { string.append( '\f' ); }
-  "\\r"                          { string.append( '\r' ); }
-  "\\\""                         { string.append( '\"' ); }
-  "\\'"                          { string.append( '\'' ); }
-  "\\\\"                         { string.append( '\\' ); }
-  
-  /* error cases */
-  \\.                            { throw new RuntimeException("Illegal escape sequence \""+yytext()+"\""); }
-  {LineTerminator}               { throw new RuntimeException("Unterminated string at end of line"); }
 }
 
 /* error fallback */
