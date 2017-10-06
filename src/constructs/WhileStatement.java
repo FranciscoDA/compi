@@ -1,10 +1,14 @@
 package constructs;
 
 public class WhileStatement extends Statement {
-	public void setCondition(Expression condition) {
+	public WhileStatement(Condition condition, Statement branch) {
+		setCondition(condition);
+		setBranch(branch);
+	}
+	public void setCondition(Condition condition) {
 		_condition = condition;
 	}
-	public Expression getCondition() {
+	public Condition getCondition() {
 		return _condition;
 	}
 	public void setBranch(Statement branch) {
@@ -13,6 +17,6 @@ public class WhileStatement extends Statement {
 	public Statement getBranch() {
 		return _branch;
 	}
-	private Expression _condition;
+	private Condition _condition;
 	private Statement _branch;
 }

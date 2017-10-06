@@ -1,52 +1,36 @@
 package compilador;
 
-/**
- * Created by naninho205 on 2017-09-12.
- */
-public class SymbolTableEntry {
-    public SymbolTableEntry(String name, Integer type, Object value) {
-        this(name, type, value, 0);
-    }
-    public SymbolTableEntry(String name, Integer type, Object value, Integer length){
-        setName(name);
-        setType(type);
-        setVal(value);
-        setLen(length);
+import constructs.TypeName;
+
+public class SymbolTableEntry implements Comparable<SymbolTableEntry> {
+    public SymbolTableEntry(String name, TypeName type) {
+    	this.name = name;
+    	this.type = type;
     }
 
-
-    private String name;
     public String getName() {
         return name;
     }
     public void setName(String name) {
         this.name = name;
     }
-
-
-    private Integer type;
-    public Integer getType() {
+    public TypeName getType() {
         return type;
     }
-    public void setType(Integer type) {
+    public void setType(TypeName type) {
         this.type = type;
-    }
+    }    
 
+    @Override
+    public String toString() {
+    	return name.toString() + " " + type.toString();
+    }
+    
+	@Override
+	public int compareTo(SymbolTableEntry o) {
+		return this.name.compareTo(o.getName());
+	}
 
-    private Object val;
-    public Object getVal() {
-        return val;
-    }
-    public void setVal(Object val) {
-        this.val = val;
-    }
-
-
-    private Integer len;
-    public Integer getLen() {
-        return len;
-    }
-    public void setLen(Integer len) {
-        this.len = len;
-    }
+    private String name;
+    private TypeName type;
 }

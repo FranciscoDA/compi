@@ -50,128 +50,124 @@ terminal EQ;
 terminal ANDAND; // conditional_and_expression
 terminal OROR; // conditional_or_expression
 
-terminal java.lang.Number INTEGER_LITERAL;
-terminal java.lang.Number FLOATING_POINT_LITERAL;
+terminal java.lang.Integer INTEGER_LITERAL;
+terminal java.lang.Float FLOATING_POINT_LITERAL;
 terminal java.lang.String STRING_LITERAL;
 terminal java.lang.String IDENTIFIER; // name
 
 
 
-non terminal Boolean goal;
+non terminal constructs.Program goal;
 
-non terminal type_name;
-non terminal literal;
+non terminal constructs.TypeName          type_name;
+non terminal constructs.LiteralExpression literal;
 
-non terminal declaration_block;
-non terminal declaration_list;
-non terminal type_declaration_outer;
-non terminal type_declaration_inner;
+non terminal constructs.Declaration declaration_block, declaration_list;
+non terminal constructs.Declaration type_declaration_outer, type_declaration_inner;
 
 non terminal constructs.Expression expression, term, factor;
-non terminal condition;
+non terminal constructs.Condition  condition;
 
-non terminal constructs.Statement      statement;
+non terminal constructs.Statement      statement, statement_list;
 non terminal constructs.IfStatement    if_statement;
 non terminal constructs.WhileStatement while_statement;
-non terminal constructs.Statement      statement_list;
 
-non terminal function_call;
-non terminal argument_list;
-non terminal bracketed_argument_list;
+non terminal constructs.PlusTrunc function_call;
+non terminal constructs.PlusTrunc argument_list;
+non terminal constructs.PlusTrunc bracketed_argument_list;
 
 start with goal;
 
 
 goal ::=
-	declaration_block statement_list {: RESULT = true; :}
-	| statement_list                 {: RESULT = false; :}
+	declaration_block:dec statement_list:st {: RESULT = new constructs.Program(st, dec); :}
+	| statement_list:st                     {: RESULT = new constructs.Program(st);      :}
 	;
 
 type_name ::=
-	INTEGER
-	| FLOAT
+	INTEGER {: RESULT = constructs.TypeName.INTEGER; :}
+	| FLOAT {: RESULT = constructs.TypeName.FLOAT;   :}
 	;
 
 literal ::=
-	INTEGER_LITERAL
-	| FLOATING_POINT_LITERAL
+	INTEGER_LITERAL:lit          {: RESULT = new constructs.LiteralExpression(lit); :}
+	| FLOATING_POINT_LITERAL:lit {: RESULT = new constructs.LiteralExpression(lit); :}
 	;
 
 declaration_block ::=
-	DECVAR declaration_list ENDVAR
+	DECVAR declaration_list:dec1 ENDVAR {: RESULT = dec1; :}
 	;
 
 declaration_list ::=
-	declaration_list type_declaration_outer
-	| type_declaration_outer
+	declaration_list:dec1 type_declaration_outer:dec2 {: dec1.concatenate(dec2); RESULT = dec1; :}
+	| type_declaration_outer:dec1                     {: RESULT = dec1; :}
 	;
 
 type_declaration_outer ::=
-	LBRACK type_declaration_inner RBRACK
+	LBRACK type_declaration_inner:dec1 RBRACK         {: dec1.invert(); RESULT = dec1; :}
 	;
 	
 type_declaration_inner ::=
-	IDENTIFIER RBRACK EQ LBRACK type_name
-	| IDENTIFIER COMMA type_declaration_inner COMMA type_name
+	IDENTIFIER:ident RBRACK EQ LBRACK type_name:type                             {: RESULT = new constructs.Declaration(ident, type); :}
+	| IDENTIFIER:ident COMMA type_declaration_inner:nextdec COMMA type_name:type {: RESULT = new constructs.Declaration(ident, type, nextdec); RESULT.setNext(nextdec); :}   
 	;
 
 expression ::=
-	expression PLUS term
-	| expression MINUS term
-	| MINUS term
-	| term
+	expression:e1 PLUS term:e2    {: RESULT = new constructs.BinaryExpression(e1, constructs.BinaryOperator.PLUS, e2); :}
+	| expression:e1 MINUS term:e2 {: RESULT = new constructs.BinaryExpression(e1, constructs.BinaryOperator.MINUS, e2); :}
+	| term:e1                     {: RESULT = e1; :}
 	;
 
 term ::=
-	term MULT factor
-	| term DIV factor
-	| factor
+	term:e1 MULT factor:e2  {: RESULT = new constructs.BinaryExpression(e1, constructs.BinaryOperator.MULT, e2); :}
+	| term:e1 DIV factor:e2 {: RESULT = new constructs.BinaryExpression(e1, constructs.BinaryOperator.DIV, e2); :}
+	| factor:e1             {: RESULT = e1; :}
 	;
 
 factor ::=
-	IDENTIFIER
-	| literal
-	| function_call
-	| LPAREN expression RPAREN
+	IDENTIFIER:ident              {: RESULT = new constructs.VariableExpression(ident); :}
+	| literal:lit                 {: RESULT = lit; :}
+	| function_call:plustrunc     {: RESULT = plustrunc; :}
+	| LPAREN expression:e1 RPAREN {: RESULT = e1; :}
 	;
 
 condition ::=
-	expression LTEQ expression
-	| expression LT expression
-	| expression GTEQ expression
-	| expression GT expression
-	| expression EQEQ expression
-	| expression NOTEQ expression
+	expression:e1 LTEQ expression:e2    {: RESULT = new constructs.Condition(e1, constructs.BinaryComparator.LTEQ, e2); :}
+	| expression:e1 LT expression:e2    {: RESULT = new constructs.Condition(e1, constructs.BinaryComparator.LT, e2); :}
+	| expression:e1 GTEQ expression:e2  {: RESULT = new constructs.Condition(e1, constructs.BinaryComparator.GTEQ, e2); :}
+	| expression:e1 GT expression:e2    {: RESULT = new constructs.Condition(e1, constructs.BinaryComparator.GT, e2); :}
+	| expression:e1 EQEQ expression:e2  {: RESULT = new constructs.Condition(e1, constructs.BinaryComparator.EQEQ, e2); :}
+	| expression:e1 NOTEQ expression:e2 {: RESULT = new constructs.Condition(e1, constructs.BinaryComparator.NOTEQ, e2); :}
 	; 
 
 statement ::=
-	IDENTIFIER ASSIGN expression
-	| PRINT STRING_LITERAL
-	| if_statement
-	| while_statement
+	IDENTIFIER:ident ASSIGN expression:exp {: RESULT = new constructs.AssignStatement(ident, exp); :}
+	| PRINT STRING_LITERAL:text            {: RESULT = new constructs.PrintStatement(text); :}
+	| if_statement:st1                     {: RESULT = st1; :}
+	| while_statement:st1                  {: RESULT = st1; :}
 	;
 
 if_statement ::=
-	IF condition THEN statement_list END IF
-	| IF condition THEN statement_list ELSE statement_list END IF
+	IF condition:cond THEN statement_list:branch END IF                           {: RESULT = new constructs.IfStatement(cond, branch, null); :}
+	| IF condition:cond THEN statement_list:branch ELSE statement_list:els END IF {: RESULT = new constructs.IfStatement(cond, branch, els);  :} 
 	;
 
 while_statement ::=
-	WHILE condition DO statement_list END WHILE
+	WHILE condition:cond DO statement_list:branch END WHILE {: RESULT = new constructs.WhileStatement(cond, branch); :}
 	;
 
 
 statement_list ::=
-	statement_list statement
-	| statement
+	statement_list:st1 statement:st2                              {: st1.concatenate(st2); RESULT = st1; :}
+	| statement:st1                                               {: RESULT = st1; :}
 	;
 
 
 function_call ::=
-	PLUSTRUNC LPAREN LBRACK argument_list RBRACK RPAREN
+	PLUSTRUNC LPAREN LBRACK argument_list:plustrunc RBRACK RPAREN {: RESULT = plustrunc; :}
 	;
 
 argument_list ::=
-	argument_list COMMA TRUNC LPAREN expression RPAREN
-	| TRUNC LPAREN expression RPAREN
+	argument_list:trunc COMMA TRUNC LPAREN expression:expr RPAREN {: trunc.setNext(new constructs.PlusTrunc(expr)); RESULT = trunc; :}
+	| TRUNC LPAREN expression:expr RPAREN                         {: RESULT = new constructs.PlusTrunc(expr); :}
 	;

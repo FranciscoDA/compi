@@ -108,7 +108,7 @@ Identifier = [a-zA-Z_][a-zA-Z_0-9]*
 DecIntegerLiteral = 0 | [1-9][0-9]*
     
 /* floating point literals */        
-DoubleLiteral = ({FLit1}|{FLit2})
+FloatLiteral = ({FLit1}|{FLit2})
 
 FLit1    = [0-9]+ \. [0-9]* 
 FLit2    = \. [0-9]+  
@@ -183,9 +183,9 @@ FLit2    = \. [0-9]+
                                     return symbol(INTEGER_LITERAL, new Integer(yytext()));
                                  }
 
-  {DoubleLiteral}                {
+  {FloatLiteral}                 {
                                     verify_real(yytext());
-                                    return symbol(FLOATING_POINT_LITERAL, new Double(yytext()));
+                                    return symbol(FLOATING_POINT_LITERAL, new Float(yytext()));
                                  }
   
   {Identifier}                   { return symbol(IDENTIFIER, yytext()); }
