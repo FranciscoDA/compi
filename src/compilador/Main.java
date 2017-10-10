@@ -82,6 +82,7 @@ public class Main {
 			if (!symbolTable.containsKey(astatement.getIdentifier())) {
 				throw new Exception("Undeclared identifier: " + astatement.getIdentifier());
 			}
+			processExpression(astatement.getExpression());
 		}
 		else if (statement instanceof PrintStatement) {
 			PrintStatement pstatement = (PrintStatement)statement;
@@ -118,17 +119,18 @@ public class Main {
 	public static void outputSymbolTable() {
 		try {
 			PrintWriter pw =  new PrintWriter(Files.newOutputStream(TS_PATH));
+			String fmt = "%20s%20s%20s%20s\n";
 			for (SymbolTableEntry e : symbolTable.values()) {
-				pw.printf("%s\t%s\t---\t---\n", e.getName(), e.getType().toString());
+				pw.printf(fmt, e.getName(), e.getType().toString(), "---", "---");
 			}
 			for (Integer i : integerTable) {
-				pw.printf("---\tCteInt\t%d\t---\n", i);
+				pw.printf(fmt, "---", "CteInt", i.toString(), "---");
 			}
 			for (Float f : floatTable) {
-				pw.printf("---\tCteReal\t%f\t---\n", f);
+				pw.printf(fmt, "---", "CteReal", f.toString(), "---");
 			}
 			for (String s : stringTable) {
-				pw.printf("---\tCteString\t%s\t%d\n", s, s.length());
+				pw.printf(fmt, "---", "CteString", s, Integer.toString(s.length()));
 			}
 			pw.close();
 		} catch (IOException e1) {

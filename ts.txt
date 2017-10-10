@@ -1,0 +1,28 @@
+                SUMA               FLOAT                 ---                 ---
+                 ASD             INTEGER                 ---                 ---
+                  DX               FLOAT                 ---                 ---
+                  CX               FLOAT                 ---                 ---
+                  BX             INTEGER                 ---                 ---
+                  AX             INTEGER                 ---                 ---
+            CONTADOR             INTEGER                 ---                 ---
+            PROMEDIO               FLOAT                 ---                 ---
+              ACTUAL             INTEGER                 ---                 ---
+              RESULT             INTEGER                 ---                 ---
+                 ---              CteInt                   0                 ---
+                 ---              CteInt                   1                 ---
+                 ---              CteInt                   2                 ---
+                 ---              CteInt                   3                 ---
+                 ---              CteInt                 999                 ---
+                 ---              CteInt                  92                 ---
+                 ---              CteInt                  31                 ---
+                 ---             CteReal                99.0                 ---
+                 ---             CteReal            99999.99                 ---
+                 ---             CteReal            333.3333                 ---
+                 ---             CteReal              0.9999                 ---
+                 ---             CteReal               0.342                 ---
+                 ---           CteString        asldk fh sjf                  12
+                 ---           CteString     @sdADaSjfla%dfg                  15
+                 ---           CteString               2 > 3                   5
+                 ---           CteString                 asd                   3
+                 ---           CteString            SOY TRUE                   8
+                 ---           CteString          Hola mundo                  10
