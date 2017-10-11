@@ -4,30 +4,24 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
-import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import com.sun.org.apache.xerces.internal.util.SynchronizedSymbolTable;
-
-import constructs.AssignStatement;
-import constructs.BinaryExpression;
-import constructs.BinaryOperator;
-import constructs.Condition;
-import constructs.Declaration;
-import constructs.Expression;
-import constructs.IfStatement;
-import constructs.LiteralExpression;
-import constructs.PlusTrunc;
-import constructs.PrintStatement;
-import constructs.Program;
-import constructs.Statement;
-import constructs.TypeName;
-import constructs.VariableExpression;
-import constructs.WhileStatement;
+import ast.AssignStatement;
+import ast.BinaryExpression;
+import ast.Condition;
+import ast.Declaration;
+import ast.Expression;
+import ast.IfStatement;
+import ast.LiteralExpression;
+import ast.PlusTrunc;
+import ast.PrintStatement;
+import ast.Program;
+import ast.Statement;
+import ast.VariableExpression;
+import ast.WhileStatement;
 import java_cup.runtime.Symbol;
 
 public class Main {

@@ -1,4 +1,4 @@
-package constructs;
+package ast;
 
 public class Program {
 	public Program(Statement statement, Declaration declaration) {

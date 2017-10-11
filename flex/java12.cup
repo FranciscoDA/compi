@@ -57,41 +57,41 @@ terminal java.lang.String IDENTIFIER; // name
 
 
 
-non terminal constructs.Program goal;
+non terminal ast.Program goal;
 
-non terminal constructs.TypeName          type_name;
-non terminal constructs.LiteralExpression literal;
+non terminal ast.TypeName          type_name;
+non terminal ast.LiteralExpression literal;
 
-non terminal constructs.Declaration declaration_block, declaration_list;
-non terminal constructs.Declaration type_declaration_outer, type_declaration_inner;
+non terminal ast.Declaration declaration_block, declaration_list;
+non terminal ast.Declaration type_declaration_outer, type_declaration_inner;
 
-non terminal constructs.Expression expression, term, factor;
-non terminal constructs.Condition  condition;
+non terminal ast.Expression expression, term, factor;
+non terminal ast.Condition  condition;
 
-non terminal constructs.Statement      statement, statement_list;
-non terminal constructs.IfStatement    if_statement;
-non terminal constructs.WhileStatement while_statement;
+non terminal ast.Statement      statement, statement_list;
+non terminal ast.IfStatement    if_statement;
+non terminal ast.WhileStatement while_statement;
 
-non terminal constructs.PlusTrunc function_call;
-non terminal constructs.PlusTrunc argument_list;
-non terminal constructs.PlusTrunc bracketed_argument_list;
+non terminal ast.PlusTrunc function_call;
+non terminal ast.PlusTrunc argument_list;
+non terminal ast.PlusTrunc bracketed_argument_list;
 
 start with goal;
 
 
 goal ::=
-	declaration_block:dec statement_list:st {: RESULT = new constructs.Program(st, dec); :}
-	| statement_list:st                     {: RESULT = new constructs.Program(st);      :}
+	declaration_block:dec statement_list:st {: RESULT = new ast.Program(st, dec); :}
+	| statement_list:st                     {: RESULT = new ast.Program(st);      :}
 	;
 
 type_name ::=
-	INTEGER {: RESULT = constructs.TypeName.INTEGER; :}
-	| FLOAT {: RESULT = constructs.TypeName.FLOAT;   :}
+	INTEGER {: RESULT = ast.TypeName.INTEGER; :}
+	| FLOAT {: RESULT = ast.TypeName.FLOAT;   :}
 	;
 
 literal ::=
-	INTEGER_LITERAL:lit          {: RESULT = new constructs.LiteralExpression(lit); :}
-	| FLOATING_POINT_LITERAL:lit {: RESULT = new constructs.LiteralExpression(lit); :}
+	INTEGER_LITERAL:lit          {: RESULT = new ast.LiteralExpression(lit); :}
+	| FLOATING_POINT_LITERAL:lit {: RESULT = new ast.LiteralExpression(lit); :}
 	;
 
 declaration_block ::=
@@ -108,52 +108,52 @@ type_declaration_outer ::=
 	;
 	
 type_declaration_inner ::=
-	IDENTIFIER:ident RBRACK EQ LBRACK type_name:type                             {: RESULT = new constructs.Declaration(ident, type); :}
-	| IDENTIFIER:ident COMMA type_declaration_inner:nextdec COMMA type_name:type {: RESULT = new constructs.Declaration(ident, type, nextdec); RESULT.setNext(nextdec); :}   
+	IDENTIFIER:ident RBRACK EQ LBRACK type_name:type                             {: RESULT = new ast.Declaration(ident, type); :}
+	| IDENTIFIER:ident COMMA type_declaration_inner:nextdec COMMA type_name:type {: RESULT = new ast.Declaration(ident, type, nextdec); RESULT.setNext(nextdec); :}   
 	;
 
 expression ::=
-	expression:e1 PLUS term:e2    {: RESULT = new constructs.BinaryExpression(e1, constructs.BinaryOperator.PLUS, e2); :}
-	| expression:e1 MINUS term:e2 {: RESULT = new constructs.BinaryExpression(e1, constructs.BinaryOperator.MINUS, e2); :}
+	expression:e1 PLUS term:e2    {: RESULT = new ast.BinaryExpression(e1, ast.BinaryOperator.PLUS, e2); :}
+	| expression:e1 MINUS term:e2 {: RESULT = new ast.BinaryExpression(e1, ast.BinaryOperator.MINUS, e2); :}
 	| term:e1                     {: RESULT = e1; :}
 	;
 
 term ::=
-	term:e1 MULT factor:e2  {: RESULT = new constructs.BinaryExpression(e1, constructs.BinaryOperator.MULT, e2); :}
-	| term:e1 DIV factor:e2 {: RESULT = new constructs.BinaryExpression(e1, constructs.BinaryOperator.DIV, e2); :}
+	term:e1 MULT factor:e2  {: RESULT = new ast.BinaryExpression(e1, ast.BinaryOperator.MULT, e2); :}
+	| term:e1 DIV factor:e2 {: RESULT = new ast.BinaryExpression(e1, ast.BinaryOperator.DIV, e2); :}
 	| factor:e1             {: RESULT = e1; :}
 	;
 
 factor ::=
-	IDENTIFIER:ident              {: RESULT = new constructs.VariableExpression(ident); :}
+	IDENTIFIER:ident              {: RESULT = new ast.VariableExpression(ident); :}
 	| literal:lit                 {: RESULT = lit; :}
 	| function_call:plustrunc     {: RESULT = plustrunc; :}
 	| LPAREN expression:e1 RPAREN {: RESULT = e1; :}
 	;
 
 condition ::=
-	expression:e1 LTEQ expression:e2    {: RESULT = new constructs.Condition(e1, constructs.BinaryComparator.LTEQ, e2); :}
-	| expression:e1 LT expression:e2    {: RESULT = new constructs.Condition(e1, constructs.BinaryComparator.LT, e2); :}
-	| expression:e1 GTEQ expression:e2  {: RESULT = new constructs.Condition(e1, constructs.BinaryComparator.GTEQ, e2); :}
-	| expression:e1 GT expression:e2    {: RESULT = new constructs.Condition(e1, constructs.BinaryComparator.GT, e2); :}
-	| expression:e1 EQEQ expression:e2  {: RESULT = new constructs.Condition(e1, constructs.BinaryComparator.EQEQ, e2); :}
-	| expression:e1 NOTEQ expression:e2 {: RESULT = new constructs.Condition(e1, constructs.BinaryComparator.NOTEQ, e2); :}
+	expression:e1 LTEQ expression:e2    {: RESULT = new ast.Condition(e1, ast.BinaryComparator.LTEQ, e2); :}
+	| expression:e1 LT expression:e2    {: RESULT = new ast.Condition(e1, ast.BinaryComparator.LT, e2); :}
+	| expression:e1 GTEQ expression:e2  {: RESULT = new ast.Condition(e1, ast.BinaryComparator.GTEQ, e2); :}
+	| expression:e1 GT expression:e2    {: RESULT = new ast.Condition(e1, ast.BinaryComparator.GT, e2); :}
+	| expression:e1 EQEQ expression:e2  {: RESULT = new ast.Condition(e1, ast.BinaryComparator.EQEQ, e2); :}
+	| expression:e1 NOTEQ expression:e2 {: RESULT = new ast.Condition(e1, ast.BinaryComparator.NOTEQ, e2); :}
 	; 
 
 statement ::=
-	IDENTIFIER:ident ASSIGN expression:exp {: RESULT = new constructs.AssignStatement(ident, exp); :}
-	| PRINT STRING_LITERAL:text            {: RESULT = new constructs.PrintStatement(text); :}
+	IDENTIFIER:ident ASSIGN expression:exp {: RESULT = new ast.AssignStatement(ident, exp); :}
+	| PRINT STRING_LITERAL:text            {: RESULT = new ast.PrintStatement(text); :}
 	| if_statement:st1                     {: RESULT = st1; :}
 	| while_statement:st1                  {: RESULT = st1; :}
 	;
 
 if_statement ::=
-	IF condition:cond THEN statement_list:branch END IF                           {: RESULT = new constructs.IfStatement(cond, branch, null); :}
-	| IF condition:cond THEN statement_list:branch ELSE statement_list:els END IF {: RESULT = new constructs.IfStatement(cond, branch, els);  :} 
+	IF condition:cond THEN statement_list:branch END IF                           {: RESULT = new ast.IfStatement(cond, branch, null); :}
+	| IF condition:cond THEN statement_list:branch ELSE statement_list:els END IF {: RESULT = new ast.IfStatement(cond, branch, els);  :} 
 	;
 
 while_statement ::=
-	WHILE condition:cond DO statement_list:branch END WHILE {: RESULT = new constructs.WhileStatement(cond, branch); :}
+	WHILE condition:cond DO statement_list:branch END WHILE {: RESULT = new ast.WhileStatement(cond, branch); :}
 	;
 
 
@@ -168,6 +168,6 @@ function_call ::=
 	;
 
 argument_list ::=
-	argument_list:trunc COMMA TRUNC LPAREN expression:expr RPAREN {: trunc.setNext(new constructs.PlusTrunc(expr)); RESULT = trunc; :}
-	| TRUNC LPAREN expression:expr RPAREN                         {: RESULT = new constructs.PlusTrunc(expr); :}
+	argument_list:trunc COMMA TRUNC LPAREN expression:expr RPAREN {: trunc.setNext(new ast.PlusTrunc(expr)); RESULT = trunc; :}
+	| TRUNC LPAREN expression:expr RPAREN                         {: RESULT = new ast.PlusTrunc(expr); :}
 	;

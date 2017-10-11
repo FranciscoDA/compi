@@ -1,4 +1,4 @@
-package constructs;
+package ast;
 
 public class AssignStatement extends Statement {
 	public AssignStatement(String identifier, Expression expression) {

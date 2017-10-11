@@ -1,4 +1,4 @@
-package constructs;
+package ast;
 
 public class Statement {
 	public Statement() {

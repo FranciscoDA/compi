@@ -1,15 +1,15 @@
-package constructs;
+package ast;
 
-public class BinaryExpression extends Expression {
-	public BinaryExpression(Expression left, BinaryOperator op, Expression right) {
+public class Condition {
+	public Condition(Expression left, BinaryComparator comp, Expression right) {
 		setLeft(left);
-		setOperation(op);
+		setComparator(comp);
 		setRight(right);
 	}
-	public void setOperation(BinaryOperator op)	{
+	public void setComparator(BinaryComparator op) {
 		_op = op;
 	}
-	public BinaryOperator getOperation() {
+	public BinaryComparator getComparator() {
 		return _op;
 	}
 	public void setLeft(Expression left) {
@@ -24,7 +24,7 @@ public class BinaryExpression extends Expression {
 	public Expression getRight() {
 		return _right;
 	}
-	private BinaryOperator _op;
+	private BinaryComparator _op;
 	private Expression _left;
 	private Expression _right;
 }

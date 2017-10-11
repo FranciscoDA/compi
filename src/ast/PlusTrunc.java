@@ -1,4 +1,4 @@
-package constructs;
+package ast;
 
 public class PlusTrunc extends Expression {
 	public PlusTrunc(Expression trunc) {

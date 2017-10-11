@@ -1,4 +1,4 @@
-package constructs;
+package ast;
 
 public class PrintStatement extends Statement {
 	public PrintStatement(String text) {

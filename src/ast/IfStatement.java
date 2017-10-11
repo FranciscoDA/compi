@@ -1,9 +1,10 @@
-package constructs;
+package ast;
 
-public class WhileStatement extends Statement {
-	public WhileStatement(Condition condition, Statement branch) {
+public class IfStatement extends Statement {
+	public IfStatement(Condition condition, Statement branch, Statement els) {
 		setCondition(condition);
 		setBranch(branch);
+		setElse(els);
 	}
 	public void setCondition(Condition condition) {
 		_condition = condition;
@@ -17,6 +18,13 @@ public class WhileStatement extends Statement {
 	public Statement getBranch() {
 		return _branch;
 	}
+	public void setElse(Statement newElse) {
+		_else = newElse;
+	}
+	public Statement getElse() {
+		return _else;
+	}
 	private Condition _condition;
 	private Statement _branch;
+	private Statement _else;
 }

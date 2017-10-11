@@ -1,4 +1,4 @@
-package constructs;
+package ast;
 
 public class LiteralExpression extends Expression {
 	public LiteralExpression() {

@@ -1,0 +1,23 @@
+<project name="compi" default="run">
+	<taskdef classname="jflex.anttask.JFlexTask" name="jflex" classpath="jflex/lib/jflex-1.6.1.jar"/>
+	<taskdef classname="java_cup.anttask.CUPTask" name="cup" classpath="jflex/lib/java-cup-11a.jar"/>
+	
+	<target name="build" depends="scanner,cup">
+		<javac srcdir="src" destdir="bin" includeantruntime="false"></javac>
+	</target>
+	<target name="run" depends="build">
+		<java dir="." classname="compilador.Main">
+			<classpath>
+				<pathelement location="jflex/lib/java-cup-11a.jar"></pathelement>
+				<pathelement path="bin"></pathelement>
+			</classpath>
+		</java>
+	</target>
+	
+	<target name="scanner">
+		<jflex file="flex/java.flex" destdir="src"></jflex>
+	</target>
+	<target name="cup">
+		<cup srcfile="flex/java12.cup" interface="yes" destdir="src"></cup>
+	</target>
+</project>

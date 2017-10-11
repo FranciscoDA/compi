@@ -1,4 +1,4 @@
-package constructs;
+package ast;
 
 public class VariableExpression extends Expression {
 	public VariableExpression(String identifier) {

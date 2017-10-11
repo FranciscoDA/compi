@@ -1,4 +1,4 @@
-package constructs;
+package ast;
 
 import java.util.LinkedList;
 
