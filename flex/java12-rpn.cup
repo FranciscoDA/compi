@@ -1,0 +1,301 @@
+package compilador;
+import java_cup.runtime.*;
+
+/* Java 1.2 parser for CUP.  
+ * Copyright (C) 1998 C. Scott Ananian <cananian@alumni.princeton.edu>
+ * This program is released under the terms of the GPL; see the file
+ * COPYING for more details.  There is NO WARRANTY on this code.
+ */
+
+parser code  {: 
+  public void report_error(String message, Object info) {
+    StringBuilder m = new StringBuilder("Error ");
+
+    if (info instanceof java_cup.runtime.Symbol) 
+      m.append( "("+info.toString()+")" );
+     
+    m.append(" : "+message);
+   
+    System.out.println(m);
+  }
+   
+  public void report_fatal_error(String message, Object info) {
+    report_error(message, info);
+    throw new RuntimeException("Fatal Syntax Error");
+  }
+:};
+
+terminal DECVAR;
+terminal ENDVAR;
+terminal INTEGER;
+terminal FLOAT;
+
+terminal LBRACK, RBRACK;
+terminal SEMICOLON, MULT, COMMA, LBRACE, RBRACE, ASSIGN, LPAREN, RPAREN, COLON;
+
+terminal IF, ELSE, THEN;
+terminal WHILE, DO;
+terminal END;
+terminal PRINT;
+
+terminal TRUNC;
+terminal PLUSTRUNC;
+
+
+terminal PLUS, MINUS, COMP, NOT, DIV, MOD;
+terminal LT, GT, LTEQ, GTEQ; // relational_expression
+terminal EQEQ, NOTEQ; // equality_expression
+terminal EQ;
+
+terminal ANDAND; // conditional_and_expression
+terminal OROR; // conditional_or_expression
+
+terminal java.lang.Integer INTEGER_LITERAL;
+terminal java.lang.Float FLOATING_POINT_LITERAL;
+terminal java.lang.String STRING_LITERAL;
+terminal java.lang.String IDENTIFIER; // name
+
+
+
+non terminal ast.Program goal;
+
+non terminal rpn.TypeName type_name;
+non terminal rpn.Literal  literal;
+
+non terminal LinkedList<rpn.Node> declaration_block, declaration_list;
+non terminal LinkedList<rpn.Node> type_declaration_outer, type_declaration_inner;
+
+non terminal LinkedList<rpn.Node> expression, term, factor;
+non terminal LinkedList<rpn.Node> condition;
+
+non terminal LinkedList<rpn.Node> statement, statement_list;
+non terminal LinkedList<rpn.Node> if_statement;
+non terminal LinkedList<rpn.Node> while_statement;
+
+non terminal LinkedList<rpn.Node> function_call;
+non terminal LinkedList<rpn.Node> argument_list;
+non terminal LinkedList<rpn.Node> bracketed_argument_list;
+
+start with goal;
+
+
+goal ::=
+	declaration_block:dec statement_list:st           {:
+	                                                     dec.addAll(st);
+	                                                     RESULT = dec;
+	                                                  :}
+	| statement_list:st                               {: RESULT = st; :}
+	;
+
+type_name ::=
+	INTEGER                                           {: RESULT = rpn.TypeName.INTEGER; :}
+	| FLOAT                                           {: RESULT = rpn.TypeName.FLOAT;   :}
+	;
+
+literal ::=
+	INTEGER_LITERAL:lit                               {: RESULT = new rpn.LiteralExpression(lit); :}
+	| FLOATING_POINT_LITERAL:lit                      {: RESULT = new rpn.LiteralExpression(lit); :}
+	;
+
+declaration_block ::=
+	DECVAR declaration_list:dec1 ENDVAR               {: RESULT = dec1; :}
+	;
+
+declaration_list ::=
+	declaration_list:dec1 type_declaration_outer:dec2 {:
+	                                                     dec1.addAll(dec2);
+	                                                     RESULT = dec1;
+	                                                  :}
+	| type_declaration_outer:dec1                     {: RESULT = dec1; :}
+	;
+
+type_declaration_outer ::=
+	LBRACK type_declaration_inner:dec1 RBRACK         {:
+	                                                     ListIterator<rpn.Node> it1 = dec1.listIterator(0);
+	                                                     ListIterator<rpn.Node> it2 = dec1.listIterator(dec1.size()-1);
+	                                                     for (int i = 0; i < dec1.size()/4; i++)
+	                                                     {
+	                                                     	rpn.Node el1 = it1.next();
+	                                                     	rpn.Node el2 = it2.previous();
+	                                                     	it1.set(el2);
+	                                                     	it2.set(el1);
+	                                                     	it1.next();
+	                                                     	it2.previous();
+	                                                     }
+	                                                     RESULT = dec1;
+	                                                  :}
+	;
+	
+type_declaration_inner ::=
+	IDENTIFIER:ident RBRACK EQ LBRACK type_name:type                             {:
+	                                                                                LinkedList<rpn.Node> e1 = new LinkedList<>();
+	                                                                                e1.addLast(new rpn.IdentifierExpression(ident));
+	                                                                                e1.addLast(type);
+	                                                                                RESULT = e1;
+	                                                                             :}
+	| IDENTIFIER:ident COMMA type_declaration_inner:nextdec COMMA type_name:type {:
+	                                                                                nextdec.addLast(new rpn.IdentifierExpression(ident));
+	                                                                                nextdec.addLast(type);
+	                                                                                RESULT = nextdec;
+	                                                                             :}
+	;
+
+expression ::=
+	expression:e1 PLUS term:e2             {:
+	                                          e1.addAll(e2);
+	                                          e1.add(rpn.BinaryOperator.PLUS);
+	                                          RESULT = e1;
+	                                       :}
+	| expression:e1 MINUS term:e2          {:
+	                                          e1.addAll(e2);
+	                                          e1.add(rpn.BinaryOperator.MINUS);
+	                                          RESULT = e1;
+	                                       :}
+	| term:e1                              {: RESULT = e1; :}
+	;
+
+term ::=
+	term:e1 MULT factor:e2                 {:
+	                                          e1.addAll(e2);
+	                                          e1.add(rpn.BinaryOperator.MULT);
+	                                          RESULT = e1;
+	                                       :}
+	| term:e1 DIV factor:e2                {:
+	                                          e1.addAll(e2);
+	                                          e1.add(rpn.BinaryOperator.DIV);
+	                                          RESULT = e1
+	                                       :}
+	| factor:e1                            {: RESULT = e1; :}
+	;
+
+factor ::=
+	IDENTIFIER:ident                       {:
+	                                          LinkedList<rpn.Node> e1 = new LinkedList<>();
+	                                          e1.addLast(new rpn.VariableExpression(ident));
+	                                          RESULT = e1;
+	                                       :}
+	| literal:lit                          {:
+	                                          LinkedList<rpn.Node> e1 = new LinkedList<>();
+	                                          e1.addLast(lit);
+	                                          RESULT = e1;
+	                                       :}
+	| function_call:plustrunc              {: RESULT = plustrunc; :}
+	| LPAREN expression:e1 RPAREN          {: RESULT = e1; :}
+	;
+
+condition ::=
+	expression:e1 LTEQ expression:e2       {:
+	                                          e1.addAll(e2);
+	                                          e1.addLast(rpn.BinaryOperator.CMP);
+	                                          e1.addLast(rpn.BinaryComparator.GT);
+	                                          RESULT = e1;
+	                                       :}
+	| expression:e1 LT expression:e2       {:
+	                                          e1.addAll(e2);
+	                                          e1.addLast(rpn.BinaryOperator.CMP);
+	                                          e1.addLast(rpn.BinaryComparator.GTEQ);
+	                                          RESULT = e1;
+	                                       :}
+	| expression:e1 GTEQ expression:e2     {:
+	                                          e1.addAll(e2);
+	                                          e1.add(rpn.BinaryOperator.CMP);
+	                                          e1.add(rpn.BinaryComparator.LT);
+	                                          RESULT = e1;
+	                                       :}
+	| expression:e1 GT expression:e2       {:
+	                                          e1.addAll(e2);
+	                                          e1.add(rpn.BinaryOperator.CMP);
+	                                          e1.add(rpn.BinaryComparator.LTEQ);
+	                                          RESULT = e1;
+	                                       :}
+	| expression:e1 EQEQ expression:e2     {:
+	                                          e1.addAll(e2);
+	                                          e1.add(rpn.BinaryOperator.CMP);
+	                                          e1.add(rpn.BinaryComparator.NOTEQ);
+	                                          RESULT = e1;
+	                                       :}
+	| expression:e1 NOTEQ expression:e2    {:
+	                                          e1.addAll(e2);
+	                                          e1.add(rpn.BinaryOperator.CMP);
+	                                          e1.add(rpn.BinaryComparator.EQEQ);
+	                                          RESULT = e1;
+	                                       :}
+	;
+
+statement ::=
+	IDENTIFIER:ident ASSIGN expression:exp {:
+	                                          exp.add(new rpn.VariableExpression(ident));
+	                                          exp.add(rpn.BinaryOperator.ASSIGN);
+	                                          RESULT = exp;
+	                                       :}
+	| PRINT STRING_LITERAL:text            {:
+	                                          LinkedList<rpn.Node> e1 = new LinkedList<>();
+	                                          e1.add(new rpn.LiteralExpression(test));
+	                                          RESULT = e1;
+	                                       :}
+	| if_statement:st1                     {: RESULT = st1; :}
+	| while_statement:st1                  {: RESULT = st1; :}
+	;
+
+if_statement ::=
+	IF condition:cond THEN statement_list:branch END IF                           {:
+	                                                                                 rpn.Node jumpCondition = cond.pollLast();
+	                                                                                 rpn.Node jumpLocation = new rpn.JumpRelativeOffset(branch.size());
+	                                                                                 cond.addLast(jumpLocation);
+	                                                                                 cond.addLast(jumpCondition);
+	                                                                                 cond.addAll(branch);
+	                                                                                 RESULT = cond;
+	                                                                              :}
+	| IF condition:cond THEN statement_list:branch ELSE statement_list:els END IF {:
+	                                                                                 rpn.Node jumpCondition = cond.pollLast();
+	                                                                                 rpn.Node jumpLocation = new rpn.JumpRelativeOffset(branch.size());
+	                                                                                 cond.addLast(jumpLocation);
+	                                                                                 cond.addLast(jumpCondition);
+	                                                                                 cond.addAll(branch);
+	                                                                                 rpn.Node elseLocation = new rpn.JumpRelativeOffset(els.size());
+	                                                                                 cond.addLast(elseLocation);
+	                                                                                 cond.addLast(rpn.UnaryOperator.JMP);
+	                                                                                 cond.addAll(els);
+	                                                                                 RESULT = cond;
+	                                                                              :}
+	;
+
+while_statement ::=
+	WHILE condition:cond DO statement_list:branch END WHILE {:
+	                                                           rpn.Node jumpCondition = cond.pollLast();
+	                                                           rpn.Node endLoopJumpLocation = new rpn.JumpRelativeOffset(branch.size());
+	                                                           cond.addLast(endLoopJumpLocation);
+	                                                           cond.addLast(jumpCondition);
+	                                                           cond.addAll(branch);
+	                                                           rpn.Node repeatLoopLocation = new rpn.JumpRelativeOffset(-cond.size());
+	                                                           cond.addLast(repeatLoopLocation);
+	                                                           RESULT = cond;
+	                                                        :}
+	;
+
+
+statement_list ::=
+	statement_list:st1 statement:st2                              {:
+	                                                                 st1.concatenate(st2);
+	                                                                 RESULT = st1;
+	                                                              :}
+	| statement:st1                                               {: RESULT = st1; :}
+	;
+
+
+function_call ::=
+	PLUSTRUNC LPAREN LBRACK argument_list:plustrunc RBRACK RPAREN {: RESULT = plustrunc; :}
+	;
+
+argument_list ::=
+	argument_list:trunc COMMA TRUNC LPAREN expression:expr RPAREN {:
+	                                                                 trunc.addAll(expr);
+	                                                                 trunc.add(rpn.UnaryOperator.TRUNC);
+	                                                                 trunc.add(rpn.BinaryOperator.PLUS);
+	                                                                 RESULT = trunc;
+	                                                              :}
+	| TRUNC LPAREN expression:expr RPAREN                         {:
+	                                                                 expr.add(rpn.UnaryOperator.TRUNC);
+	                                                                 RESULT = expr;
+	                                                              :}
+	;
