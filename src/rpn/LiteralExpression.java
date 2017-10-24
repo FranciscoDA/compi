@@ -6,6 +6,14 @@ public class LiteralExpression implements Node{
 	public LiteralExpression(Object l) {
 		this.Literal=l;
 	}
+
+	public Object getLiteral() {
+		return Literal;
+	}
+
+	public void setLiteral(Object literal) {
+		Literal = literal;
+	}
 	
 	
 }

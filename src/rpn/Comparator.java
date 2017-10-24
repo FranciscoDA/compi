@@ -1,5 +1,5 @@
 package rpn;
 
-public enum Comparator {JG,JGE,JL,JLE,JNZ,JZ
+public enum Comparator implements Node {JG,JGE,JL,JLE,JNZ,JZ
 
 }

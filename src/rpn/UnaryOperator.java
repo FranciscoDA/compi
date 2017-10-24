@@ -1,5 +1,5 @@
 package rpn;
 
-public enum UnaryOperator {PRINT,TRUNC,JMP
+public enum UnaryOperator implements Node{PRINT,TRUNC,JMP
 
 }

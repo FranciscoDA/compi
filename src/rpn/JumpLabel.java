@@ -6,4 +6,14 @@ public class JumpLabel {
 	public JumpLabel(int i) {
 		this.LabelIndex=i;
 	}
+
+	public int getLabelIndex() {
+		return LabelIndex;
+	}
+
+	public void setLabelIndex(int labelIndex) {
+		LabelIndex = labelIndex;
+	}
+	
+	
 }
