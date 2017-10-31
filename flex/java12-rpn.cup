@@ -42,6 +42,10 @@ parser code  {:
       symbolTable.put(varName.getName(), entry);
     }
   }
+  public rpn.TypeName getVariableType(String varName)
+  {
+  	return symbolTable.get(varName).getType();
+  }
   public HashMap<String, SymbolTableEntry> symbolTable = new HashMap<>();
   public HashSet<Integer> integerTable = new HashSet<>();
   public HashSet<Float> floatTable = new HashSet<>();
@@ -221,37 +225,37 @@ condition ::=
 	expression:e1 LTEQ expression:e2       {:
 	                                          e1.addAll(e2);
 	                                          e1.addLast(rpn.BinaryOperator.CMP);
-	                                          e1.addLast(rpn.Comparator.JA);
+	                                          e1.addLast(rpn.Comparator.LTEQ);
 	                                          RESULT = e1;
 	                                       :}
 	| expression:e1 LT expression:e2       {:
 	                                          e1.addAll(e2);
 	                                          e1.addLast(rpn.BinaryOperator.CMP);
-	                                          e1.addLast(rpn.Comparator.JAE);
+	                                          e1.addLast(rpn.Comparator.LT);
 	                                          RESULT = e1;
 	                                       :}
 	| expression:e1 GTEQ expression:e2     {:
 	                                          e1.addAll(e2);
 	                                          e1.add(rpn.BinaryOperator.CMP);
-	                                          e1.add(rpn.Comparator.JB);
+	                                          e1.add(rpn.Comparator.GTEQ);
 	                                          RESULT = e1;
 	                                       :}
 	| expression:e1 GT expression:e2       {:
 	                                          e1.addAll(e2);
 	                                          e1.add(rpn.BinaryOperator.CMP);
-	                                          e1.add(rpn.Comparator.JBE);
+	                                          e1.add(rpn.Comparator.GT);
 	                                          RESULT = e1;
 	                                       :}
 	| expression:e1 EQEQ expression:e2     {:
 	                                          e1.addAll(e2);
 	                                          e1.add(rpn.BinaryOperator.CMP);
-	                                          e1.add(rpn.Comparator.JNZ);
+	                                          e1.add(rpn.Comparator.EQEQ);
 	                                          RESULT = e1;
 	                                       :}
 	| expression:e1 NOTEQ expression:e2    {:
 	                                          e1.addAll(e2);
 	                                          e1.add(rpn.BinaryOperator.CMP);
-	                                          e1.add(rpn.Comparator.JZ);
+	                                          e1.add(rpn.Comparator.NEQ);
 	                                          RESULT = e1;
 	                                       :}
 	;
@@ -293,7 +297,7 @@ if_statement ::=
 	                                                                                 
 	                                                                                 cond.addLast(jumpToElse);
 	                                                                                 cond.addAll(branch);
-	                                                                                 cond.addLast(rpn.UnaryOperator.JMP);
+	                                                                                 cond.addLast(rpn.ControlOperator.JMP);
 	                                                                                 cond.addLast(jumpToEnd);
 	                                                                                 cond.addLast(elseDest);
 	                                                                                 cond.addAll(els);
@@ -315,7 +319,7 @@ while_statement ::=
                                                                cond.addFirst(beginDest);
                                                                cond.addLast(jumpToEnd);
                                                                cond.addAll(branch);
-                                                               cond.addLast(rpn.UnaryOperator.JMP);
+                                                               cond.addLast(rpn.ControlOperator.JMP);
                                                                cond.addLast(jumpToBegin);
                                                                cond.addLast(endDest);
 

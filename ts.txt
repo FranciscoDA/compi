@@ -25,4 +25,5 @@
                  ---           CteString               2 > 3                   5
                  ---           CteString                 asd                   3
                  ---           CteString            SOY TRUE                   8
+                 ---           CteString           SOY FALSE                   9
                  ---           CteString          Hola mundo                  10
