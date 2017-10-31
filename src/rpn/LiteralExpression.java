@@ -15,5 +15,13 @@ public class LiteralExpression implements Node{
 		Literal = literal;
 	}
 	
-	
+	@Override
+	public String toString()
+	{
+		if (Literal instanceof String)
+		{
+			return "\"" + Literal + "\"";
+		}
+		return Literal.toString();
+	}
 }

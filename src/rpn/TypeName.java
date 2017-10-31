@@ -1,5 +1,6 @@
 package rpn;
 
-public enum TypeName implements Node {INTEGER,FLOAT
-	
+public enum TypeName implements Node {
+	INTEGER,
+	FLOAT
 }

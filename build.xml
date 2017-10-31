@@ -43,7 +43,7 @@
   	<jflex file="${basedir}/flex/java.flex" destdir="src" />
   </target>
   <target name="cup">
-    <cup srcfile="${basedir}/flex/java12.cup" interface="true" destdir="${basedir}/src"/>
+    <cup srcfile="${basedir}/flex/java12-rpn.cup" interface="true" destdir="${basedir}/src"/>
   </target>
 
   <target name="genclean">

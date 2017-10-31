@@ -18,6 +18,6 @@
 		<jflex file="flex/java.flex" destdir="src"></jflex>
 	</target>
 	<target name="cup">
-		<cup srcfile="flex/java12.cup" interface="yes" destdir="src"></cup>
+		<cup srcfile="flex/java12-rpn.cup" interface="yes" destdir="src"></cup>
 	</target>
 </project>

@@ -9,108 +9,17 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import ast.AssignStatement;
-import ast.BinaryExpression;
-import ast.Condition;
-import ast.Declaration;
-import ast.Expression;
-import ast.IfStatement;
-import ast.LiteralExpression;
-import ast.PlusTrunc;
-import ast.PrintStatement;
-import ast.Program;
-import ast.Statement;
-import ast.VariableExpression;
-import ast.WhileStatement;
 import java_cup.runtime.Symbol;
+import java.util.LinkedList;
 
 public class Main {
 	private final static Path PRUEBA_PATH = Paths.get("prueba.txt");
 	private final static Path TS_PATH = Paths.get("ts.txt");
 
-	private static HashMap<String, SymbolTableEntry> symbolTable = new HashMap<>();
-	private static HashSet<Integer> integerTable = new HashSet<>();
-	private static HashSet<Float> floatTable = new HashSet<>();
-	private static HashSet<String> stringTable = new HashSet<>();
-	
-	public static void processCondition(Condition condition) throws Exception {
-		processExpression(condition.getLeft());
-		processExpression(condition.getRight());
-	}
-	public static void processExpression(Expression expression) throws Exception {
-		if (expression instanceof BinaryExpression) {
-			BinaryExpression binexp = (BinaryExpression)expression;
-			processExpression(binexp.getLeft());
-			processExpression(binexp.getRight());
-		}
-		else if (expression instanceof VariableExpression) {
-			VariableExpression vexp = (VariableExpression)expression;
-			if (!symbolTable.containsKey(vexp.getIdentifier())) {
-				throw new Exception("Undeclared identifier: " + vexp.getIdentifier());
-			}
-		}
-		else if (expression instanceof PlusTrunc) {
-			PlusTrunc ptrunc = (PlusTrunc)expression;
-			processExpression(ptrunc.getTrunc());
-			if (ptrunc.getNext() != null) {
-				processExpression(ptrunc.getNext());
-			}
-		}
-		else if (expression instanceof LiteralExpression) {
-			LiteralExpression lexp = (LiteralExpression)expression;
-			Object literal = lexp.getLiteral();
-			if (literal instanceof Integer) {
-				integerTable.add((Integer)literal);
-			}
-			else if (literal instanceof Float) {
-				floatTable.add((Float) literal);
-			}
-		}
-	}
-	public static void processStatement(Statement statement) throws Exception {
-		if (statement == null) {
-			return;
-		}
-		if(statement instanceof AssignStatement) {
-			AssignStatement astatement = (AssignStatement)statement;
-			if (!symbolTable.containsKey(astatement.getIdentifier())) {
-				throw new Exception("Undeclared identifier: " + astatement.getIdentifier());
-			}
-			processExpression(astatement.getExpression());
-		}
-		else if (statement instanceof PrintStatement) {
-			PrintStatement pstatement = (PrintStatement)statement;
-			stringTable.add(pstatement.getText());
-		}
-		else if (statement instanceof IfStatement) {
-			IfStatement istatement = (IfStatement)statement;
-			processCondition(istatement.getCondition());
-			processStatement(istatement.getBranch());
-			if (istatement.getElse() != null) {
-				processStatement(istatement.getElse());
-			}
-		}
-		else if (statement instanceof WhileStatement) {
-			WhileStatement wstatement = (WhileStatement)statement;
-			processCondition(wstatement.getCondition());
-			processStatement(wstatement.getBranch());
-		}
-		processStatement(statement.getNext());
-	}
-	public static void processDeclaration(Declaration declaration) throws Exception {
-		if (declaration == null) {
-			return;
-		}
-		if (symbolTable.containsKey(declaration.getIdentifier())) {
-			throw new Exception("Multiple declaration of " + declaration.getIdentifier());
-		}
-		else {
-			SymbolTableEntry newEntry = new SymbolTableEntry(declaration.getIdentifier(), declaration.getType());
-			symbolTable.put(declaration.getIdentifier(), newEntry);						
-		}
-		processDeclaration(declaration.getNext());
-	}
-	public static void outputSymbolTable() {
+	public static void outputSymbolTable(HashMap<String, SymbolTableEntry> symbolTable,
+			HashSet<Integer> integerTable,
+			HashSet<Float> floatTable,
+			HashSet<String> stringTable) {
 		try {
 			PrintWriter pw =  new PrintWriter(Files.newOutputStream(TS_PATH));
 			String fmt = "%20s%20s%20s%20s\n";
@@ -139,13 +48,110 @@ public class Main {
 			parser par = new parser(sc);
 			try {
 				Symbol s = par.debug_parse();
-				Program program = (Program)s.value;
-				processDeclaration(program.getDeclarations());
+				//Program program = (Program)s.value;
+				//processDeclaration(program.getDeclarations());
 				
-				Statement statement = program.getStatements();
-				processStatement(statement);
+				//Statement statement = program.getStatements();
+				//processStatement(statement);
 				
-				outputSymbolTable();
+				outputSymbolTable(par.symbolTable, par.integerTable, par.floatTable, par.stringTable);
+				LinkedList<rpn.Node> program = (LinkedList<rpn.Node>) s.value;
+				PrintWriter pw =  new PrintWriter(Files.newOutputStream(Paths.get("intermedio.txt")));
+				for (rpn.Node node : program)
+				{
+					pw.println(node.toString());
+				}
+				pw.close();
+				
+				PrintWriter pw2 =  new PrintWriter(Files.newOutputStream(Paths.get("programa.asm")));
+				pw2.println(".MODEL LARGE");
+				pw2.println(".386");
+				pw2.println(".STACK 200h");
+				pw2.println(".DATA");
+				HashMap<String, Integer> mapVariableToIndex = new HashMap<>();
+				HashMap<Integer, Integer> mapIntegerToIndex = new HashMap<>();
+				HashMap<Float, Integer> mapFloatToIndex = new HashMap<>();
+				HashMap<String, Integer> mapStringToIndex = new HashMap<>();
+				for (SymbolTableEntry entry : par.symbolTable.values())
+				{
+					switch(entry.getType())
+					{
+					case FLOAT:
+						pw2.println("\tVAR_" + entry.getName() + " dd ?");
+						break;
+					case INTEGER:
+						pw2.println("\tVAR_" + entry.getName() + " dw ?");
+						break;
+					}
+					mapVariableToIndex.put(entry.getName(), mapVariableToIndex.size());
+				}
+				for (Integer i : par.integerTable)
+				{
+					pw2.println("\tCTE_INT_" + mapIntegerToIndex.size() + " dw " + i);
+					mapIntegerToIndex.put(i, mapIntegerToIndex.size());
+				}
+				for (Float f : par.floatTable)
+				{
+					pw2.println("\tCTE_FLOAT_" + mapFloatToIndex.size() + " dd " + f);
+					mapFloatToIndex.put(f, mapFloatToIndex.size());
+				}
+				for (String st : par.stringTable)
+				{
+					pw2.println("\tCTE_STR_" + mapStringToIndex.size() + " db \"" + st + "\", '$'");
+					mapStringToIndex.put(st, mapStringToIndex.size());
+				}
+				pw2.println(".CODE");
+				for (rpn.Node node : program)
+				{
+					if (node instanceof rpn.VariableExpression)
+					{
+						rpn.VariableExpression vex = (rpn.VariableExpression) node;
+						pw2.println("fld " + "VAR_" + mapVariableToIndex.get(vex.getName()));
+					}
+					if (node instanceof rpn.LiteralExpression)
+					{
+						rpn.LiteralExpression lex = (rpn.LiteralExpression) node;
+						if (lex.getLiteral() instanceof Integer)
+						{
+							pw2.println("fld " + "CTE_INT_" + mapIntegerToIndex.get(lex.getLiteral()));
+						}
+						else if (lex.getLiteral() instanceof Float)
+						{
+							pw2.println("fld " + "CTE_FLOAT_" + mapFloatToIndex.get(lex.getLiteral()));
+						}
+						else if (lex.getLiteral() instanceof String)
+						{
+							pw2.println("mov dx, CTE_STR_" + mapStringToIndex.get(lex.getLiteral()));
+						}
+					}
+					if (node instanceof rpn.BinaryOperator)
+					{
+						rpn.BinaryOperator binop = (rpn.BinaryOperator) node;
+						switch(binop)
+						{
+						case CMP:
+							break;
+						case MINUS:
+							break;
+						case DIV:
+							break;
+						case MULT:
+							break;
+						case PLUS:
+							break;
+						}
+					}
+					if (node instanceof rpn.UnaryOperator)
+					{
+						
+					}
+					if (node instanceof rpn.VariableExpression)
+					{
+						
+					}
+					pw.println(node.toString());
+				}
+				pw2.close();
 			}
 			catch (Exception e) {
 				e.printStackTrace();

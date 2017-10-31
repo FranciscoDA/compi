@@ -1,5 +1,10 @@
 package compilador;
 import java_cup.runtime.*;
+import rpn.*;
+import java.util.LinkedList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.ListIterator;
 
 /* Java 1.2 parser for CUP.  
  * Copyright (C) 1998 C. Scott Ananian <cananian@alumni.princeton.edu>
@@ -23,6 +28,25 @@ parser code  {:
     report_error(message, info);
     throw new RuntimeException("Fatal Syntax Error");
   }
+  public void handleDeclaration(LinkedList<rpn.Node> dec2) throws Exception {
+    ListIterator<rpn.Node> it = dec2.listIterator(0);
+    while (it.hasNext())
+    {
+      rpn.VariableExpression varName = (rpn.VariableExpression)it.next();
+      rpn.TypeName varType = (rpn.TypeName)it.next();
+
+      if (symbolTable.containsKey(varName.getName())) {
+        throw new Exception("Multiple declaration of " + varName.getName());
+      }
+      SymbolTableEntry entry = new SymbolTableEntry(varName.getName(), varType);
+      symbolTable.put(varName.getName(), entry);
+    }
+  }
+  public HashMap<String, SymbolTableEntry> symbolTable = new HashMap<>();
+  public HashSet<Integer> integerTable = new HashSet<>();
+  public HashSet<Float> floatTable = new HashSet<>();
+  public HashSet<String> stringTable = new HashSet<>();
+  public int counter = 0;
 :};
 
 terminal DECVAR;
@@ -57,10 +81,10 @@ terminal java.lang.String IDENTIFIER; // name
 
 
 
-non terminal ast.Program goal;
+non terminal LinkedList<rpn.Node> goal;
 
 non terminal rpn.TypeName type_name;
-non terminal rpn.Literal  literal;
+non terminal rpn.LiteralExpression  literal;
 
 non terminal LinkedList<rpn.Node> declaration_block, declaration_list;
 non terminal LinkedList<rpn.Node> type_declaration_outer, type_declaration_inner;
@@ -80,10 +104,7 @@ start with goal;
 
 
 goal ::=
-	declaration_block:dec statement_list:st           {:
-	                                                     dec.addAll(st);
-	                                                     RESULT = dec;
-	                                                  :}
+	declaration_block:dec statement_list:st           {: RESULT = st; :}
 	| statement_list:st                               {: RESULT = st; :}
 	;
 
@@ -93,8 +114,14 @@ type_name ::=
 	;
 
 literal ::=
-	INTEGER_LITERAL:lit                               {: RESULT = new rpn.LiteralExpression(lit); :}
-	| FLOATING_POINT_LITERAL:lit                      {: RESULT = new rpn.LiteralExpression(lit); :}
+	INTEGER_LITERAL:lit                               {:
+	                                                     parser.integerTable.add(lit);
+	                                                     RESULT = new rpn.LiteralExpression(lit);
+	                                                  :}
+	| FLOATING_POINT_LITERAL:lit                      {:
+	                                                     parser.floatTable.add(lit);
+	                                                     RESULT = new rpn.LiteralExpression(lit);
+	                                                  :}
 	;
 
 declaration_block ::=
@@ -103,10 +130,14 @@ declaration_block ::=
 
 declaration_list ::=
 	declaration_list:dec1 type_declaration_outer:dec2 {:
+	                                                     parser.handleDeclaration(dec2);
 	                                                     dec1.addAll(dec2);
 	                                                     RESULT = dec1;
 	                                                  :}
-	| type_declaration_outer:dec1                     {: RESULT = dec1; :}
+	| type_declaration_outer:dec1                     {:
+	                                                     parser.handleDeclaration(dec1);
+	                                                     RESULT = dec1;
+	                                                  :}
 	;
 
 type_declaration_outer ::=
@@ -129,12 +160,12 @@ type_declaration_outer ::=
 type_declaration_inner ::=
 	IDENTIFIER:ident RBRACK EQ LBRACK type_name:type                             {:
 	                                                                                LinkedList<rpn.Node> e1 = new LinkedList<>();
-	                                                                                e1.addLast(new rpn.IdentifierExpression(ident));
+	                                                                                e1.addLast(new rpn.VariableExpression(ident));
 	                                                                                e1.addLast(type);
 	                                                                                RESULT = e1;
 	                                                                             :}
 	| IDENTIFIER:ident COMMA type_declaration_inner:nextdec COMMA type_name:type {:
-	                                                                                nextdec.addLast(new rpn.IdentifierExpression(ident));
+	                                                                                nextdec.addLast(new rpn.VariableExpression(ident));
 	                                                                                nextdec.addLast(type);
 	                                                                                RESULT = nextdec;
 	                                                                             :}
@@ -163,7 +194,7 @@ term ::=
 	| term:e1 DIV factor:e2                {:
 	                                          e1.addAll(e2);
 	                                          e1.add(rpn.BinaryOperator.DIV);
-	                                          RESULT = e1
+	                                          RESULT = e1;
 	                                       :}
 	| factor:e1                            {: RESULT = e1; :}
 	;
@@ -172,6 +203,9 @@ factor ::=
 	IDENTIFIER:ident                       {:
 	                                          LinkedList<rpn.Node> e1 = new LinkedList<>();
 	                                          e1.addLast(new rpn.VariableExpression(ident));
+	                                          if (!parser.symbolTable.containsKey(ident)) {
+                                                throw new Exception(ident + " not declared");
+                                              }
 	                                          RESULT = e1;
 	                                       :}
 	| literal:lit                          {:
@@ -187,37 +221,37 @@ condition ::=
 	expression:e1 LTEQ expression:e2       {:
 	                                          e1.addAll(e2);
 	                                          e1.addLast(rpn.BinaryOperator.CMP);
-	                                          e1.addLast(rpn.BinaryComparator.GT);
+	                                          e1.addLast(rpn.Comparator.JA);
 	                                          RESULT = e1;
 	                                       :}
 	| expression:e1 LT expression:e2       {:
 	                                          e1.addAll(e2);
 	                                          e1.addLast(rpn.BinaryOperator.CMP);
-	                                          e1.addLast(rpn.BinaryComparator.GTEQ);
+	                                          e1.addLast(rpn.Comparator.JAE);
 	                                          RESULT = e1;
 	                                       :}
 	| expression:e1 GTEQ expression:e2     {:
 	                                          e1.addAll(e2);
 	                                          e1.add(rpn.BinaryOperator.CMP);
-	                                          e1.add(rpn.BinaryComparator.LT);
+	                                          e1.add(rpn.Comparator.JB);
 	                                          RESULT = e1;
 	                                       :}
 	| expression:e1 GT expression:e2       {:
 	                                          e1.addAll(e2);
 	                                          e1.add(rpn.BinaryOperator.CMP);
-	                                          e1.add(rpn.BinaryComparator.LTEQ);
+	                                          e1.add(rpn.Comparator.JBE);
 	                                          RESULT = e1;
 	                                       :}
 	| expression:e1 EQEQ expression:e2     {:
 	                                          e1.addAll(e2);
 	                                          e1.add(rpn.BinaryOperator.CMP);
-	                                          e1.add(rpn.BinaryComparator.NOTEQ);
+	                                          e1.add(rpn.Comparator.JNZ);
 	                                          RESULT = e1;
 	                                       :}
 	| expression:e1 NOTEQ expression:e2    {:
 	                                          e1.addAll(e2);
 	                                          e1.add(rpn.BinaryOperator.CMP);
-	                                          e1.add(rpn.BinaryComparator.EQEQ);
+	                                          e1.add(rpn.Comparator.JZ);
 	                                          RESULT = e1;
 	                                       :}
 	;
@@ -229,8 +263,10 @@ statement ::=
 	                                          RESULT = exp;
 	                                       :}
 	| PRINT STRING_LITERAL:text            {:
+	                                          parser.stringTable.add(text);
 	                                          LinkedList<rpn.Node> e1 = new LinkedList<>();
-	                                          e1.add(new rpn.LiteralExpression(test));
+	                                          e1.add(new rpn.LiteralExpression(text));
+	                                          e1.add(rpn.UnaryOperator.PRINT);
 	                                          RESULT = e1;
 	                                       :}
 	| if_statement:st1                     {: RESULT = st1; :}
@@ -239,36 +275,50 @@ statement ::=
 
 if_statement ::=
 	IF condition:cond THEN statement_list:branch END IF                           {:
-	                                                                                 rpn.Node jumpCondition = cond.pollLast();
-	                                                                                 rpn.Node jumpLocation = new rpn.JumpRelativeOffset(branch.size());
+	                                                                                 int x = parser.counter++;
+	                                                                                 rpn.Node jumpLocation = new rpn.JumpLabel(x);
+	                                                                                 rpn.Node jumpDest = new rpn.LabelDeclaration(x);
 	                                                                                 cond.addLast(jumpLocation);
-	                                                                                 cond.addLast(jumpCondition);
 	                                                                                 cond.addAll(branch);
+	                                                                                 cond.addLast(jumpDest);
 	                                                                                 RESULT = cond;
 	                                                                              :}
 	| IF condition:cond THEN statement_list:branch ELSE statement_list:els END IF {:
-	                                                                                 rpn.Node jumpCondition = cond.pollLast();
-	                                                                                 rpn.Node jumpLocation = new rpn.JumpRelativeOffset(branch.size());
-	                                                                                 cond.addLast(jumpLocation);
-	                                                                                 cond.addLast(jumpCondition);
+	                                                                                 int x = parser.counter++;
+	                                                                                 int y = parser.counter++;
+	                                                                                 rpn.Node jumpToElse = new rpn.JumpLabel(x);
+	                                                                                 rpn.Node jumpToEnd = new rpn.JumpLabel(y);
+	                                                                                 rpn.Node elseDest = new rpn.LabelDeclaration(x);
+	                                                                                 rpn.Node endDest = new rpn.LabelDeclaration(y);
+	                                                                                 
+	                                                                                 cond.addLast(jumpToElse);
 	                                                                                 cond.addAll(branch);
-	                                                                                 rpn.Node elseLocation = new rpn.JumpRelativeOffset(els.size());
-	                                                                                 cond.addLast(elseLocation);
 	                                                                                 cond.addLast(rpn.UnaryOperator.JMP);
+	                                                                                 cond.addLast(jumpToEnd);
+	                                                                                 cond.addLast(elseDest);
 	                                                                                 cond.addAll(els);
+	                                                                                 cond.addLast(endDest);
+	                                                                                 
 	                                                                                 RESULT = cond;
 	                                                                              :}
 	;
 
 while_statement ::=
 	WHILE condition:cond DO statement_list:branch END WHILE {:
-	                                                           rpn.Node jumpCondition = cond.pollLast();
-	                                                           rpn.Node endLoopJumpLocation = new rpn.JumpRelativeOffset(branch.size());
-	                                                           cond.addLast(endLoopJumpLocation);
-	                                                           cond.addLast(jumpCondition);
-	                                                           cond.addAll(branch);
-	                                                           rpn.Node repeatLoopLocation = new rpn.JumpRelativeOffset(-cond.size());
-	                                                           cond.addLast(repeatLoopLocation);
+	                                                           int x = parser.counter++;
+	                                                           int y = parser.counter++;
+	                                                           rpn.Node jumpToBegin = new rpn.JumpLabel(x);
+                                                               rpn.Node jumpToEnd = new rpn.JumpLabel(y);
+                                                               rpn.Node beginDest = new rpn.LabelDeclaration(x);
+                                                               rpn.Node endDest = new rpn.LabelDeclaration(y);
+                                                               
+                                                               cond.addFirst(beginDest);
+                                                               cond.addLast(jumpToEnd);
+                                                               cond.addAll(branch);
+                                                               cond.addLast(rpn.UnaryOperator.JMP);
+                                                               cond.addLast(jumpToBegin);
+                                                               cond.addLast(endDest);
+
 	                                                           RESULT = cond;
 	                                                        :}
 	;
@@ -276,7 +326,7 @@ while_statement ::=
 
 statement_list ::=
 	statement_list:st1 statement:st2                              {:
-	                                                                 st1.concatenate(st2);
+	                                                                 st1.addAll(st2);
 	                                                                 RESULT = st1;
 	                                                              :}
 	| statement:st1                                               {: RESULT = st1; :}

@@ -1,9 +1,9 @@
 package rpn;
 
-public class JumpLabel implements Node {
+public class LabelDeclaration implements Node {
 	int LabelIndex;
 	
-	public JumpLabel(int i) {
+	public LabelDeclaration(int i) {
 		this.LabelIndex=i;
 	}
 
@@ -18,6 +18,6 @@ public class JumpLabel implements Node {
 	@Override
 	public String toString()
 	{
-		return "(LABEL_" + LabelIndex + ")";
+		return "LABEL_" + LabelIndex + ":";
 	}
 }

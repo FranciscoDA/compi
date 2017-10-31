@@ -1,6 +1,6 @@
 package compilador;
 
-import ast.TypeName;
+import rpn.TypeName;
 
 public class SymbolTableEntry implements Comparable<SymbolTableEntry> {
     public SymbolTableEntry(String name, TypeName type) {
