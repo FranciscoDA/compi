@@ -2,6 +2,7 @@ package compilador;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -15,30 +16,29 @@ import java.util.LinkedList;
 public class Main {
 	private final static Path PRUEBA_PATH = Paths.get("prueba.txt");
 	private final static Path TS_PATH = Paths.get("ts.txt");
+	private final static Path INTERMEDIATE_PATH = Paths.get("intermedio.txt");
+	private final static Path ASSEMBLY_PATH = Paths.get("programa.asm");
 
 	public static void outputSymbolTable(HashMap<String, SymbolTableEntry> symbolTable,
 			HashSet<Integer> integerTable,
 			HashSet<Float> floatTable,
-			HashSet<String> stringTable) {
-		try {
-			PrintWriter pw =  new PrintWriter(Files.newOutputStream(TS_PATH));
-			String fmt = "%20s%20s%20s%20s\n";
-			for (SymbolTableEntry e : symbolTable.values()) {
-				pw.printf(fmt, e.getName(), e.getType().toString(), "---", "---");
-			}
-			for (Integer i : integerTable) {
-				pw.printf(fmt, "---", "CteInt", i.toString(), "---");
-			}
-			for (Float f : floatTable) {
-				pw.printf(fmt, "---", "CteReal", f.toString(), "---");
-			}
-			for (String s : stringTable) {
-				pw.printf(fmt, "---", "CteString", s, Integer.toString(s.length()));
-			}
-			pw.close();
-		} catch (IOException e1) {
-			e1.printStackTrace();
+			HashSet<String> stringTable,
+			OutputStream output) {
+		PrintWriter pw =  new PrintWriter(output);
+		String fmt = "%20s%20s%20s%20s\n";
+		for (SymbolTableEntry e : symbolTable.values()) {
+			pw.printf(fmt, e.getName(), e.getType().toString(), "---", "---");
 		}
+		for (Integer i : integerTable) {
+			pw.printf(fmt, "---", "CteInt", i.toString(), "---");
+		}
+		for (Float f : floatTable) {
+			pw.printf(fmt, "---", "CteReal", f.toString(), "---");
+		}
+		for (String s : stringTable) {
+			pw.printf(fmt, "---", "CteString", s, Integer.toString(s.length()));
+		}
+		pw.close();
 	}
 
 	public static void main(String[] argv) {
@@ -49,16 +49,17 @@ public class Main {
 			try {
 				Symbol s = par.debug_parse();
 				
-				outputSymbolTable(par.symbolTable, par.integerTable, par.floatTable, par.stringTable);
-				LinkedList<rpn.Node> program = (LinkedList<rpn.Node>) s.value;
-				PrintWriter pw =  new PrintWriter(Files.newOutputStream(Paths.get("intermedio.txt")));
-				for (rpn.Node node : program)
-				{
-					pw.println(node.toString());
-				}
-				pw.close();
+				// stack de tipos para determinar que instruccion generar
+				LinkedList<rpn.TypeName> typeStack = new LinkedList<>();
 				
-				PrintWriter pw2 =  new PrintWriter(Files.newOutputStream(Paths.get("programa.asm")));
+				LinkedList<rpn.Node> program = (LinkedList<rpn.Node>) s.value;
+				
+				System.out.println("Compilacion OK");
+				
+				outputSymbolTable(par.symbolTable, par.integerTable, par.floatTable, par.stringTable, Files.newOutputStream(TS_PATH));
+				rpn.Serializer.serialize(program, Files.newOutputStream(INTERMEDIATE_PATH));
+
+				PrintWriter pw2 = new PrintWriter(Files.newOutputStream(Paths.get("programa.asm")));
 				pw2.println(".MODEL LARGE");
 				pw2.println(".386");
 				pw2.println(".STACK 200h");
@@ -183,6 +184,32 @@ public class Main {
 						{
 						case JMP:
 							pw2.print("\tjmp ");
+							break;
+						}
+					}
+					else if (node instanceof rpn.Comparator)
+					{
+						rpn.Comparator cmp = (rpn.Comparator) node;
+						pw2.print("\t");
+						switch (cmp)
+						{
+						case EQEQ:
+							pw2.print("jne ");
+							break;
+						case GT:
+							pw2.print("jle ");
+							break;
+						case GTEQ:
+							pw2.print("jl ");
+							break;
+						case LTEQ:
+							pw2.print("jg ");
+							break;
+						case LT:
+							pw2.print("jge ");
+							break;
+						case NEQ:
+							pw2.print("je ");
 							break;
 						}
 					}

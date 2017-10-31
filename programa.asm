@@ -55,7 +55,7 @@
 	flid VAR_CONTADOR
 	flid CTE_INT_5 ; value = 92
 	fcom
-	LTEQ (LABEL_1)
+	jg (LABEL_1)
 	flid VAR_CONTADOR
 	flid CTE_INT_1 ; value = 1
 	faddp
@@ -80,7 +80,7 @@
 	flid VAR_ACTUAL
 	flid CTE_INT_2 ; value = 2
 	fcom
-	GT (LABEL_2)
+	jle (LABEL_2)
 	mov dx, CTE_STR_2 ; value = "2 > 3"
 	mov ah, 09h
 	int 21h
@@ -88,11 +88,11 @@
 	flid VAR_ACTUAL
 	flid CTE_INT_3 ; value = 3
 	fcom
-	LT (LABEL_8)
+	jge (LABEL_8)
 	flid VAR_ACTUAL
 	fld CTE_FLOAT_1 ; value = 99999.99
 	fcom
-	GTEQ (LABEL_3)
+	jl (LABEL_3)
 	mov dx, CTE_STR_4 ; value = "SOY TRUE"
 	mov ah, 09h
 	int 21h
@@ -100,7 +100,7 @@
 	flid VAR_ACTUAL
 	fld CTE_FLOAT_0 ; value = 99.0
 	fcom
-	LTEQ (LABEL_4)
+	jg (LABEL_4)
 	mov dx, CTE_STR_5 ; value = "SOY FALSE"
 	mov ah, 09h
 	int 21h
@@ -108,7 +108,7 @@
 	flid VAR_ACTUAL
 	fld CTE_FLOAT_3 ; value = 0.9999
 	fcom
-	NEQ (LABEL_5)
+	je (LABEL_5)
 	mov dx, CTE_STR_1 ; value = "@sdADaSjfla%dfg"
 	mov ah, 09h
 	int 21h
@@ -116,7 +116,7 @@
 	flid VAR_ACTUAL
 	flid CTE_INT_3 ; value = 3
 	fcom
-	EQEQ (LABEL_6)
+	jne (LABEL_6)
 	mov dx, CTE_STR_0 ; value = "asldk fh sjf"
 	mov ah, 09h
 	int 21h
@@ -124,7 +124,7 @@
 	flid VAR_ACTUAL
 	flid CTE_INT_6 ; value = 31
 	fcom
-	NEQ (LABEL_7)
+	je (LABEL_7)
 	mov dx, CTE_STR_3 ; value = "asd"
 	mov ah, 09h
 	int 21h
