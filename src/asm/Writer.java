@@ -25,6 +25,8 @@ public interface Writer {
 	void doMul();
 	void doDiv();
 	
+	void doAssign();
+	
 	void doPrint();
 	void doCompare();
 	void doTrunc();

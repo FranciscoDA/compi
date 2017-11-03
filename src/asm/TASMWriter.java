@@ -39,10 +39,10 @@ public class TASMWriter implements Writer {
 			switch(entry.getType())
 			{
 			case FLOAT:
-				writer.println("\tVAR_" + entry.getName() + " dd ?");
+				writer.println("\t" + VARIABLE_PREFIX + entry.getName() + " dd ?");
 				break;
 			case INTEGER:
-				writer.println("\tVAR_" + entry.getName() + " dw ?");
+				writer.println("\t" + VARIABLE_PREFIX + entry.getName() + " dw ?");
 				break;
 			}
 			mapVariableToIndex.put(entry.getName(), mapVariableToIndex.size());
@@ -161,5 +161,10 @@ public class TASMWriter implements Writer {
 	@Override
 	public void endProgram() {
 		writer.close();
+	}
+
+	@Override
+	public void doAssign() {
+		// ???
 	}
 }
