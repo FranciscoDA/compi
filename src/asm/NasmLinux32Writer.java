@@ -1,16 +1,11 @@
 package asm;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.HashSet;
 
 import compilador.SymbolTableEntry;
 
 public class NasmLinux32Writer extends TasmDos16Writer {
-
 	public NasmLinux32Writer(Path fpath) throws IOException
 	{
 		super(fpath);
@@ -18,7 +13,12 @@ public class NasmLinux32Writer extends TasmDos16Writer {
 
 	@Override
 	public void beginProgram() {
-		writer.println("; compile with: nasm -felf32 filename.asm && ld filename.o");
+		String filename = this.path.getFileName().toString();
+		if (filename.contains(".")) { // remove file extension
+			filename = filename.substring(0, filename.lastIndexOf('.'));
+		}
+		
+		writer.println("; compile with: nasm -felf32 " + filename  + ".asm && ld " + filename + ".o");
 		writer.println("; 32-bit linux only");
 		writer.println("global _start");
 		writer.println("section .text");
@@ -31,14 +31,14 @@ public class NasmLinux32Writer extends TasmDos16Writer {
 	
 	@Override
 	public void loadStringLiteral(String value) {
-		writer.println("\tmov eax, 1 ; sys_write");
-		writer.println("\tmov ebx, 1 ; fd=stdout");
 		writer.println("\tmov ecx, " + SLIT_PREFIX + mapStringToIndex.get(value) + " ; value=" + value);
 		writer.println("\tmov edx, " + (value.length()+1) + " ; msg length + newline");
 	}
 	
 	@Override
 	public void doPrint() {
+		writer.println("\tmov eax, 1 ; sys_write");
+		writer.println("\tmov ebx, 1 ; fd=stdout");
 		writer.println("\tsyscall");
 	}
 
@@ -70,4 +70,8 @@ public class NasmLinux32Writer extends TasmDos16Writer {
 		}
 	}
 
+	@Override
+	public String getPlatformName() {
+		return "Linux 32-bit (NASM syntax)";
+	}
 }

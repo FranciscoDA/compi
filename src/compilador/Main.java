@@ -13,15 +13,15 @@ import java.util.HashSet;
 import java_cup.runtime.Symbol;
 import java.util.LinkedList;
 
-import asm.NasmLinux32Writer;
-import asm.TasmDos16Writer;
+import asm.*;
 
 public class Main {
 	private final static Path PRUEBA_PATH = Paths.get("prueba.txt");
 	private final static Path TS_PATH = Paths.get("ts.txt");
 	private final static Path INTERMEDIATE_PATH = Paths.get("intermedio.txt");
 	private final static Path TASM_OUT_PATH = Paths.get("programa-tasm.asm");
-	private final static Path NASM_OUT_PATH = Paths.get("programa-nasm.asm");
+	private final static Path NASM32_OUT_PATH = Paths.get("programa-nasm32.asm");
+	private final static Path NASM64_OUT_PATH = Paths.get("programa-nasm64.asm"); 
 
 	public static void outputSymbolTable(HashMap<String, SymbolTableEntry> symbolTable,
 			HashSet<Integer> integerTable,
@@ -44,6 +44,69 @@ public class Main {
 		}
 		pw.close();
 	}
+	
+	public static void writeAssemblyCode(parser par, LinkedList<rpn.Node> program, asm.Writer writer) {
+		writer.loadSymbols(par.symbolTable, par.integerTable, par.floatTable, par.stringTable);
+		writer.beginProgram();
+		writer.beginCode();
+		for (rpn.Node node : program)
+		{
+			if (node instanceof rpn.VariableExpression)
+			{
+				rpn.VariableExpression vex = (rpn.VariableExpression) node;
+				writer.loadVariable(par.symbolTable.get(vex.getName()));
+			}
+			else if (node instanceof rpn.LiteralExpression)
+			{
+				rpn.LiteralExpression lex = (rpn.LiteralExpression) node;
+				writer.loadLiteral(lex.getLiteral());
+			}
+			else if (node instanceof rpn.BinaryOperator)
+			{
+				rpn.BinaryOperator binop = (rpn.BinaryOperator) node;
+				if (binop == rpn.BinaryOperator.CMP) writer.doCompare();
+				else if (binop == rpn.BinaryOperator.PLUS) writer.doAdd();
+				else if (binop == rpn.BinaryOperator.MINUS) writer.doSub();
+				else if (binop == rpn.BinaryOperator.MULT) writer.doMul();
+				else if (binop == rpn.BinaryOperator.DIV) writer.doDiv();
+				else if (binop == rpn.BinaryOperator.ASSIGN) writer.doAssign();
+			}
+			else if (node instanceof rpn.UnaryOperator)
+			{
+				rpn.UnaryOperator unop = (rpn.UnaryOperator) node;
+				if (unop == rpn.UnaryOperator.PRINT) writer.doPrint();
+				else if (unop == rpn.UnaryOperator.TRUNC) writer.doTrunc();
+			}
+			else if (node instanceof rpn.ControlOperator)
+			{
+				rpn.ControlOperator cop = (rpn.ControlOperator) node;
+				if (cop == rpn.ControlOperator.JMP)
+					writer.doJMP();
+			}
+			else if (node instanceof rpn.Comparator)
+			{
+				rpn.Comparator cmp = (rpn.Comparator) node;
+				if (cmp == rpn.Comparator.NEQ) writer.doJNE();
+				else if (cmp == rpn.Comparator.LTEQ) writer.doJLE();
+				else if (cmp == rpn.Comparator.LT) writer.doJE();
+				else if (cmp == rpn.Comparator.GTEQ) writer.doJGE();
+				else if (cmp == rpn.Comparator.GT) writer.doJG();
+				else if (cmp == rpn.Comparator.EQEQ) writer.doJE();
+			}
+			else if (node instanceof rpn.JumpLabel)
+			{
+				rpn.JumpLabel lr = (rpn.JumpLabel) node;
+				writer.referenceLabel(lr.getLabelIndex().toString());
+			}
+			else if (node instanceof rpn.LabelDeclaration)
+			{
+				rpn.LabelDeclaration ld = (rpn.LabelDeclaration) node;
+				writer.declareLabel(ld.getLabelIndex().toString());
+			}
+		}
+		writer.endCode();
+		writer.endProgram();
+	}
 
 	public static void main(String[] argv) {
 		try {
@@ -53,76 +116,21 @@ public class Main {
 			try {
 				Symbol s = par.debug_parse();
 				
+				@SuppressWarnings("unchecked")
 				LinkedList<rpn.Node> program = (LinkedList<rpn.Node>) s.value;
-				
-				System.out.println("Compilacion OK");
-				
 				outputSymbolTable(par.symbolTable, par.integerTable, par.floatTable, par.stringTable, Files.newOutputStream(TS_PATH));
 				rpn.Serializer.serialize(program, Files.newOutputStream(INTERMEDIATE_PATH));
 
-				asm.Writer writer = new TasmDos16Writer(TASM_OUT_PATH);
-
-				writer.loadSymbols(par.symbolTable, par.integerTable, par.floatTable, par.stringTable);
-
-				writer.beginProgram();
-				writer.beginCode();
-				for (rpn.Node node : program)
-				{
-					if (node instanceof rpn.VariableExpression)
-					{
-						rpn.VariableExpression vex = (rpn.VariableExpression) node;
-						writer.loadVariable(par.symbolTable.get(vex.getName()));
-					}
-					else if (node instanceof rpn.LiteralExpression)
-					{
-						rpn.LiteralExpression lex = (rpn.LiteralExpression) node;
-						writer.loadLiteral(lex.getLiteral());
-					}
-					else if (node instanceof rpn.BinaryOperator)
-					{
-						rpn.BinaryOperator binop = (rpn.BinaryOperator) node;
-						if (binop == rpn.BinaryOperator.CMP) writer.doCompare();
-						else if (binop == rpn.BinaryOperator.PLUS) writer.doAdd();
-						else if (binop == rpn.BinaryOperator.MINUS) writer.doSub();
-						else if (binop == rpn.BinaryOperator.MULT) writer.doMul();
-						else if (binop == rpn.BinaryOperator.DIV) writer.doDiv();
-						else if (binop == rpn.BinaryOperator.ASSIGN) writer.doAssign();
-					}
-					else if (node instanceof rpn.UnaryOperator)
-					{
-						rpn.UnaryOperator unop = (rpn.UnaryOperator) node;
-						if (unop == rpn.UnaryOperator.PRINT) writer.doPrint();
-						else if (unop == rpn.UnaryOperator.TRUNC) writer.doTrunc();
-					}
-					else if (node instanceof rpn.ControlOperator)
-					{
-						rpn.ControlOperator cop = (rpn.ControlOperator) node;
-						if (cop == rpn.ControlOperator.JMP)
-							writer.doJmp();
-					}
-					else if (node instanceof rpn.Comparator)
-					{
-						rpn.Comparator cmp = (rpn.Comparator) node;
-						if (cmp == rpn.Comparator.NEQ) writer.doJNE();
-						else if (cmp == rpn.Comparator.LTEQ) writer.doJLE();
-						else if (cmp == rpn.Comparator.LT) writer.doJE();
-						else if (cmp == rpn.Comparator.GTEQ) writer.doJGE();
-						else if (cmp == rpn.Comparator.GT) writer.doJG();
-						else if (cmp == rpn.Comparator.EQEQ) writer.doJE();
-					}
-					else if (node instanceof rpn.JumpLabel)
-					{
-						rpn.JumpLabel lr = (rpn.JumpLabel) node;
-						writer.referenceLabel(lr.getLabelIndex().toString());
-					}
-					else if (node instanceof rpn.LabelDeclaration)
-					{
-						rpn.LabelDeclaration ld = (rpn.LabelDeclaration) node;
-						writer.declareLabel(ld.getLabelIndex().toString());
-					}
+				asm.Writer writers[] = {
+						new TasmDos16Writer(TASM_OUT_PATH),
+						new NasmLinux32Writer(NASM32_OUT_PATH),
+						new NasmLinux64Writer(NASM64_OUT_PATH)
+						};
+				System.out.println("Parsing OK");
+				for (asm.Writer w : writers) {
+					writeAssemblyCode(par, program, w);
+					System.out.println(w.getPlatformName() + ": " + w.getOutputPath());
 				}
-				writer.endCode();
-				writer.endProgram();
 			}
 			catch (Exception e) {
 				e.printStackTrace();
@@ -131,6 +139,5 @@ public class Main {
 		catch (IOException ex) {
 			System.err.println("No se pudo abrir el archivo de prueba " + PRUEBA_PATH.toString());
 		}
-		
 	}
 }

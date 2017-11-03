@@ -20,6 +20,7 @@ public class TasmDos16Writer implements Writer {
 	protected HashSet<Float> floatTable;
 	protected HashSet<String> stringTable;
 	
+	protected Path path;
 	protected PrintWriter writer;
 	
 	protected final String VARIABLE_PREFIX = "VAR_";
@@ -29,6 +30,7 @@ public class TasmDos16Writer implements Writer {
 	protected final String SLIT_PREFIX = "CTE_STR_";
 	
 	public TasmDos16Writer(Path fpath) throws IOException {
+		path = fpath;
 		writer = new PrintWriter(Files.newOutputStream(fpath));
 	}
 
@@ -103,7 +105,7 @@ public class TasmDos16Writer implements Writer {
 		writer.println("\tcmp");
 	}
 	@Override
-	public void doJmp() {
+	public void doJMP() {
 		writer.print("\tjmp ");
 	}
 	@Override
@@ -180,5 +182,15 @@ public class TasmDos16Writer implements Writer {
 	@Override
 	public void doAssign() {
 		// ???
+	}
+
+	@Override
+	public Path getOutputPath() {
+		return path;
+	}
+
+	@Override
+	public String getPlatformName() {
+		return "DOS 16-bit (TASM syntax)";
 	}
 }

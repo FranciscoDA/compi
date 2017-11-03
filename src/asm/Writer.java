@@ -1,5 +1,6 @@
 package asm;
 
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -45,7 +46,7 @@ public interface Writer {
 	void doCompare();
 	void doTrunc();
 	
-	void doJmp();
+	void doJMP();
 	void doJG();
 	void doJGE();
 	void doJL();
@@ -60,4 +61,7 @@ public interface Writer {
 	void endCode();
 	void beginProgram();
 	void endProgram();
+	
+	Path getOutputPath();
+	String getPlatformName();
 }
