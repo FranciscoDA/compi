@@ -58,5 +58,6 @@ public interface Writer {
 	
 	void beginCode();
 	void endCode();
+	void beginProgram();
 	void endProgram();
 }

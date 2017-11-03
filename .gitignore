@@ -29,3 +29,7 @@ hs_err_pid*
 
 # IntelliJ/Eclipse/Etc
 .*
+
+# Binary Compiled files
+*.o
+*.out

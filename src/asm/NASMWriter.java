@@ -9,160 +9,65 @@ import java.util.HashSet;
 
 import compilador.SymbolTableEntry;
 
-public class NASMWriter implements Writer {
-	private HashMap<String, Integer> mapVariableToIndex = new HashMap<>();
-	private HashMap<Integer, Integer> mapIntegerToIndex = new HashMap<>();
-	private HashMap<Float, Integer> mapFloatToIndex = new HashMap<>();
-	private HashMap<String, Integer> mapStringToIndex = new HashMap<>();
-	
-	private PrintWriter writer;
-	
-	private final String VARIABLE_PREFIX = "VAR_";
-	private final String LABEL_PREFIX = "LABEL_";
-	private final String ILIT_PREFIX = "CTE_INT_";
-	private final String FLIT_PREFIX = "CTE_FLT_";
-	private final String SLIT_PREFIX = "CTE_STR_";
+public class NASMWriter extends TASMWriter {
 
 	public NASMWriter(Path fpath) throws IOException
 	{
-		writer = new PrintWriter(Files.newOutputStream(fpath));
+		super(fpath);
 	}
 
 	@Override
-	public void loadSymbols(HashMap<String, SymbolTableEntry> variables, HashSet<Integer> integers,
-			HashSet<Float> floats, HashSet<String> strings) {
-		for (SymbolTableEntry entry : variables.values())
+	public void beginProgram() {
+		writer.println("; compile with: nasm -felf64 filename.asm && ld filename.o");
+		writer.println("; 64-bit linux only");
+		writer.println("global _start");
+		writer.println("section .text");
+	} 
+	
+	@Override
+	public void beginCode() {
+		writer.println("_start:");
+	}
+	
+	@Override
+	public void loadStringLiteral(String value) {
+		writer.println("\tmov rax, 1 ; sys_write");
+		writer.println("\tmov rdi, 1 ; fd=stdout");
+		writer.println("\tmov rsi, " + SLIT_PREFIX + mapStringToIndex.get(value) + " ; value=" + value);
+		writer.println("\tmov rdx, " + (value.length()+1) + " ; msg length + newline");
+	}
+	
+	@Override
+	public void doPrint() {
+		writer.println("\tsyscall");
+	}
+
+	@Override
+	public void endCode() {
+		// exit (0)
+		writer.println("\tmov eax, 60 ; sys_exit");
+		writer.println("\txor rdi, rdi ; code = 0");
+		writer.println("\tsyscall");
+		
+		for (Integer i : integerTable)
+			writer.println(ILIT_PREFIX + mapIntegerToIndex.get(i) + ":\n\tdw " + i);
+		for (Float f : floatTable)
+			writer.println(FLIT_PREFIX + mapFloatToIndex.get(f) + ":\n\tdd " + f);
+		for (String s : stringTable)
+			writer.println(SLIT_PREFIX + mapStringToIndex.get(s) + ":\n\tdb \"" + s + "\", 10");
+		writer.println("section .bss");
+		for (SymbolTableEntry entry : symbolTable.values())
 		{
 			switch(entry.getType())
 			{
 			case FLOAT:
-				writer.println("\t" + VARIABLE_PREFIX + entry.getName() + " dd ?");
+				writer.println(VARIABLE_PREFIX + entry.getName() + ":\n\tresb 4");
 				break;
 			case INTEGER:
-				writer.println("\t" + VARIABLE_PREFIX + entry.getName() + " dw ?");
+				writer.println(VARIABLE_PREFIX + entry.getName() + ":\n\tresw 1");
 				break;
 			}
-			mapVariableToIndex.put(entry.getName(), mapVariableToIndex.size());
 		}
-		for (Integer i : integers)
-		{
-			writer.println("\t" + ILIT_PREFIX + mapIntegerToIndex.size() + " dw " + i);
-			mapIntegerToIndex.put(i, mapIntegerToIndex.size());
-		}
-		for (Float f : floats)
-		{
-			writer.println("\t" + FLIT_PREFIX + mapFloatToIndex.size() + " dd " + f);
-			mapFloatToIndex.put(f, mapFloatToIndex.size());
-		}
-		for (String st : strings)
-		{
-			writer.println("\t" + SLIT_PREFIX + mapStringToIndex.size() + " db \"" + st + "\", '$'");
-			mapStringToIndex.put(st, mapStringToIndex.size());
-		}
-		writer.println("\taux_int dw ?");
-		writer.println("\taux_float dd ?");
-	}
-	@Override
-	public void loadFloatLiteral(Float value) {
-		writer.print("fld " + FLIT_PREFIX + mapFloatToIndex.get(value) + " ; value=" + value);
-	}
-	@Override
-	public void loadIntegerLiteral(Integer value) {
-		writer.println("flid " + ILIT_PREFIX + mapIntegerToIndex.get(value) + " ; value=" + value);
-	}
-	@Override
-	public void loadStringLiteral(String value) {
-		writer.println("mov dx, " + SLIT_PREFIX + mapStringToIndex.get(value) + " ; value=" + value);
-	}
-	@Override
-	public void loadFloatVariable(String varName) {
-		writer.println("\tfld " + VARIABLE_PREFIX + varName);
-	}
-	@Override
-	public void loadIntegerVariable(String varName) {
-		writer.println("\tfild " + VARIABLE_PREFIX + varName);
-	}
-	@Override
-	public void doAdd() {
-		writer.println("fadd");
-	}
-	@Override
-	public void doSub() {
-		writer.println("fsub");
-	}
-	@Override
-	public void doMul() {
-		writer.println("fmul");
-	}
-	@Override
-	public void doDiv() {
-		writer.println("fdiv");
-	}
-	@Override
-	public void doPrint() {
-		writer.println("mov ah, 09h");
-		writer.println("int 21h");
-	}
-	@Override
-	public void doCompare() {
-		writer.println("cmp");
-	}
-	@Override
-	public void doJmp() {
-		writer.print("jmp ");
-	}
-	@Override
-	public void doJG() {
-		writer.print("jg ");
-	}
-	@Override
-	public void doJGE() {
-		writer.print("jge ");
-	}
-	@Override
-	public void doJL() {
-		writer.print("jgl ");
-	}
-	@Override
-	public void doJLE() {
-		writer.print("jle ");
-	}
-	@Override
-	public void doJE() {
-		writer.print("je ");
-	}
-	@Override
-	public void doJNE() {
-		writer.print("jne ");
-	}
-	@Override
-	public void declareLabel(String name) {
-		writer.println(LABEL_PREFIX + name + ":");
-	}
-	@Override
-	public void referenceLabel(String name) {
-		writer.print(LABEL_PREFIX + name + "\n");
-	}
-
-	@Override
-	public void doTrunc() {
-		// ????
-	}
-	@Override
-	public void beginCode() {
-		writer.println(".CODE");
-	}
-	@Override
-	public void endCode() {
-	}
-	@Override
-	public void endProgram() {
-		writer.close();
-	}
-
-	@Override
-	public void doAssign() {
-		// ???
 	}
 
 }

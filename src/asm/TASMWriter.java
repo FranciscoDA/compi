@@ -10,61 +10,53 @@ import java.util.HashSet;
 import compilador.SymbolTableEntry;
 
 public class TASMWriter implements Writer {
-	private HashMap<String, Integer> mapVariableToIndex = new HashMap<>();
-	private HashMap<Integer, Integer> mapIntegerToIndex = new HashMap<>();
-	private HashMap<Float, Integer> mapFloatToIndex = new HashMap<>();
-	private HashMap<String, Integer> mapStringToIndex = new HashMap<>();
+	protected HashMap<String, Integer> mapVariableToIndex = new HashMap<>();
+	protected HashMap<Integer, Integer> mapIntegerToIndex = new HashMap<>();
+	protected HashMap<Float, Integer> mapFloatToIndex = new HashMap<>();
+	protected HashMap<String, Integer> mapStringToIndex = new HashMap<>();
+
+	protected HashMap<String, SymbolTableEntry> symbolTable;
+	protected HashSet<Integer> integerTable;
+	protected HashSet<Float> floatTable;
+	protected HashSet<String> stringTable;
 	
-	private PrintWriter writer;
+	protected PrintWriter writer;
 	
-	private final String VARIABLE_PREFIX = "VAR_";
-	private final String LABEL_PREFIX = "LABEL_";
-	private final String ILIT_PREFIX = "CTE_INT_";
-	private final String FLIT_PREFIX = "CTE_FLT_";
-	private final String SLIT_PREFIX = "CTE_STR_";
+	protected final String VARIABLE_PREFIX = "VAR_";
+	protected final String LABEL_PREFIX = "LABEL_";
+	protected final String ILIT_PREFIX = "CTE_INT_";
+	protected final String FLIT_PREFIX = "CTE_FLT_";
+	protected final String SLIT_PREFIX = "CTE_STR_";
 	
-	public TASMWriter(Path fpath) throws IOException
-	{
+	public TASMWriter(Path fpath) throws IOException {
 		writer = new PrintWriter(Files.newOutputStream(fpath));
+	}
+
+	public void beginProgram() {
 		writer.println(".MODEL LARGE");
 		writer.println(".386");
 		writer.println(".STACK 200h");
 		writer.println(".DATA");
 	}
+
 	@Override
 	public void loadSymbols(HashMap<String, SymbolTableEntry> variables, HashSet<Integer> integers,
 			HashSet<Float> floats, HashSet<String> strings) {
-		for (SymbolTableEntry entry : variables.values())
-		{
-			switch(entry.getType())
-			{
-			case FLOAT:
-				writer.println("\t" + VARIABLE_PREFIX + entry.getName() + " dd ?");
-				break;
-			case INTEGER:
-				writer.println("\t" + VARIABLE_PREFIX + entry.getName() + " dw ?");
-				break;
-			}
+		symbolTable = variables;
+		integerTable = integers;
+		floatTable = floats;
+		stringTable = strings;
+
+		for (SymbolTableEntry entry : symbolTable.values())
 			mapVariableToIndex.put(entry.getName(), mapVariableToIndex.size());
-		}
-		for (Integer i : integers)
-		{
-			writer.println("\t" + ILIT_PREFIX + mapIntegerToIndex.size() + " dw " + i);
+		for (Integer i : integerTable)
 			mapIntegerToIndex.put(i, mapIntegerToIndex.size());
-		}
-		for (Float f : floats)
-		{
-			writer.println("\t" + FLIT_PREFIX + mapFloatToIndex.size() + " dd " + f);
+		for (Float f : floatTable)
 			mapFloatToIndex.put(f, mapFloatToIndex.size());
-		}
-		for (String st : strings)
-		{
-			writer.println("\t" + SLIT_PREFIX + mapStringToIndex.size() + " db \"" + st + "\", '$'");
+		for (String st : stringTable)
 			mapStringToIndex.put(st, mapStringToIndex.size());
-		}
-		writer.println("\taux_int dw ?");
-		writer.println("\taux_float dd ?");
 	}
+
 	@Override
 	public void loadFloatLiteral(Float value) {
 		writer.println("\tfld " + FLIT_PREFIX + mapFloatToIndex.get(value) + " ; value=" + value);
@@ -153,6 +145,28 @@ public class TASMWriter implements Writer {
 	}
 	@Override
 	public void beginCode() {
+		for (SymbolTableEntry entry : symbolTable.values())
+		{
+			switch(entry.getType())
+			{
+			case FLOAT:
+				writer.println("\t" + VARIABLE_PREFIX + entry.getName() + " dd ?");
+				break;
+			case INTEGER:
+				writer.println("\t" + VARIABLE_PREFIX + entry.getName() + " dw ?");
+				break;
+			}
+		}
+		for (Integer i : integerTable)
+			writer.println("\t" + ILIT_PREFIX + mapIntegerToIndex.get(i) + " dw " + i);
+		for (Float f : floatTable)
+			writer.println("\t" + FLIT_PREFIX + mapFloatToIndex.get(f) + " dd " + f);
+		for (String s : stringTable)
+			writer.println("\t" + SLIT_PREFIX + mapStringToIndex.get(s) + " db \"" + s + "\", '$'");
+
+		writer.println("\taux_int dw ?");
+		writer.println("\taux_float dd ?");
+
 		writer.println(".CODE");
 	}
 	@Override

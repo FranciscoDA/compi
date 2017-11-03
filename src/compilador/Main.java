@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java_cup.runtime.Symbol;
 import java.util.LinkedList;
 
+import asm.NASMWriter;
 import asm.TASMWriter;
 
 public class Main {
@@ -59,8 +60,11 @@ public class Main {
 				outputSymbolTable(par.symbolTable, par.integerTable, par.floatTable, par.stringTable, Files.newOutputStream(TS_PATH));
 				rpn.Serializer.serialize(program, Files.newOutputStream(INTERMEDIATE_PATH));
 
-				asm.Writer writer = new TASMWriter(TASM_OUT_PATH);
+				asm.Writer writer = new NASMWriter(NASM_OUT_PATH);
+
 				writer.loadSymbols(par.symbolTable, par.integerTable, par.floatTable, par.stringTable);
+
+				writer.beginProgram();
 				writer.beginCode();
 				for (rpn.Node node : program)
 				{
