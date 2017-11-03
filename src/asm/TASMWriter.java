@@ -67,15 +67,15 @@ public class TASMWriter implements Writer {
 	}
 	@Override
 	public void loadFloatLiteral(Float value) {
-		writer.print("fld " + FLIT_PREFIX + mapFloatToIndex.get(value) + " ; value=" + value);
+		writer.println("\tfld " + FLIT_PREFIX + mapFloatToIndex.get(value) + " ; value=" + value);
 	}
 	@Override
 	public void loadIntegerLiteral(Integer value) {
-		writer.println("flid " + ILIT_PREFIX + mapIntegerToIndex.get(value) + " ; value=" + value);
+		writer.println("\tfild " + ILIT_PREFIX + mapIntegerToIndex.get(value) + " ; value=" + value);
 	}
 	@Override
 	public void loadStringLiteral(String value) {
-		writer.println("mov dx, " + SLIT_PREFIX + mapStringToIndex.get(value) + " ; value=" + value);
+		writer.println("\tmov dx, " + SLIT_PREFIX + mapStringToIndex.get(value) + " ; value=" + value);
 	}
 	@Override
 	public void loadFloatVariable(String varName) {
@@ -87,60 +87,60 @@ public class TASMWriter implements Writer {
 	}
 	@Override
 	public void doAdd() {
-		writer.println("fadd");
+		writer.println("\tfadd");
 	}
 	@Override
 	public void doSub() {
-		writer.println("fsub");
+		writer.println("\tfsub");
 	}
 	@Override
 	public void doMul() {
-		writer.println("fmul");
+		writer.println("\tfmul");
 	}
 	@Override
 	public void doDiv() {
-		writer.println("fdiv");
+		writer.println("\tfdiv");
 	}
 	@Override
 	public void doPrint() {
-		writer.println("mov ah, 09h");
-		writer.println("int 21h");
+		writer.println("\tmov ah, 09h");
+		writer.println("\tint 21h");
 	}
 	@Override
 	public void doCompare() {
-		writer.println("cmp");
+		writer.println("\tcmp");
 	}
 	@Override
 	public void doJmp() {
-		writer.print("jmp ");
+		writer.print("\tjmp ");
 	}
 	@Override
 	public void doJG() {
-		writer.print("jg ");
+		writer.print("\tjg ");
 	}
 	@Override
 	public void doJGE() {
-		writer.print("jge ");
+		writer.print("\tjge ");
 	}
 	@Override
 	public void doJL() {
-		writer.print("jgl ");
+		writer.print("\tjgl ");
 	}
 	@Override
 	public void doJLE() {
-		writer.print("jle ");
+		writer.print("\tjle ");
 	}
 	@Override
 	public void doJE() {
-		writer.print("je ");
+		writer.print("\tje ");
 	}
 	@Override
 	public void doJNE() {
-		writer.print("jne ");
+		writer.print("\tjne ");
 	}
 	@Override
 	public void declareLabel(String name) {
-		writer.println(LABEL_PREFIX + name + ":");
+		writer.println("\t" + LABEL_PREFIX + name + ":");
 	}
 	@Override
 	public void referenceLabel(String name) {

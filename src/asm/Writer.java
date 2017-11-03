@@ -13,10 +13,24 @@ public interface Writer {
 			HashSet<String> strings
 			);
 	
+	default void loadLiteral(Object literal) {
+		if (literal instanceof Integer)
+			loadIntegerLiteral((Integer)literal);
+		else if (literal instanceof String)
+			loadStringLiteral((String)literal);
+		else if (literal instanceof Float)
+			loadFloatLiteral((Float)literal);
+	}
 	void loadFloatLiteral(Float value);
 	void loadIntegerLiteral(Integer value);
 	void loadStringLiteral(String value);
 	
+	default void loadVariable(SymbolTableEntry entry) {
+		if (entry.getType() == SymbolTableEntry.TypeName.INTEGER)
+			loadIntegerVariable(entry.getName());
+		else if (entry.getType() == SymbolTableEntry.TypeName.FLOAT)
+			loadFloatVariable(entry.getName());
+	}
 	void loadFloatVariable(String varName);
 	void loadIntegerVariable(String varName);
 	

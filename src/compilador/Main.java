@@ -19,7 +19,8 @@ public class Main {
 	private final static Path PRUEBA_PATH = Paths.get("prueba.txt");
 	private final static Path TS_PATH = Paths.get("ts.txt");
 	private final static Path INTERMEDIATE_PATH = Paths.get("intermedio.txt");
-	private final static Path ASSEMBLY_PATH = Paths.get("programa.asm");
+	private final static Path TASM_OUT_PATH = Paths.get("programa-tasm.asm");
+	private final static Path NASM_OUT_PATH = Paths.get("programa-nasm.asm");
 
 	public static void outputSymbolTable(HashMap<String, SymbolTableEntry> symbolTable,
 			HashSet<Integer> integerTable,
@@ -58,7 +59,7 @@ public class Main {
 				outputSymbolTable(par.symbolTable, par.integerTable, par.floatTable, par.stringTable, Files.newOutputStream(TS_PATH));
 				rpn.Serializer.serialize(program, Files.newOutputStream(INTERMEDIATE_PATH));
 
-				asm.Writer writer = new TASMWriter(ASSEMBLY_PATH);
+				asm.Writer writer = new TASMWriter(TASM_OUT_PATH);
 				writer.loadSymbols(par.symbolTable, par.integerTable, par.floatTable, par.stringTable);
 				writer.beginCode();
 				for (rpn.Node node : program)
@@ -66,98 +67,44 @@ public class Main {
 					if (node instanceof rpn.VariableExpression)
 					{
 						rpn.VariableExpression vex = (rpn.VariableExpression) node;
-						switch (par.getVariableType(vex.getName()))
-						{
-						case FLOAT:
-							writer.loadFloatVariable(vex.getName());
-							break;
-						case INTEGER:
-							writer.loadIntegerVariable(vex.getName());
-							break;
-						}
+						writer.loadVariable(par.symbolTable.get(vex.getName()));
 					}
 					else if (node instanceof rpn.LiteralExpression)
 					{
 						rpn.LiteralExpression lex = (rpn.LiteralExpression) node;
-						if (lex.getLiteral() instanceof Integer)
-							writer.loadIntegerLiteral((Integer)lex.getLiteral());
-						else if (lex.getLiteral() instanceof String)
-							writer.loadStringLiteral((String)lex.getLiteral());
-						else if (lex.getLiteral() instanceof Float)
-							writer.loadFloatLiteral((Float)lex.getLiteral());
+						writer.loadLiteral(lex.getLiteral());
 					}
 					else if (node instanceof rpn.BinaryOperator)
 					{
 						rpn.BinaryOperator binop = (rpn.BinaryOperator) node;
-						switch(binop)
-						{
-						case CMP:
-							writer.doCompare();
-							break;
-						case MINUS:
-							writer.doSub();
-							break;
-						case DIV:
-							writer.doDiv();
-							break;
-						case MULT:
-							writer.doMul();
-							break;
-						case PLUS:
-							writer.doAdd();
-							break;
-						case ASSIGN:
-							//pw2.print("fstp ST(1)");
-							break;
-						}
+						if (binop == rpn.BinaryOperator.CMP) writer.doCompare();
+						else if (binop == rpn.BinaryOperator.PLUS) writer.doAdd();
+						else if (binop == rpn.BinaryOperator.MINUS) writer.doSub();
+						else if (binop == rpn.BinaryOperator.MULT) writer.doMul();
+						else if (binop == rpn.BinaryOperator.DIV) writer.doDiv();
+						else if (binop == rpn.BinaryOperator.ASSIGN) writer.doAssign();
 					}
 					else if (node instanceof rpn.UnaryOperator)
 					{
 						rpn.UnaryOperator unop = (rpn.UnaryOperator) node;
-						switch (unop)
-						{
-						case PRINT:
-							writer.doPrint();
-							break;
-						case TRUNC:
-							writer.doTrunc();
-							break;
-						}
+						if (unop == rpn.UnaryOperator.PRINT) writer.doPrint();
+						else if (unop == rpn.UnaryOperator.TRUNC) writer.doTrunc();
 					}
 					else if (node instanceof rpn.ControlOperator)
 					{
 						rpn.ControlOperator cop = (rpn.ControlOperator) node;
-						switch(cop)
-						{
-						case JMP:
+						if (cop == rpn.ControlOperator.JMP)
 							writer.doJmp();
-							break;
-						}
 					}
 					else if (node instanceof rpn.Comparator)
 					{
 						rpn.Comparator cmp = (rpn.Comparator) node;
-						switch (cmp)
-						{
-						case NEQ:
-							writer.doJNE();
-							break;
-						case LTEQ:
-							writer.doJLE();
-							break;
-						case LT:
-							writer.doJL();
-							break;
-						case GT:
-							writer.doJG();
-							break;
-						case GTEQ:
-							writer.doJGE();
-							break;
-						case EQEQ:
-							writer.doJE();
-							break;
-						}
+						if (cmp == rpn.Comparator.NEQ) writer.doJNE();
+						else if (cmp == rpn.Comparator.LTEQ) writer.doJLE();
+						else if (cmp == rpn.Comparator.LT) writer.doJE();
+						else if (cmp == rpn.Comparator.GTEQ) writer.doJGE();
+						else if (cmp == rpn.Comparator.GT) writer.doJG();
+						else if (cmp == rpn.Comparator.EQEQ) writer.doJE();
 					}
 					else if (node instanceof rpn.JumpLabel)
 					{

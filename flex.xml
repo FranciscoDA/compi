@@ -3,7 +3,11 @@
 	<taskdef classname="java_cup.anttask.CUPTask" name="cup" classpath="jflex/lib/java-cup-11a.jar"/>
 	
 	<target name="build" depends="scanner,cup">
-		<javac srcdir="src" destdir="bin" includeantruntime="false"></javac>
+		<javac srcdir="src" destdir="bin" includeantruntime="false">
+			<classpath>
+				<pathelement location="jflex/lib/java-cup-11a.jar"></pathelement>
+			</classpath>
+		</javac>
 	</target>
 	<target name="run" depends="build">
 		<java dir="." classname="compilador.Main">

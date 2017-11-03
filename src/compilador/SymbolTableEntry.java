@@ -1,8 +1,10 @@
 package compilador;
 
-import rpn.TypeName;
-
-public class SymbolTableEntry implements Comparable<SymbolTableEntry> {
+public class SymbolTableEntry {
+	public enum TypeName {
+		INTEGER,
+		FLOAT
+	}
     public SymbolTableEntry(String name, TypeName type) {
     	this.name = name;
     	this.type = type;
@@ -25,11 +27,6 @@ public class SymbolTableEntry implements Comparable<SymbolTableEntry> {
     public String toString() {
     	return name.toString() + " " + type.toString();
     }
-    
-	@Override
-	public int compareTo(SymbolTableEntry o) {
-		return this.name.compareTo(o.getName());
-	}
 
     private String name;
     private TypeName type;

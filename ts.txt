@@ -1,13 +1,13 @@
-                SUMA               FLOAT                 ---                 ---
-                 ASD             INTEGER                 ---                 ---
-                  DX               FLOAT                 ---                 ---
-                  CX               FLOAT                 ---                 ---
-                  BX             INTEGER                 ---                 ---
+                SUMA             INTEGER                 ---                 ---
+                 ASD               FLOAT                 ---                 ---
+                  DX             INTEGER                 ---                 ---
+                  CX             INTEGER                 ---                 ---
+                  BX               FLOAT                 ---                 ---
                   AX             INTEGER                 ---                 ---
             CONTADOR             INTEGER                 ---                 ---
-            PROMEDIO               FLOAT                 ---                 ---
-              ACTUAL             INTEGER                 ---                 ---
-              RESULT             INTEGER                 ---                 ---
+            PROMEDIO             INTEGER                 ---                 ---
+              ACTUAL               FLOAT                 ---                 ---
+              RESULT               FLOAT                 ---                 ---
                  ---              CteInt                   0                 ---
                  ---              CteInt                   1                 ---
                  ---              CteInt                   2                 ---

@@ -4,7 +4,7 @@ import rpn.*;
 import java.util.LinkedList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.ListIterator;
+import java.util.Iterator;
 
 /* Java 1.2 parser for CUP.  
  * Copyright (C) 1998 C. Scott Ananian <cananian@alumni.princeton.edu>
@@ -28,21 +28,15 @@ parser code  {:
     report_error(message, info);
     throw new RuntimeException("Fatal Syntax Error");
   }
-  public void handleDeclaration(LinkedList<rpn.Node> dec2) throws Exception {
-    ListIterator<rpn.Node> it = dec2.listIterator(0);
-    while (it.hasNext())
-    {
-      rpn.VariableExpression varName = (rpn.VariableExpression)it.next();
-      rpn.TypeName varType = (rpn.TypeName)it.next();
-
-      if (symbolTable.containsKey(varName.getName())) {
-        throw new Exception("Multiple declaration of " + varName.getName());
+  public void handleDeclaration(LinkedList<SymbolTableEntry> dec2) throws Exception {
+  	for (SymbolTableEntry entry : dec2) {
+      if (symbolTable.containsKey(entry.getName())) {
+        throw new Exception("Multiple declaration of " + entry.getName());
       }
-      SymbolTableEntry entry = new SymbolTableEntry(varName.getName(), varType);
-      symbolTable.put(varName.getName(), entry);
-    }
+      symbolTable.put(entry.getName(), entry);
+  	}
   }
-  public rpn.TypeName getVariableType(String varName)
+  public SymbolTableEntry.TypeName getVariableType(String varName)
   {
   	return symbolTable.get(varName).getType();
   }
@@ -87,11 +81,11 @@ terminal java.lang.String IDENTIFIER; // name
 
 non terminal LinkedList<rpn.Node> goal;
 
-non terminal rpn.TypeName type_name;
+non terminal SymbolTableEntry.TypeName type_name;
 non terminal rpn.LiteralExpression  literal;
 
-non terminal LinkedList<rpn.Node> declaration_block, declaration_list;
-non terminal LinkedList<rpn.Node> type_declaration_outer, type_declaration_inner;
+non terminal LinkedList<SymbolTableEntry> declaration_block, declaration_list;
+non terminal LinkedList<SymbolTableEntry> type_declaration_outer, type_declaration_inner;
 
 non terminal LinkedList<rpn.Node> expression, term, factor;
 non terminal LinkedList<rpn.Node> condition;
@@ -113,8 +107,8 @@ goal ::=
 	;
 
 type_name ::=
-	INTEGER                                           {: RESULT = rpn.TypeName.INTEGER; :}
-	| FLOAT                                           {: RESULT = rpn.TypeName.FLOAT;   :}
+	INTEGER                                           {: RESULT = SymbolTableEntry.TypeName.INTEGER; :}
+	| FLOAT                                           {: RESULT = SymbolTableEntry.TypeName.FLOAT;   :}
 	;
 
 literal ::=
@@ -146,16 +140,14 @@ declaration_list ::=
 
 type_declaration_outer ::=
 	LBRACK type_declaration_inner:dec1 RBRACK         {:
-	                                                     ListIterator<rpn.Node> it1 = dec1.listIterator(0);
-	                                                     ListIterator<rpn.Node> it2 = dec1.listIterator(dec1.size()-1);
-	                                                     for (int i = 0; i < dec1.size()/4; i++)
-	                                                     {
-	                                                     	rpn.Node el1 = it1.next();
-	                                                     	rpn.Node el2 = it2.previous();
-	                                                     	it1.set(el2);
-	                                                     	it2.set(el1);
-	                                                     	it1.next();
-	                                                     	it2.previous();
+	                                                     Iterator<SymbolTableEntry> rit = dec1.descendingIterator();
+	                                                     Iterator<SymbolTableEntry> fit = dec1.iterator();
+	                                                     while (fit.hasNext()) {
+	                                                       SymbolTableEntry e1 = fit.next();
+	                                                       SymbolTableEntry e2 = rit.next();
+	                                                       SymbolTableEntry.TypeName tn = e1.getType();
+	                                                       e1.setType(e2.getType());
+	                                                       e2.setType(tn);
 	                                                     }
 	                                                     RESULT = dec1;
 	                                                  :}
@@ -163,14 +155,12 @@ type_declaration_outer ::=
 	
 type_declaration_inner ::=
 	IDENTIFIER:ident RBRACK EQ LBRACK type_name:type                             {:
-	                                                                                LinkedList<rpn.Node> e1 = new LinkedList<>();
-	                                                                                e1.addLast(new rpn.VariableExpression(ident));
-	                                                                                e1.addLast(type);
+	                                                                                LinkedList<SymbolTableEntry> e1 = new LinkedList<>();
+	                                                                                e1.addLast(new SymbolTableEntry(ident, type));
 	                                                                                RESULT = e1;
 	                                                                             :}
 	| IDENTIFIER:ident COMMA type_declaration_inner:nextdec COMMA type_name:type {:
-	                                                                                nextdec.addLast(new rpn.VariableExpression(ident));
-	                                                                                nextdec.addLast(type);
+	                                                                                nextdec.addLast(new SymbolTableEntry(ident, type));
 	                                                                                RESULT = nextdec;
 	                                                                             :}
 	;
