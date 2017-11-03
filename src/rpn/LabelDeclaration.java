@@ -7,7 +7,7 @@ public class LabelDeclaration implements Node {
 		this.LabelIndex=i;
 	}
 
-	public int getLabelIndex() {
+	public Integer getLabelIndex() {
 		return LabelIndex;
 	}
 

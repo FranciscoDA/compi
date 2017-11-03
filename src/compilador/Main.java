@@ -13,6 +13,8 @@ import java.util.HashSet;
 import java_cup.runtime.Symbol;
 import java.util.LinkedList;
 
+import asm.TASMWriter;
+
 public class Main {
 	private final static Path PRUEBA_PATH = Paths.get("prueba.txt");
 	private final static Path TS_PATH = Paths.get("ts.txt");
@@ -49,9 +51,6 @@ public class Main {
 			try {
 				Symbol s = par.debug_parse();
 				
-				// stack de tipos para determinar que instruccion generar
-				LinkedList<rpn.TypeName> typeStack = new LinkedList<>();
-				
 				LinkedList<rpn.Node> program = (LinkedList<rpn.Node>) s.value;
 				
 				System.out.println("Compilacion OK");
@@ -59,108 +58,58 @@ public class Main {
 				outputSymbolTable(par.symbolTable, par.integerTable, par.floatTable, par.stringTable, Files.newOutputStream(TS_PATH));
 				rpn.Serializer.serialize(program, Files.newOutputStream(INTERMEDIATE_PATH));
 
-				PrintWriter pw2 = new PrintWriter(Files.newOutputStream(Paths.get("programa.asm")));
-				pw2.println(".MODEL LARGE");
-				pw2.println(".386");
-				pw2.println(".STACK 200h");
-				pw2.println(".DATA");
-				HashMap<String, Integer> mapVariableToIndex = new HashMap<>();
-				HashMap<Integer, Integer> mapIntegerToIndex = new HashMap<>();
-				HashMap<Float, Integer> mapFloatToIndex = new HashMap<>();
-				HashMap<String, Integer> mapStringToIndex = new HashMap<>();
-				for (SymbolTableEntry entry : par.symbolTable.values())
-				{
-					switch(entry.getType())
-					{
-					case FLOAT:
-						pw2.println("\tVAR_" + entry.getName() + " dd ?");
-						break;
-					case INTEGER:
-						pw2.println("\tVAR_" + entry.getName() + " dw ?");
-						break;
-					}
-					mapVariableToIndex.put(entry.getName(), mapVariableToIndex.size());
-				}
-				for (Integer i : par.integerTable)
-				{
-					pw2.println("\tCTE_INT_" + mapIntegerToIndex.size() + " dw " + i);
-					mapIntegerToIndex.put(i, mapIntegerToIndex.size());
-				}
-				for (Float f : par.floatTable)
-				{
-					pw2.println("\tCTE_FLOAT_" + mapFloatToIndex.size() + " dd " + f);
-					mapFloatToIndex.put(f, mapFloatToIndex.size());
-				}
-				for (String st : par.stringTable)
-				{
-					pw2.println("\tCTE_STR_" + mapStringToIndex.size() + " db \"" + st + "\", '$'");
-					mapStringToIndex.put(st, mapStringToIndex.size());
-				}
-				pw2.println("\taux_int dw ?");
-				pw2.println("\taux_float dd ?");
-				
-				pw2.println(".CODE");
+				asm.Writer writer = new TASMWriter(ASSEMBLY_PATH);
+				writer.loadSymbols(par.symbolTable, par.integerTable, par.floatTable, par.stringTable);
+				writer.beginCode();
 				for (rpn.Node node : program)
 				{
 					if (node instanceof rpn.VariableExpression)
 					{
 						rpn.VariableExpression vex = (rpn.VariableExpression) node;
-						pw2.print("\t");
 						switch (par.getVariableType(vex.getName()))
 						{
 						case FLOAT:
-							pw2.print("fld " + "VAR_" + vex.getName());
+							writer.loadFloatVariable(vex.getName());
 							break;
 						case INTEGER:
-							pw2.print("flid " + "VAR_" + vex.getName());
+							writer.loadIntegerVariable(vex.getName());
 							break;
 						}
-						pw2.print("\n");
 					}
 					else if (node instanceof rpn.LiteralExpression)
 					{
-						pw2.print("\t");
 						rpn.LiteralExpression lex = (rpn.LiteralExpression) node;
 						if (lex.getLiteral() instanceof Integer)
-						{
-							pw2.print("flid " + "CTE_INT_" + mapIntegerToIndex.get(lex.getLiteral()));
-						}
-						else if (lex.getLiteral() instanceof Float)
-						{
-							pw2.print("fld " + "CTE_FLOAT_" + mapFloatToIndex.get(lex.getLiteral()));
-						}
+							writer.loadIntegerLiteral((Integer)lex.getLiteral());
 						else if (lex.getLiteral() instanceof String)
-						{
-							pw2.print("mov dx, CTE_STR_" + mapStringToIndex.get(lex.getLiteral()));
-						}
-						pw2.print(" ; value = " + lex.toString() + "\n");
+							writer.loadStringLiteral((String)lex.getLiteral());
+						else if (lex.getLiteral() instanceof Float)
+							writer.loadFloatLiteral((Float)lex.getLiteral());
 					}
 					else if (node instanceof rpn.BinaryOperator)
 					{
-						pw2.print("\t");
 						rpn.BinaryOperator binop = (rpn.BinaryOperator) node;
 						switch(binop)
 						{
 						case CMP:
-							pw2.print("fcom");
+							writer.doCompare();
 							break;
 						case MINUS:
-							pw2.print("fsubp");
+							writer.doSub();
 							break;
 						case DIV:
-							pw2.print("fdivp");
+							writer.doDiv();
 							break;
 						case MULT:
-							pw2.print("fmulp");
+							writer.doMul();
 							break;
 						case PLUS:
-							pw2.print("faddp");
+							writer.doAdd();
 							break;
 						case ASSIGN:
-							pw2.print("fstp ST(1)");
+							//pw2.print("fstp ST(1)");
 							break;
 						}
-						pw2.print("\n");
 					}
 					else if (node instanceof rpn.UnaryOperator)
 					{
@@ -168,12 +117,10 @@ public class Main {
 						switch (unop)
 						{
 						case PRINT:
-							pw2.print("\tmov ah, 09h\n");
-							pw2.print("\tint 21h\n");
+							writer.doPrint();
 							break;
 						case TRUNC:
-							pw2.print("\tfisttp aux_int\n"); // pop truncated into aux variable
-							pw2.print("\tfild aux_int\n"); // push aux content
+							writer.doTrunc();
 							break;
 						}
 					}
@@ -183,57 +130,48 @@ public class Main {
 						switch(cop)
 						{
 						case JMP:
-							pw2.print("\tjmp ");
+							writer.doJmp();
 							break;
 						}
 					}
 					else if (node instanceof rpn.Comparator)
 					{
 						rpn.Comparator cmp = (rpn.Comparator) node;
-						pw2.print("\t");
 						switch (cmp)
 						{
 						case EQEQ:
-							pw2.print("jne ");
+							writer.doJNE();
 							break;
 						case GT:
-							pw2.print("jle ");
+							writer.doJLE();
 							break;
 						case GTEQ:
-							pw2.print("jl ");
+							writer.doJL();
 							break;
 						case LTEQ:
-							pw2.print("jg ");
+							writer.doJG();
 							break;
 						case LT:
-							pw2.print("jge ");
+							writer.doJGE();
 							break;
 						case NEQ:
-							pw2.print("je ");
+							writer.doJE();
 							break;
 						}
 					}
 					else if (node instanceof rpn.JumpLabel)
 					{
 						rpn.JumpLabel lr = (rpn.JumpLabel) node;
-						pw2.print(lr.toString() + "\n");
+						writer.referenceLabel(lr.getLabelIndex().toString());
 					}
 					else if (node instanceof rpn.LabelDeclaration)
 					{
 						rpn.LabelDeclaration ld = (rpn.LabelDeclaration) node;
-						pw2.print("\t" + ld.toString() + "\n");
-					}
-					else if (node instanceof rpn.Comparator)
-					{
-						rpn.Comparator cmp = (rpn.Comparator) node;
-						pw2.print("\t" + cmp.toString() + " ");
-					}
-					else if (node instanceof rpn.VariableExpression)
-					{
-						
+						writer.declareLabel(ld.getLabelIndex().toString());
 					}
 				}
-				pw2.close();
+				writer.endCode();
+				writer.endProgram();
 			}
 			catch (Exception e) {
 				e.printStackTrace();
