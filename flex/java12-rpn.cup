@@ -225,37 +225,37 @@ condition ::=
 	expression:e1 LTEQ expression:e2       {:
 	                                          e1.addAll(e2);
 	                                          e1.addLast(rpn.BinaryOperator.CMP);
-	                                          e1.addLast(rpn.Comparator.LTEQ);
+	                                          e1.addLast(rpn.Comparator.GT);
 	                                          RESULT = e1;
 	                                       :}
 	| expression:e1 LT expression:e2       {:
 	                                          e1.addAll(e2);
 	                                          e1.addLast(rpn.BinaryOperator.CMP);
-	                                          e1.addLast(rpn.Comparator.LT);
+	                                          e1.addLast(rpn.Comparator.GTEQ);
 	                                          RESULT = e1;
 	                                       :}
 	| expression:e1 GTEQ expression:e2     {:
 	                                          e1.addAll(e2);
 	                                          e1.add(rpn.BinaryOperator.CMP);
-	                                          e1.add(rpn.Comparator.GTEQ);
+	                                          e1.add(rpn.Comparator.LT);
 	                                          RESULT = e1;
 	                                       :}
 	| expression:e1 GT expression:e2       {:
 	                                          e1.addAll(e2);
 	                                          e1.add(rpn.BinaryOperator.CMP);
-	                                          e1.add(rpn.Comparator.GT);
+	                                          e1.add(rpn.Comparator.LTEQ);
 	                                          RESULT = e1;
 	                                       :}
 	| expression:e1 EQEQ expression:e2     {:
 	                                          e1.addAll(e2);
 	                                          e1.add(rpn.BinaryOperator.CMP);
-	                                          e1.add(rpn.Comparator.EQEQ);
+	                                          e1.add(rpn.Comparator.NEQ);
 	                                          RESULT = e1;
 	                                       :}
 	| expression:e1 NOTEQ expression:e2    {:
 	                                          e1.addAll(e2);
 	                                          e1.add(rpn.BinaryOperator.CMP);
-	                                          e1.add(rpn.Comparator.NEQ);
+	                                          e1.add(rpn.Comparator.EQEQ);
 	                                          RESULT = e1;
 	                                       :}
 	;

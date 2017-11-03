@@ -139,22 +139,22 @@ public class Main {
 						rpn.Comparator cmp = (rpn.Comparator) node;
 						switch (cmp)
 						{
-						case EQEQ:
+						case NEQ:
 							writer.doJNE();
 							break;
-						case GT:
+						case LTEQ:
 							writer.doJLE();
 							break;
-						case GTEQ:
+						case LT:
 							writer.doJL();
 							break;
-						case LTEQ:
+						case GT:
 							writer.doJG();
 							break;
-						case LT:
+						case GTEQ:
 							writer.doJGE();
 							break;
-						case NEQ:
+						case EQEQ:
 							writer.doJE();
 							break;
 						}
