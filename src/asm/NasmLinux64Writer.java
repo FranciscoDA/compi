@@ -3,8 +3,8 @@ package asm;
 import java.io.IOException;
 import java.nio.file.Path;
 
-public class NASM64Writer extends NASM32Writer {
-	public NASM64Writer(Path p) throws IOException {
+public class NasmLinux64Writer extends NasmLinux32Writer {
+	public NasmLinux64Writer(Path p) throws IOException {
 		super(p);
 	}
 

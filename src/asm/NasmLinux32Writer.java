@@ -9,9 +9,9 @@ import java.util.HashSet;
 
 import compilador.SymbolTableEntry;
 
-public class NASM32Writer extends TASMWriter {
+public class NasmLinux32Writer extends TasmDos16Writer {
 
-	public NASM32Writer(Path fpath) throws IOException
+	public NasmLinux32Writer(Path fpath) throws IOException
 	{
 		super(fpath);
 	}

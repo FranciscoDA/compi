@@ -9,7 +9,7 @@ import java.util.HashSet;
 
 import compilador.SymbolTableEntry;
 
-public class TASMWriter implements Writer {
+public class TasmDos16Writer implements Writer {
 	protected HashMap<String, Integer> mapVariableToIndex = new HashMap<>();
 	protected HashMap<Integer, Integer> mapIntegerToIndex = new HashMap<>();
 	protected HashMap<Float, Integer> mapFloatToIndex = new HashMap<>();
@@ -28,7 +28,7 @@ public class TASMWriter implements Writer {
 	protected final String FLIT_PREFIX = "CTE_FLT_";
 	protected final String SLIT_PREFIX = "CTE_STR_";
 	
-	public TASMWriter(Path fpath) throws IOException {
+	public TasmDos16Writer(Path fpath) throws IOException {
 		writer = new PrintWriter(Files.newOutputStream(fpath));
 	}
 
