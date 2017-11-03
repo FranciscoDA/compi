@@ -9,17 +9,17 @@ import java.util.HashSet;
 
 import compilador.SymbolTableEntry;
 
-public class NASMWriter extends TASMWriter {
+public class NASM32Writer extends TASMWriter {
 
-	public NASMWriter(Path fpath) throws IOException
+	public NASM32Writer(Path fpath) throws IOException
 	{
 		super(fpath);
 	}
 
 	@Override
 	public void beginProgram() {
-		writer.println("; compile with: nasm -felf64 filename.asm && ld filename.o");
-		writer.println("; 64-bit linux only");
+		writer.println("; compile with: nasm -felf32 filename.asm && ld filename.o");
+		writer.println("; 32-bit linux only");
 		writer.println("global _start");
 		writer.println("section .text");
 	} 
@@ -31,10 +31,10 @@ public class NASMWriter extends TASMWriter {
 	
 	@Override
 	public void loadStringLiteral(String value) {
-		writer.println("\tmov rax, 1 ; sys_write");
-		writer.println("\tmov rdi, 1 ; fd=stdout");
-		writer.println("\tmov rsi, " + SLIT_PREFIX + mapStringToIndex.get(value) + " ; value=" + value);
-		writer.println("\tmov rdx, " + (value.length()+1) + " ; msg length + newline");
+		writer.println("\tmov eax, 1 ; sys_write");
+		writer.println("\tmov ebx, 1 ; fd=stdout");
+		writer.println("\tmov ecx, " + SLIT_PREFIX + mapStringToIndex.get(value) + " ; value=" + value);
+		writer.println("\tmov edx, " + (value.length()+1) + " ; msg length + newline");
 	}
 	
 	@Override
