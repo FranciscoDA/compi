@@ -13,7 +13,8 @@ public interface Writer {
 			HashSet<Float> floats,
 			HashSet<String> strings
 			);
-	
+	Character[] getNewlineCharacters();
+
 	default void loadLiteral(Object literal) {
 		if (literal instanceof Integer)
 			loadIntegerLiteral((Integer)literal);
@@ -40,22 +41,25 @@ public interface Writer {
 	void doMul();
 	void doDiv();
 	
-	void doAssign();
+	void doAssign(String varName);
 	
-	void doPrint();
+	void doPrintString();
+	void doPrintInteger();
+	void doPrintFloat();
+	void doPrintLF();
+	
 	void doCompare();
 	void doTrunc();
 	
-	void doJMP();
-	void doJG();
-	void doJGE();
-	void doJL();
-	void doJLE();
-	void doJE();
-	void doJNE();
+	void doJMP(String label);
+	void doJG(String label);
+	void doJGE(String label);
+	void doJL(String label);
+	void doJLE(String label);
+	void doJE(String label);
+	void doJNE(String label);
 	
 	void declareLabel(String name);
-	void referenceLabel(String name);
 	
 	void beginCode();
 	void endCode();

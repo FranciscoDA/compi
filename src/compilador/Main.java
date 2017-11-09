@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 
 import java_cup.runtime.Symbol;
 import java.util.LinkedList;
@@ -45,12 +46,13 @@ public class Main {
 		pw.close();
 	}
 	
-	public static void writeAssemblyCode(parser par, LinkedList<rpn.Node> program, asm.Writer writer) {
+	public static void writeAssemblyCode(parser par, LinkedList<rpn.Node> program, asm.Writer writer) throws Exception {
 		writer.loadSymbols(par.symbolTable, par.integerTable, par.floatTable, par.stringTable);
 		writer.beginProgram();
 		writer.beginCode();
-		for (rpn.Node node : program)
+		for (Iterator<rpn.Node> it = program.iterator(); it.hasNext(); )
 		{
+			rpn.Node node = it.next();
 			if (node instanceof rpn.VariableExpression)
 			{
 				rpn.VariableExpression vex = (rpn.VariableExpression) node;
@@ -61,45 +63,80 @@ public class Main {
 				rpn.LiteralExpression lex = (rpn.LiteralExpression) node;
 				writer.loadLiteral(lex.getLiteral());
 			}
-			else if (node instanceof rpn.BinaryOperator)
+			else if (node instanceof rpn.Operation)
 			{
-				rpn.BinaryOperator binop = (rpn.BinaryOperator) node;
-				if (binop == rpn.BinaryOperator.CMP) writer.doCompare();
-				else if (binop == rpn.BinaryOperator.PLUS) writer.doAdd();
-				else if (binop == rpn.BinaryOperator.MINUS) writer.doSub();
-				else if (binop == rpn.BinaryOperator.MULT) writer.doMul();
-				else if (binop == rpn.BinaryOperator.DIV) writer.doDiv();
-				else if (binop == rpn.BinaryOperator.ASSIGN) writer.doAssign();
+				rpn.Operation op = (rpn.Operation) node;
+				switch (op)	{
+				case PLUS:
+					writer.doAdd();
+					break;
+				case MINUS:
+					writer.doSub();
+					break;
+				case MULT:
+					writer.doMul();
+					break;
+				case DIV:
+					writer.doDiv();
+					break;
+				case ASSIGN: {
+					rpn.VariableExpression vex = (rpn.VariableExpression) it.next();
+					writer.doAssign(vex.getName());
+					break;
+				}
+				case CMP:
+					writer.doCompare();
+					break;
+				case PRINTSTR:
+					writer.doPrintString();
+					break;
+				case PRINTINT:
+					writer.doPrintInteger();
+					break;
+				case PRINTFLOAT:
+					writer.doPrintFloat();
+					break;
+				case PRINTLF:
+					writer.doPrintLF();
+					break;
+				case TRUNC:
+					writer.doTrunc();
+					break;
+				}
 			}
-			else if (node instanceof rpn.UnaryOperator)
-			{
-				rpn.UnaryOperator unop = (rpn.UnaryOperator) node;
-				if (unop == rpn.UnaryOperator.PRINT) writer.doPrint();
-				else if (unop == rpn.UnaryOperator.TRUNC) writer.doTrunc();
+			else if (node instanceof rpn.Control) {
+				rpn.Control co = (rpn.Control) node;
+				rpn.LabelReference lr = (rpn.LabelReference)it.next();
+				String i = lr.getLabelIndex().toString();
+				switch (co) {
+				case JMP:
+					writer.doJMP(i);
+					break;
+				case LTEQ:
+					writer.doJLE(i);
+					break;
+				case LT:
+					writer.doJL(i);
+					break;
+				case GTEQ:
+					writer.doJGE(i);
+					break;
+				case GT:
+					writer.doJG(i);
+					break;
+				case EQEQ:
+					writer.doJE(i);
+					break;
+				case NEQ:
+					writer.doJNE(i);
+					break;
+				}
 			}
-			else if (node instanceof rpn.ControlOperator)
-			{
-				rpn.ControlOperator cop = (rpn.ControlOperator) node;
-				if (cop == rpn.ControlOperator.JMP)
-					writer.doJMP();
+			else if (node instanceof rpn.LabelReference) {
+				rpn.LabelReference lr = (rpn.LabelReference) node;
+				throw new Exception("loose label (" + lr.getLabelIndex() + ") reference");
 			}
-			else if (node instanceof rpn.Comparator)
-			{
-				rpn.Comparator cmp = (rpn.Comparator) node;
-				if (cmp == rpn.Comparator.NEQ) writer.doJNE();
-				else if (cmp == rpn.Comparator.LTEQ) writer.doJLE();
-				else if (cmp == rpn.Comparator.LT) writer.doJE();
-				else if (cmp == rpn.Comparator.GTEQ) writer.doJGE();
-				else if (cmp == rpn.Comparator.GT) writer.doJG();
-				else if (cmp == rpn.Comparator.EQEQ) writer.doJE();
-			}
-			else if (node instanceof rpn.JumpLabel)
-			{
-				rpn.JumpLabel lr = (rpn.JumpLabel) node;
-				writer.referenceLabel(lr.getLabelIndex().toString());
-			}
-			else if (node instanceof rpn.LabelDeclaration)
-			{
+			else if (node instanceof rpn.LabelDeclaration) {
 				rpn.LabelDeclaration ld = (rpn.LabelDeclaration) node;
 				writer.declareLabel(ld.getLabelIndex().toString());
 			}

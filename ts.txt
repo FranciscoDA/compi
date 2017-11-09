@@ -1,11 +1,10 @@
-                SUMA             INTEGER                 ---                 ---
-                 ASD               FLOAT                 ---                 ---
-                  DX             INTEGER                 ---                 ---
-                  CX             INTEGER                 ---                 ---
-                  BX               FLOAT                 ---                 ---
-                  AX             INTEGER                 ---                 ---
             CONTADOR             INTEGER                 ---                 ---
-            PROMEDIO             INTEGER                 ---                 ---
-              ACTUAL               FLOAT                 ---                 ---
-              RESULT               FLOAT                 ---                 ---
+               FIB_A             INTEGER                 ---                 ---
+               FIB_B             INTEGER                 ---                 ---
+                 ---              CteInt                   0                 ---
+                 ---              CteInt                   1                 ---
+                 ---              CteInt                   5                 ---
+                 ---           CteString                FIB(                   4
+                 ---           CteString                ) =                    4
+                 ---           CteString                 Fin                   3
                  ---           CteString          Hola mundo                  10

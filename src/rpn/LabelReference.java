@@ -1,9 +1,9 @@
 package rpn;
 
-public class JumpLabel implements Node {
+public class LabelReference implements Node {
 	int LabelIndex;
 	
-	public JumpLabel(int i) {
+	public LabelReference(int i) {
 		this.LabelIndex=i;
 	}
 

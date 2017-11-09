@@ -36,10 +36,27 @@ parser code  {:
       symbolTable.put(entry.getName(), entry);
   	}
   }
-  public SymbolTableEntry.TypeName getVariableType(String varName)
-  {
+  public SymbolTableEntry.TypeName getVariableType(String varName) {
   	return symbolTable.get(varName).getType();
   }
+  public SymbolTableEntry.TypeName getExpressionType(LinkedList<rpn.Node> l) {
+  	for (rpn.Node i : l) {
+  		if (i instanceof rpn.VariableExpression) {
+  			rpn.VariableExpression vex = (rpn.VariableExpression) i;
+  			if (getVariableType(vex.getName()) == SymbolTableEntry.TypeName.FLOAT) {
+  				return SymbolTableEntry.TypeName.FLOAT;
+  			}
+  		}
+  		else if (i instanceof rpn.LiteralExpression) {
+  			rpn.LiteralExpression lex = (rpn.LiteralExpression) i;
+  			if (lex.getLiteral() instanceof Float) {
+  				return SymbolTableEntry.TypeName.FLOAT;
+  			}
+  		}
+  	}
+  	return SymbolTableEntry.TypeName.INTEGER;
+  }
+  
   public HashMap<String, SymbolTableEntry> symbolTable = new HashMap<>();
   public HashSet<Integer> integerTable = new HashSet<>();
   public HashSet<Float> floatTable = new HashSet<>();
@@ -97,6 +114,9 @@ non terminal LinkedList<rpn.Node> while_statement;
 non terminal LinkedList<rpn.Node> function_call;
 non terminal LinkedList<rpn.Node> argument_list;
 non terminal LinkedList<rpn.Node> bracketed_argument_list;
+
+non terminal LinkedList<rpn.Node> print_list;
+non terminal LinkedList<rpn.Node> print_item;
 
 start with goal;
 
@@ -168,12 +188,12 @@ type_declaration_inner ::=
 expression ::=
 	expression:e1 PLUS term:e2             {:
 	                                          e1.addAll(e2);
-	                                          e1.add(rpn.BinaryOperator.PLUS);
+	                                          e1.add(rpn.Operation.PLUS);
 	                                          RESULT = e1;
 	                                       :}
 	| expression:e1 MINUS term:e2          {:
 	                                          e1.addAll(e2);
-	                                          e1.add(rpn.BinaryOperator.MINUS);
+	                                          e1.add(rpn.Operation.MINUS);
 	                                          RESULT = e1;
 	                                       :}
 	| term:e1                              {: RESULT = e1; :}
@@ -182,12 +202,12 @@ expression ::=
 term ::=
 	term:e1 MULT factor:e2                 {:
 	                                          e1.addAll(e2);
-	                                          e1.add(rpn.BinaryOperator.MULT);
+	                                          e1.add(rpn.Operation.MULT);
 	                                          RESULT = e1;
 	                                       :}
 	| term:e1 DIV factor:e2                {:
 	                                          e1.addAll(e2);
-	                                          e1.add(rpn.BinaryOperator.DIV);
+	                                          e1.add(rpn.Operation.DIV);
 	                                          RESULT = e1;
 	                                       :}
 	| factor:e1                            {: RESULT = e1; :}
@@ -214,63 +234,82 @@ factor ::=
 condition ::=
 	expression:e1 LTEQ expression:e2       {:
 	                                          e1.addAll(e2);
-	                                          e1.addLast(rpn.BinaryOperator.CMP);
-	                                          e1.addLast(rpn.Comparator.GT);
+	                                          e1.addLast(rpn.Operation.CMP);
+	                                          e1.addLast(rpn.Control.GT);
 	                                          RESULT = e1;
 	                                       :}
 	| expression:e1 LT expression:e2       {:
 	                                          e1.addAll(e2);
-	                                          e1.addLast(rpn.BinaryOperator.CMP);
-	                                          e1.addLast(rpn.Comparator.GTEQ);
+	                                          e1.addLast(rpn.Operation.CMP);
+	                                          e1.addLast(rpn.Control.GTEQ);
 	                                          RESULT = e1;
 	                                       :}
 	| expression:e1 GTEQ expression:e2     {:
 	                                          e1.addAll(e2);
-	                                          e1.add(rpn.BinaryOperator.CMP);
-	                                          e1.add(rpn.Comparator.LT);
+	                                          e1.add(rpn.Operation.CMP);
+	                                          e1.add(rpn.Control.LT);
 	                                          RESULT = e1;
 	                                       :}
 	| expression:e1 GT expression:e2       {:
 	                                          e1.addAll(e2);
-	                                          e1.add(rpn.BinaryOperator.CMP);
-	                                          e1.add(rpn.Comparator.LTEQ);
+	                                          e1.add(rpn.Operation.CMP);
+	                                          e1.add(rpn.Control.LTEQ);
 	                                          RESULT = e1;
 	                                       :}
 	| expression:e1 EQEQ expression:e2     {:
 	                                          e1.addAll(e2);
-	                                          e1.add(rpn.BinaryOperator.CMP);
-	                                          e1.add(rpn.Comparator.NEQ);
+	                                          e1.add(rpn.Operation.CMP);
+	                                          e1.add(rpn.Control.NEQ);
 	                                          RESULT = e1;
 	                                       :}
 	| expression:e1 NOTEQ expression:e2    {:
 	                                          e1.addAll(e2);
-	                                          e1.add(rpn.BinaryOperator.CMP);
-	                                          e1.add(rpn.Comparator.EQEQ);
+	                                          e1.add(rpn.Operation.CMP);
+	                                          e1.add(rpn.Control.EQEQ);
 	                                          RESULT = e1;
 	                                       :}
 	;
 
 statement ::=
 	IDENTIFIER:ident ASSIGN expression:exp {:
+	                                          exp.add(rpn.Operation.ASSIGN);
 	                                          exp.add(new rpn.VariableExpression(ident));
-	                                          exp.add(rpn.BinaryOperator.ASSIGN);
 	                                          RESULT = exp;
 	                                       :}
-	| PRINT STRING_LITERAL:text            {:
-	                                          parser.stringTable.add(text);
-	                                          LinkedList<rpn.Node> e1 = new LinkedList<>();
-	                                          e1.add(new rpn.LiteralExpression(text));
-	                                          e1.add(rpn.UnaryOperator.PRINT);
-	                                          RESULT = e1;
-	                                       :}
+	| PRINT print_list:l                   {: l.addLast(rpn.Operation.PRINTLF); RESULT = l; :}
 	| if_statement:st1                     {: RESULT = st1; :}
 	| while_statement:st1                  {: RESULT = st1; :}
+	;
+
+print_list ::=
+	print_list:l COMMA print_item:i        {: l.addAll(i); RESULT = l; :}
+	| print_item:i                         {: RESULT = i; :}
+	;
+
+print_item ::=
+	STRING_LITERAL:slit                    {:
+	                                          parser.stringTable.add(slit);
+	                                          LinkedList<rpn.Node> e1 = new LinkedList<>();
+	                                          e1.addLast(new rpn.LiteralExpression(slit));
+	                                          e1.addLast(rpn.Operation.PRINTSTR);
+	                                          RESULT = e1;
+	                                       :}
+	| expression:exp                       {:
+	                                          SymbolTableEntry.TypeName tn = parser.getExpressionType(exp);
+	                                          if (tn == SymbolTableEntry.TypeName.INTEGER) {
+	                                          	exp.addLast(rpn.Operation.PRINTINT);
+	                                          }
+	                                          else if (tn == SymbolTableEntry.TypeName.FLOAT) {
+	                                            exp.addLast(rpn.Operation.PRINTFLOAT);
+	                                          }
+	                                          RESULT = exp;
+	                                       :}
 	;
 
 if_statement ::=
 	IF condition:cond THEN statement_list:branch END IF                           {:
 	                                                                                 int x = parser.counter++;
-	                                                                                 rpn.Node jumpLocation = new rpn.JumpLabel(x);
+	                                                                                 rpn.Node jumpLocation = new rpn.LabelReference(x);
 	                                                                                 rpn.Node jumpDest = new rpn.LabelDeclaration(x);
 	                                                                                 cond.addLast(jumpLocation);
 	                                                                                 cond.addAll(branch);
@@ -280,14 +319,14 @@ if_statement ::=
 	| IF condition:cond THEN statement_list:branch ELSE statement_list:els END IF {:
 	                                                                                 int x = parser.counter++;
 	                                                                                 int y = parser.counter++;
-	                                                                                 rpn.Node jumpToElse = new rpn.JumpLabel(x);
-	                                                                                 rpn.Node jumpToEnd = new rpn.JumpLabel(y);
+	                                                                                 rpn.Node jumpToElse = new rpn.LabelReference(x);
+	                                                                                 rpn.Node jumpToEnd = new rpn.LabelReference(y);
 	                                                                                 rpn.Node elseDest = new rpn.LabelDeclaration(x);
 	                                                                                 rpn.Node endDest = new rpn.LabelDeclaration(y);
 	                                                                                 
 	                                                                                 cond.addLast(jumpToElse);
 	                                                                                 cond.addAll(branch);
-	                                                                                 cond.addLast(rpn.ControlOperator.JMP);
+	                                                                                 cond.addLast(rpn.Control.JMP);
 	                                                                                 cond.addLast(jumpToEnd);
 	                                                                                 cond.addLast(elseDest);
 	                                                                                 cond.addAll(els);
@@ -301,15 +340,15 @@ while_statement ::=
 	WHILE condition:cond DO statement_list:branch END WHILE {:
 	                                                           int x = parser.counter++;
 	                                                           int y = parser.counter++;
-	                                                           rpn.Node jumpToBegin = new rpn.JumpLabel(x);
-                                                               rpn.Node jumpToEnd = new rpn.JumpLabel(y);
+	                                                           rpn.Node jumpToBegin = new rpn.LabelReference(x);
+                                                               rpn.Node jumpToEnd = new rpn.LabelReference(y);
                                                                rpn.Node beginDest = new rpn.LabelDeclaration(x);
                                                                rpn.Node endDest = new rpn.LabelDeclaration(y);
                                                                
                                                                cond.addFirst(beginDest);
                                                                cond.addLast(jumpToEnd);
                                                                cond.addAll(branch);
-                                                               cond.addLast(rpn.ControlOperator.JMP);
+                                                               cond.addLast(rpn.Control.JMP);
                                                                cond.addLast(jumpToBegin);
                                                                cond.addLast(endDest);
 
@@ -319,11 +358,8 @@ while_statement ::=
 
 
 statement_list ::=
-	statement_list:st1 statement:st2                              {:
-	                                                                 st1.addAll(st2);
-	                                                                 RESULT = st1;
-	                                                              :}
-	| statement:st1                                               {: RESULT = st1; :}
+	statement_list:st1 statement:st2      {: st1.addAll(st2); RESULT = st1; :}
+	| statement:st1                       {: RESULT = st1; :}
 	;
 
 
@@ -334,12 +370,12 @@ function_call ::=
 argument_list ::=
 	argument_list:trunc COMMA TRUNC LPAREN expression:expr RPAREN {:
 	                                                                 trunc.addAll(expr);
-	                                                                 trunc.add(rpn.UnaryOperator.TRUNC);
-	                                                                 trunc.add(rpn.BinaryOperator.PLUS);
+	                                                                 trunc.add(rpn.Operation.TRUNC);
+	                                                                 trunc.add(rpn.Operation.PLUS);
 	                                                                 RESULT = trunc;
 	                                                              :}
 	| TRUNC LPAREN expression:expr RPAREN                         {:
-	                                                                 expr.add(rpn.UnaryOperator.TRUNC);
+	                                                                 expr.add(rpn.Operation.TRUNC);
 	                                                                 RESULT = expr;
 	                                                              :}
 	;
