@@ -1,5 +1,5 @@
 
-;arg1 = precision/length
+;arg1 = buffer size
 ;arg2 = output buffer variable
 ;input=st0
 %macro itoa 2

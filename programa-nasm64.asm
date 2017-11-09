@@ -49,6 +49,8 @@ _start:
 	mov ebx, 1 ; fd=stdout
 	int 0x80
 	fild word [VAR_CONTADOR]
+	fild word [CTE_INT_1] ; value=1
+	faddp
 	itoa 14, BUFFER_CONVERSION
 	mov ecx, BUFFER_CONVERSION
 	mov edx, edi
@@ -60,7 +62,7 @@ _start:
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
-	fild word [VAR_FIB_B]
+	fild word [VAR_FIB_A]
 	itoa 14, BUFFER_CONVERSION
 	mov ecx, BUFFER_CONVERSION
 	mov edx, edi

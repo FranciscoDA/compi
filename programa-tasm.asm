@@ -56,10 +56,12 @@
 	mov ah, 09h
 	int 21h
 	fild word [VAR_CONTADOR]
+	fild word [CTE_INT_1] ; value=1
+	faddp
 	mov dx, CTE_STR_1 ; value=) = 
 	mov ah, 09h
 	int 21h
-	fild word [VAR_FIB_B]
+	fild word [VAR_FIB_A]
 	mov dx, CTE_ESPECIAL_LF ; line break
 	mov ah, 09h
 	int 21h
