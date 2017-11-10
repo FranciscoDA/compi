@@ -74,8 +74,15 @@ _start:
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
-	mov ecx, CTE_STR_2 ; value=Fin
-	mov edx, 3 ; msg length
+	mov ecx, CTE_STR_2 ; value=Fin: 
+	mov edx, 5 ; msg length
+	mov eax, 0x4 ; sys_write
+	mov ebx, 1 ; fd=stdout
+	int 0x80
+	fld dword [CTE_FLT_0] ; value=3.5
+	ftoa 14, BUFFER_CONVERSION, 2
+	mov ecx, BUFFER_CONVERSION
+	mov edx, edi
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
@@ -93,12 +100,14 @@ CTE_INT_1:
 	dw 1
 CTE_INT_2:
 	dw 5
+CTE_FLT_0:
+	dd 3.5
 CTE_STR_0:
 	db "FIB("
 CTE_STR_1:
 	db ") = "
 CTE_STR_2:
-	db "Fin"
+	db "Fin: "
 CTE_STR_3:
 	db "Hola mundo"
 CTE_ESPECIAL_LF:

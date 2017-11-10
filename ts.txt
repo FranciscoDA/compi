@@ -4,7 +4,8 @@
                  ---              CteInt                   0                 ---
                  ---              CteInt                   1                 ---
                  ---              CteInt                   5                 ---
+                 ---             CteReal                 3.5                 ---
                  ---           CteString                FIB(                   4
                  ---           CteString                ) =                    4
-                 ---           CteString                 Fin                   3
+                 ---           CteString               Fin:                    5
                  ---           CteString          Hola mundo                  10

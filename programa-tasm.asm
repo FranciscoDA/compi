@@ -8,9 +8,10 @@
 	CTE_INT_0 dw 0
 	CTE_INT_1 dw 1
 	CTE_INT_2 dw 5
+	CTE_FLT_0 dd 3.5
 	CTE_STR_0 db "FIB(", '$'
 	CTE_STR_1 db ") = ", '$'
-	CTE_STR_2 db "Fin", '$'
+	CTE_STR_2 db "Fin: ", '$'
 	CTE_STR_3 db "Hola mundo", '$'
 	CTE_ESPECIAL_LF db 13, 10, '$'
 	BUFFER_CONVERSION db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
@@ -65,9 +66,10 @@
 	mov dx, CTE_ESPECIAL_LF ; line break
 	mov ah, 09h
 	int 21h
-	mov dx, CTE_STR_2 ; value=Fin
+	mov dx, CTE_STR_2 ; value=Fin: 
 	mov ah, 09h
 	int 21h
+	fld dword [CTE_FLT_0] ; value=3.5
 	mov dx, CTE_ESPECIAL_LF ; line break
 	mov ah, 09h
 	int 21h
