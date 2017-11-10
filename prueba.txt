@@ -1,18 +1,35 @@
 VAR
 	[FIB_A, FIB_B] = [INTEGER, INTEGER]
+	[PI, DIAMETRO] = [FLOAT, FLOAT]
 	[CONTADOR] = [INTEGER]
 ENDVAR
 
-PRINT "Hola mundo"
+PRINT "Prueba 1 (Enteros):"
+PRINT "-------------------"
 CONTADOR := 0
 FIB_A := 1
 FIB_B := 0
-WHILE CONTADOR < 5 DO
+WHILE CONTADOR < 10 DO
 	FIB_A := FIB_A + FIB_B
 	FIB_B := FIB_A - FIB_B
+	PRINT "FIB(", CONTADOR+1, ") = ", FIB_B
 	CONTADOR := CONTADOR + 1
 END WHILE
-PRINT "FIB(", CONTADOR+1, ") = ", FIB_A
-PRINT "Fin: ", 3.5
 
+PRINT ""
+PRINT "Prueba 2 (Reales):"
+PRINT "------------------"
+PI := 3.14159265
+DIAMETRO := 5
+PRINT "Diametro: ", DIAMETRO
+PRINT "Radio: ", DIAMETRO/2
+PRINT "Circunferencia: ", PI*DIAMETRO
+PRINT "Area: ", PI*DIAMETRO*DIAMETRO/4
+
+PRINT ""
+PRINT "Prueba 3 (Negativos):"
+PRINT "---------------------"
+PRINT 0-5
+PRINT (0-5)*(0-2)*(0-1)
+PRINT (0-5)*10
 </ RESULT := PLUSTRUNC([TRUNC(FIB_I + FIB_I), TRUNC(FIB_I * FIB_I), TRUNC(CX)]) />

@@ -56,7 +56,7 @@ public class NasmLinux32Writer extends TasmDos16Writer {
 	}
 	@Override
 	public void doPrintFloat() {
-		writer.println("\tftoa " + (CONVERSION_BUFFER_SIZE-1) + ", " + CONVERSION_BUFFER_NAME + ", 2");
+		writer.println("\tftoa " + (CONVERSION_BUFFER_SIZE-1) + ", " + CONVERSION_BUFFER_NAME + ", 4");
 		writer.println("\tmov ecx, " + CONVERSION_BUFFER_NAME);
 		writer.println("\tmov edx, edi");
 		doPrintString();

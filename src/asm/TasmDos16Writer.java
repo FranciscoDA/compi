@@ -98,11 +98,11 @@ public class TasmDos16Writer implements Writer {
 	}
 	@Override
 	public void doMul() {
-		writer.println("\tfmul");
+		writer.println("\tfmulp");
 	}
 	@Override
 	public void doDiv() {
-		writer.println("\tfdiv");
+		writer.println("\tfdivp");
 	}
 	@Override
 	public void doPrintString() {
@@ -219,7 +219,7 @@ public class TasmDos16Writer implements Writer {
 		SymbolTableEntry entry = symbolTable.get(varName);
 		switch (entry.getType()) {
 		case FLOAT:
-			writer.println("\tfst dword [" + VARIABLE_PREFIX + varName + "]");
+			writer.println("\tfstp dword [" + VARIABLE_PREFIX + varName + "]");
 			break;
 		case INTEGER:
 			writer.println("\tfistp word [" + VARIABLE_PREFIX + varName + "]");

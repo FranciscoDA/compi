@@ -1,11 +1,25 @@
+            DIAMETRO               FLOAT                 ---                 ---
+                  PI               FLOAT                 ---                 ---
             CONTADOR             INTEGER                 ---                 ---
                FIB_A             INTEGER                 ---                 ---
                FIB_B             INTEGER                 ---                 ---
                  ---              CteInt                   0                 ---
                  ---              CteInt                   1                 ---
+                 ---              CteInt                   2                 ---
+                 ---              CteInt                   4                 ---
                  ---              CteInt                   5                 ---
-                 ---             CteReal                 3.5                 ---
+                 ---              CteInt                  10                 ---
+                 ---             CteReal           3.1415927                 ---
+                 ---           CteString                                       0
+                 ---           CteString---------------------                  21
                  ---           CteString                FIB(                   4
                  ---           CteString                ) =                    4
-                 ---           CteString               Fin:                    5
-                 ---           CteString          Hola mundo                  10
+                 ---           CteString    Circunferencia:                   16
+                 ---           CteStringPrueba 3 (Negativos):                  21
+                 ---           CteString              Area:                    6
+                 ---           CteString Prueba 1 (Enteros):                  19
+                 ---           CteString             Radio:                    7
+                 ---           CteString  Prueba 2 (Reales):                  18
+                 ---           CteString          Diametro:                   10
+                 ---           CteString -------------------                  19
+                 ---           CteString  ------------------                  18
