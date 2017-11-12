@@ -151,7 +151,7 @@ public class Main {
 			Scanner sc = new Scanner(br);
 			parser par = new parser(sc);
 			try {
-				Symbol s = par.debug_parse();
+				Symbol s = par.parse();
 				
 				@SuppressWarnings("unchecked")
 				LinkedList<rpn.Node> program = (LinkedList<rpn.Node>) s.value;

@@ -1,7 +1,7 @@
-"Prueba 1 (Enteros):"
+"Prueba 1 (Fibonacci):"
 PRINTSTR
 PRINTLF
-"-------------------"
+"---------------------"
 PRINTSTR
 PRINTLF
 0
@@ -51,10 +51,10 @@ LABEL_1:
 ""
 PRINTSTR
 PRINTLF
-"Prueba 2 (Reales):"
+"Prueba 2 (Circunferencia):"
 PRINTSTR
 PRINTLF
-"------------------"
+"--------------------------"
 PRINTSTR
 PRINTLF
 3.1415927
@@ -98,7 +98,75 @@ PRINTLF
 ""
 PRINTSTR
 PRINTLF
-"Prueba 3 (Negativos):"
+"Prueba 3 (Nro. de Euler):"
+PRINTSTR
+PRINTLF
+"-------------------------"
+PRINTSTR
+PRINTLF
+1
+ASSIGN
+CONTADOR
+1
+ASSIGN
+e
+LABEL_4:
+CONTADOR
+10
+CMP
+GT
+(LABEL_5)
+1.0
+ASSIGN
+termino
+1
+ASSIGN
+CONTADOR2
+LABEL_2:
+CONTADOR2
+CONTADOR
+CMP
+GT
+(LABEL_3)
+termino
+CONTADOR2
+DIV
+ASSIGN
+termino
+CONTADOR2
+1
+PLUS
+ASSIGN
+CONTADOR2
+JMP
+(LABEL_2)
+LABEL_3:
+CONTADOR
+1
+PLUS
+ASSIGN
+CONTADOR
+e
+termino
+PLUS
+ASSIGN
+e
+JMP
+(LABEL_4)
+LABEL_5:
+"e ("
+PRINTSTR
+CONTADOR
+PRINTINT
+" terminos): "
+PRINTSTR
+e
+PRINTFLOAT
+PRINTLF
+""
+PRINTSTR
+PRINTLF
+"Prueba 4 (Negativos):"
 PRINTSTR
 PRINTLF
 "---------------------"
@@ -138,7 +206,7 @@ PRINTLF
 ""
 PRINTSTR
 PRINTLF
-"Prueba 4 (Redondeo):"
+"Prueba 5 (Redondeo):"
 PRINTSTR
 PRINTLF
 "--------------------"
@@ -149,6 +217,11 @@ PRINTSTR
 "redondean con precision de "
 PRINTSTR
 "4 digitos"
+PRINTSTR
+PRINTLF
+"Modo de redondeo: "
+PRINTSTR
+"Nearest Integer (even)"
 PRINTSTR
 PRINTLF
 "Redondeo de 0.00001: "
@@ -179,7 +252,7 @@ PRINTLF
 ""
 PRINTSTR
 PRINTLF
-"Prueba 5 (Plustrunc):"
+"Prueba 6 (Plustrunc):"
 PRINTSTR
 PRINTLF
 "---------------------"

@@ -1,11 +1,12 @@
 VAR
 	[FIB_A, FIB_B] = [INTEGER, INTEGER]
 	[PI, DIAMETRO] = [FLOAT, FLOAT]
-	[CONTADOR] = [INTEGER]
+	[e, termino] = [FLOAT, FLOAT]
+	[CONTADOR, CONTADOR2] = [INTEGER, INTEGER]
 ENDVAR
 
-PRINT "Prueba 1 (Enteros):"
-PRINT "-------------------"
+PRINT "Prueba 1 (Fibonacci):"
+PRINT "---------------------"
 CONTADOR := 0
 FIB_A := 1
 FIB_B := 0
@@ -17,8 +18,8 @@ WHILE CONTADOR < 10 DO
 END WHILE
 
 PRINT ""
-PRINT "Prueba 2 (Reales):"
-PRINT "------------------"
+PRINT "Prueba 2 (Circunferencia):"
+PRINT "--------------------------"
 PI := 3.14159265
 DIAMETRO := 5
 PRINT "Diametro: ", DIAMETRO
@@ -27,16 +28,35 @@ PRINT "Circunferencia: ", PI*DIAMETRO
 PRINT "Area: ", PI*DIAMETRO/2*DIAMETRO/2
 
 PRINT ""
-PRINT "Prueba 3 (Negativos):"
+PRINT "Prueba 3 (Nro. de Euler):"
+PRINT "-------------------------"
+
+CONTADOR := 1
+e := 1
+WHILE CONTADOR <= 10 DO
+	termino := 1.0
+	CONTADOR2 := 1
+	WHILE CONTADOR2 <= CONTADOR DO
+		termino := termino / CONTADOR2
+		CONTADOR2 := CONTADOR2 + 1
+	END WHILE
+	CONTADOR := CONTADOR + 1
+	e := e + termino
+END WHILE 
+PRINT "e (", CONTADOR, " terminos): ", e
+
+PRINT ""
+PRINT "Prueba 4 (Negativos):"
 PRINT "---------------------"
 PRINT "Simple: ", 0-5
 PRINT "Neg x Neg x Neg: ", (0-5)*(0-2)*(0-1)
 PRINT "Neg x Pos: ", (0-5)*10
 
 PRINT ""
-PRINT "Prueba 4 (Redondeo):"
+PRINT "Prueba 5 (Redondeo):"
 PRINT "--------------------"
 PRINT "Todos los numeros se ", "redondean con precision de ", "4 digitos"
+PRINT "Modo de redondeo: ", "Nearest Integer (even)"
 PRINT "Redondeo de 0.00001: ", 0.00001
 PRINT "Redondeo de 0.00004: ", 0.00004
 PRINT "Redondeo de 0.00005: ", 0.00005
@@ -44,6 +64,6 @@ PRINT "Redondeo de 0.00006: ", 0.00006
 PRINT "Redondeo de 0.00009: ", 0.00009
 
 PRINT ""
-PRINT "Prueba 5 (Plustrunc):"
+PRINT "Prueba 6 (Plustrunc):"
 PRINT "---------------------"
 PRINT PLUSTRUNC([TRUNC(1.5), TRUNC(10.1), TRUNC(100.9)])
