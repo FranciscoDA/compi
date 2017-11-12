@@ -31,7 +31,7 @@ public class NasmLinux32Writer extends TasmDos16Writer {
 	
 	@Override
 	public void beginCode() {
-		writer.println("%include \"numbers-nasm.asm\"");
+		writer.println("%include \"macros/nasm.asm\"");
 		writer.println("_start:");
 	}
 	

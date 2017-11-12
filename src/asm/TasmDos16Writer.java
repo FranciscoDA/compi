@@ -168,7 +168,9 @@ public class TasmDos16Writer implements Writer {
 
 	@Override
 	public void doTrunc() {
-		// ????
+		writer.println("\tfSetRC RC_ZERO");
+		writer.println("\tfrndint");
+		writer.println("\tfSetRC RC_NEAREST");
 	}
 	@Override
 	public void beginCode() {

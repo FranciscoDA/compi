@@ -40,21 +40,43 @@ parser code  {:
   	return symbolTable.get(varName).getType();
   }
   public SymbolTableEntry.TypeName getExpressionType(LinkedList<rpn.Node> l) {
+  	LinkedList<SymbolTableEntry.TypeName> typeStack = new LinkedList<>();
   	for (rpn.Node i : l) {
   		if (i instanceof rpn.VariableExpression) {
   			rpn.VariableExpression vex = (rpn.VariableExpression) i;
-  			if (getVariableType(vex.getName()) == SymbolTableEntry.TypeName.FLOAT) {
-  				return SymbolTableEntry.TypeName.FLOAT;
-  			}
+  			typeStack.push(getVariableType(vex.getName()));
   		}
   		else if (i instanceof rpn.LiteralExpression) {
   			rpn.LiteralExpression lex = (rpn.LiteralExpression) i;
-  			if (lex.getLiteral() instanceof Float) {
-  				return SymbolTableEntry.TypeName.FLOAT;
+  			if (lex.getLiteral() instanceof Float)
+  				typeStack.push(SymbolTableEntry.TypeName.FLOAT);
+  			else if (lex.getLiteral() instanceof Integer)
+  				typeStack.push(SymbolTableEntry.TypeName.INTEGER);
+  		}
+  		else if (i instanceof rpn.Operation) {
+  			rpn.Operation op = (rpn.Operation) i;
+  			switch (op) {
+  			case PLUS:
+  			case MINUS:
+  			case DIV:
+  			case MULT: {
+  				SymbolTableEntry.TypeName a = typeStack.pop();
+  				SymbolTableEntry.TypeName b = typeStack.pop();
+  				if (a == SymbolTableEntry.TypeName.FLOAT || b == SymbolTableEntry.TypeName.FLOAT)
+  					typeStack.push(SymbolTableEntry.TypeName.FLOAT);
+  				else
+  					typeStack.push(SymbolTableEntry.TypeName.INTEGER);
+  				break;
+  			}
+  			case TRUNC: {
+  				typeStack.pop();
+  				typeStack.push(SymbolTableEntry.TypeName.INTEGER);
+  				break;
+  			}
   			}
   		}
   	}
-  	return SymbolTableEntry.TypeName.INTEGER;
+  	return typeStack.pop();
   }
   
   public HashMap<String, SymbolTableEntry> symbolTable = new HashMap<>();

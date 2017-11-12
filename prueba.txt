@@ -24,12 +24,26 @@ DIAMETRO := 5
 PRINT "Diametro: ", DIAMETRO
 PRINT "Radio: ", DIAMETRO/2
 PRINT "Circunferencia: ", PI*DIAMETRO
-PRINT "Area: ", PI*DIAMETRO*DIAMETRO/4
+PRINT "Area: ", PI*DIAMETRO/2*DIAMETRO/2
 
 PRINT ""
 PRINT "Prueba 3 (Negativos):"
 PRINT "---------------------"
-PRINT 0-5
-PRINT (0-5)*(0-2)*(0-1)
-PRINT (0-5)*10
-</ RESULT := PLUSTRUNC([TRUNC(FIB_I + FIB_I), TRUNC(FIB_I * FIB_I), TRUNC(CX)]) />
+PRINT "Simple: ", 0-5
+PRINT "Neg x Neg x Neg: ", (0-5)*(0-2)*(0-1)
+PRINT "Neg x Pos: ", (0-5)*10
+
+PRINT ""
+PRINT "Prueba 4 (Redondeo):"
+PRINT "--------------------"
+PRINT "Todos los numeros se ", "redondean con precision de ", "4 digitos"
+PRINT "Redondeo de 0.00001: ", 0.00001
+PRINT "Redondeo de 0.00004: ", 0.00004
+PRINT "Redondeo de 0.00005: ", 0.00005
+PRINT "Redondeo de 0.00006: ", 0.00006
+PRINT "Redondeo de 0.00009: ", 0.00009
+
+PRINT ""
+PRINT "Prueba 5 (Plustrunc):"
+PRINT "---------------------"
+PRINT PLUSTRUNC([TRUNC(1.5), TRUNC(10.1), TRUNC(100.9)])
