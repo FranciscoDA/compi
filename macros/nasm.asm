@@ -1,4 +1,7 @@
 
+section .data
+VAR_TEN dd 10.0
+
 section .bss
 CW_IN resw 1
 
@@ -47,27 +50,6 @@ section .text
 %define RC_ZERO 0x0C00 ; round towards zero
 
 ;===================================================
-;Jumps to the label if the number at st0 is negative
-; %1=label
-; st0=number
-%macro fjnegative 1
-	fldz ; st1=number st0=0
-	fcomp ; st0=number
-	fstsw ax
-	fjg %1
-%endmacro
-;=======================================================
-;Jumps to the label if the number at st0 is non-negative
-; %1=label
-; st0=number
-%macro fjnnegative 1
-	fldz ; st1=number st0=0
-	fcomp ; st0=number
-	fstsw ax
-	fjge %1
-%endmacro
-
-;===================================================
 ;Reverse string at memory address in range [esi;edi)
 ; %1 = variable with string to reverse
 ; esi = first index of string
@@ -111,7 +93,9 @@ section .text
 	mov esi, 0
 	mov edi, 0
 
-	fjnnegative %%nonegative
+	ftst
+	fstsw ax
+	fjle %%nonegative
 
 	mov dl, '-'
 	inc esi ; dont reverse minus sign
@@ -133,14 +117,16 @@ section .text
 ; %3 = precision
 ; st0 = number
 %macro ftoa 3
-	section .data
-	%%VAR_TEN dd 10.0
+	section .bss
+	%%BUF resw 1
 	section .text
 	; start at index 0, length 0
 	mov esi, 0
 	mov edi, 0
 
-	fjnnegative %%nonegative
+	ftst
+	fstsw ax
+	fjle %%nonegative
 
 	mov dl, '-'
 	inc esi ; dont reverse minus sign
@@ -149,22 +135,25 @@ section .text
 
 	%%nonegative:
 	; float specific part: take the decimal part and place separator
-	fGetDecimals 10, %3 ; st1=dividend st0=decimals
-	__itoa %1, %2
-	fstp st0 ; st0=dividend
-
-	;add zeroes
-	mov dl, '0'
-	mov ecx, edi
-	sub ecx, esi
-	%%addzero:
-	cmp ecx, %3
-	jge %%dontaddzero
-	writeToBuffer %1, %2, %%exit
-	inc ecx
-	jmp %%addzero
-	%%dontaddzero:
-
+	fld1
+	%rep %3
+		fmul dword [VAR_TEN]
+	%endrep
+	fmulp ; st0=dividend*(10^%3)
+	fSetRC RC_NEAREST
+	frndint
+	fSetRC RC_ZERO
+	%rep %3
+		fld dword [VAR_TEN]
+		fld st1 ; st2=dividend*(10^%3) st1=10 st0=dividend*(10^%3)
+		fprem
+		fistp word [%%BUF]
+		fdiv st1, st0
+		fstp st0 ; st0=dividend
+		mov dl, [%%BUF]
+		add dl, '0'
+		writeToBuffer %1, %2, %%exit
+	%endrep
 	mov dl, '.'
 	writeToBuffer %1, %2, %%exit
 	; end float specific part
@@ -173,7 +162,7 @@ section .text
 
 	%%exit:
 	fstp st0 ;
-	fSetRC RC_NEAREST
+	fSetRC RC_NEAREST ; restore rounding mode
 	strnreverse %2 ; reverse the resulting string
 
 	%%trimzeros:
@@ -196,14 +185,12 @@ section .text
 ; st0 = number
 ; edi = dest index
 %macro __itoa 2
-	section .data
-	%%VAR_TEN dd 10.0
 	section .bss
 	%%BUF resw 1
 
 	section .text
 	fSetRC RC_ZERO
-	fld dword [%%VAR_TEN]
+	fld dword [VAR_TEN]
 	%%begin:
 	fld st1 ; st2=dividend st1=10 st0=dividend
 	fprem ; st2=dividend st1=10 st0=dividend%10
@@ -216,11 +203,10 @@ section .text
 	fdiv st1, st0 ; st1=dividend/10 st0=10
 	fxch ; st1=10 st0=dividend/10
 	frndint
-	fldz ; st2=10 st1=dividend/10 st0=0
-	fcomp ; st1=10 st0=dividend/10
+	ftst
 	fstsw ax
 	fxch ; st1=dividend/10 st0=10
-	fjle %%exit ; exit if dividend/10 was <=0
+	fjge %%exit ; exit if dividend/10 was <=0
 	jmp %%begin
 	%%exit:
 	fstp st0 ; st0=dividend
@@ -240,25 +226,22 @@ section .text
 	inc edi
 %endmacro
 
-;=====================================
-;Get decimal part of the number at st0
-; %1 = Number base (use 10)
-; %2 = Precision
-; st0 = Real number with decimal part
-%macro fGetDecimals 2
-	section .data
-	%%VAR_TEN dd 10.0
-
+%macro fpow 0
+	section .bss
+	%%TMP resw 1
 	section .text
-	fld1 ; st1=dividend st0=1
-	%rep %2
-		fmul dword [%%VAR_TEN] ; st1=dividend st0=1*10
-	%endrep
-	fld st0 ; st2=dividend st1=10^%3 st0=10^%3
-	fmul st0, st2 ; st2=dividend st1=10^%3 st0=dividend*10^%3
-	fSetRC RC_NEAREST
-	frndint
+	fxch ;st1=exponent st0=base
+	fyl2x ; st0=fyl2x
 
-	fprem ; st2=dividend st1=10^%3 st0=decimals
-	fstp st1 ; st1=dividend st0=decimals
+	fist word [%%TMP]
+	fisub word [%%TMP] ; st0=decimals
+	f2xm1 ; st0=f2xm1
+	fld1
+	faddp ; st0=f2x
+	fild word [%%TMP] ; st1=f2x st0=integers
+	fxch ; st1=integers st1=f2x
+	fscale ; st1=integers st1=f2x*2^integers
+	fxch
+	fstp st0 ; st0=result
 %endmacro
+

@@ -54,13 +54,13 @@ public class Scanner implements sym, java_cup.runtime.Scanner {
    * Translates characters to character classes
    */
   private static final String ZZ_CMAP_PACKED = 
-    "\11\0\1\2\1\1\1\0\1\2\1\1\22\0\1\2\1\46\1\55"+
-    "\2\0\1\54\1\47\1\0\1\34\1\35\1\53\1\51\1\45\1\52"+
-    "\1\11\1\4\1\10\11\7\1\43\1\42\1\3\1\44\1\5\2\0"+
-    "\1\13\1\6\1\33\1\17\1\15\1\23\1\22\1\27\1\20\2\6"+
-    "\1\24\1\6\1\16\1\25\1\31\1\6\1\14\1\30\1\21\1\32"+
-    "\1\12\1\26\3\6\1\40\1\0\1\41\1\0\1\6\1\0\32\6"+
-    "\1\36\1\50\1\37\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uff92\0";
+    "\11\0\1\2\1\1\1\0\1\2\1\1\22\0\1\2\1\47\1\55"+
+    "\2\0\1\53\2\0\1\35\1\36\1\52\1\50\1\46\1\51\1\11"+
+    "\1\4\1\10\11\7\1\44\1\43\1\3\1\45\1\5\2\0\1\13"+
+    "\1\6\1\33\1\17\1\15\1\23\1\22\1\27\1\20\2\6\1\24"+
+    "\1\6\1\16\1\25\1\31\1\34\1\14\1\30\1\21\1\32\1\12"+
+    "\1\26\3\6\1\41\1\0\1\42\1\54\1\6\1\0\32\6\1\37"+
+    "\1\0\1\40\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uffff\0\uff92\0";
 
   /** 
    * Translates characters to character classes
@@ -74,16 +74,17 @@ public class Scanner implements sym, java_cup.runtime.Scanner {
 
   private static final String ZZ_ACTION_PACKED_0 =
     "\1\0\1\1\1\2\1\3\1\4\1\5\1\6\2\7"+
-    "\1\1\10\6\1\10\1\11\1\12\1\13\1\14\1\15"+
-    "\1\16\1\1\1\17\1\20\1\21\2\1\1\22\1\23"+
+    "\1\1\12\6\1\10\1\11\1\12\1\13\1\14\1\15"+
+    "\1\16\1\1\1\17\1\20\1\1\1\21\1\22\1\23"+
     "\1\24\1\25\1\1\1\0\1\26\1\27\1\30\1\0"+
-    "\3\6\1\31\1\6\1\32\6\6\1\33\1\34\1\35"+
-    "\1\36\1\37\1\0\1\40\1\0\1\41\1\42\10\6"+
-    "\1\43\1\6\1\44\2\6\1\45\6\6\1\46\1\47"+
-    "\1\50\1\51\1\6\1\52\2\6\1\53\2\6\1\54";
+    "\3\6\1\31\1\6\1\32\11\6\1\33\1\34\1\35"+
+    "\1\0\1\36\1\0\1\37\1\40\6\6\1\41\3\6"+
+    "\1\42\1\43\1\6\1\44\2\6\1\45\2\6\1\46"+
+    "\4\6\1\47\1\50\1\51\1\52\1\6\1\53\2\6"+
+    "\1\54\2\6\1\55";
 
   private static int [] zzUnpackAction() {
-    int [] result = new int[95];
+    int [] result = new int[101];
     int offset = 0;
     offset = zzUnpackAction(ZZ_ACTION_PACKED_0, offset, result);
     return result;
@@ -110,19 +111,20 @@ public class Scanner implements sym, java_cup.runtime.Scanner {
   private static final String ZZ_ROWMAP_PACKED_0 =
     "\0\0\0\56\0\56\0\134\0\56\0\212\0\270\0\346"+
     "\0\u0114\0\u0142\0\u0170\0\u019e\0\u01cc\0\u01fa\0\u0228\0\u0256"+
-    "\0\u0284\0\u02b2\0\56\0\56\0\56\0\56\0\56\0\56"+
-    "\0\56\0\u02e0\0\u030e\0\56\0\u033c\0\u036a\0\u0398\0\56"+
-    "\0\56\0\56\0\56\0\u03c6\0\u03f4\0\56\0\56\0\u0142"+
-    "\0\u0114\0\u0422\0\u0450\0\u047e\0\270\0\u04ac\0\270\0\u04da"+
-    "\0\u0508\0\u0536\0\u0564\0\u0592\0\u05c0\0\56\0\56\0\56"+
-    "\0\56\0\56\0\u03c6\0\56\0\u05ee\0\270\0\u061c\0\u064a"+
-    "\0\u0678\0\u06a6\0\u06d4\0\u0702\0\u0730\0\u075e\0\u078c\0\56"+
-    "\0\u07ba\0\270\0\u07e8\0\u0816\0\270\0\u0844\0\u0872\0\u08a0"+
-    "\0\u08ce\0\u08fc\0\u092a\0\270\0\270\0\270\0\270\0\u0958"+
-    "\0\270\0\u0986\0\u09b4\0\270\0\u09e2\0\u0a10\0\270";
+    "\0\u0284\0\u02b2\0\u02e0\0\u030e\0\56\0\56\0\56\0\56"+
+    "\0\56\0\56\0\56\0\u033c\0\u036a\0\56\0\u0398\0\56"+
+    "\0\56\0\56\0\56\0\56\0\u03c6\0\u03f4\0\56\0\56"+
+    "\0\u0142\0\u0114\0\u0422\0\u0450\0\u047e\0\270\0\u04ac\0\270"+
+    "\0\u04da\0\u0508\0\u0536\0\u0564\0\u0592\0\u05c0\0\u05ee\0\u061c"+
+    "\0\u064a\0\56\0\56\0\56\0\u03c6\0\56\0\u0678\0\270"+
+    "\0\u06a6\0\u06d4\0\u0702\0\u0730\0\u075e\0\u078c\0\u07ba\0\270"+
+    "\0\u07e8\0\u0816\0\u0844\0\270\0\56\0\u0872\0\270\0\u08a0"+
+    "\0\u08ce\0\270\0\u08fc\0\u092a\0\270\0\u0958\0\u0986\0\u09b4"+
+    "\0\u09e2\0\270\0\270\0\270\0\270\0\u0a10\0\270\0\u0a3e"+
+    "\0\u0a6c\0\270\0\u0a9a\0\u0ac8\0\270";
 
   private static int [] zzUnpackRowMap() {
-    int [] result = new int[95];
+    int [] result = new int[101];
     int offset = 0;
     offset = zzUnpackRowMap(ZZ_ROWMAP_PACKED_0, offset, result);
     return result;
@@ -147,49 +149,54 @@ public class Scanner implements sym, java_cup.runtime.Scanner {
   private static final String ZZ_TRANS_PACKED_0 =
     "\1\2\2\3\1\4\1\5\1\6\1\7\1\10\1\11"+
     "\1\12\1\13\2\7\1\14\1\7\1\15\1\16\1\17"+
-    "\1\7\1\20\2\7\1\21\2\7\1\22\2\7\1\23"+
-    "\1\24\1\25\1\26\1\27\1\30\1\31\1\32\1\33"+
-    "\1\34\1\35\1\36\1\37\1\40\1\41\1\42\1\43"+
-    "\1\44\62\0\1\45\37\0\1\46\55\0\1\47\17\0"+
-    "\3\7\1\0\22\7\31\0\2\10\1\50\53\0\2\51"+
-    "\1\50\53\0\2\50\53\0\3\7\1\0\1\7\1\52"+
-    "\20\7\30\0\3\7\1\0\4\7\1\53\5\7\1\54"+
-    "\7\7\30\0\3\7\1\0\13\7\1\55\6\7\30\0"+
-    "\3\7\1\0\4\7\1\56\4\7\1\57\10\7\30\0"+
-    "\3\7\1\0\2\7\1\60\12\7\1\61\4\7\30\0"+
-    "\3\7\1\0\12\7\1\62\7\7\30\0\3\7\1\0"+
-    "\15\7\1\63\4\7\30\0\3\7\1\0\2\7\1\64"+
-    "\7\7\1\65\7\7\66\0\1\66\55\0\1\67\55\0"+
-    "\1\70\60\0\1\71\56\0\1\72\5\0\1\73\1\0"+
-    "\53\73\1\74\4\45\1\75\51\45\6\0\3\7\1\0"+
-    "\2\7\1\76\17\7\30\0\3\7\1\0\5\7\1\77"+
-    "\14\7\30\0\3\7\1\0\16\7\1\100\3\7\30\0"+
-    "\3\7\1\0\7\7\1\101\12\7\30\0\3\7\1\0"+
-    "\20\7\1\102\1\7\30\0\3\7\1\0\3\7\1\103"+
-    "\16\7\30\0\3\7\1\0\13\7\1\104\6\7\30\0"+
-    "\3\7\1\0\6\7\1\105\13\7\30\0\3\7\1\0"+
-    "\6\7\1\106\13\7\30\0\3\7\1\0\20\7\1\107"+
-    "\1\7\22\0\4\45\1\75\1\110\50\45\6\0\3\7"+
-    "\1\0\1\111\21\7\30\0\3\7\1\0\3\7\1\112"+
-    "\16\7\30\0\3\7\1\0\3\7\1\113\16\7\30\0"+
-    "\3\7\1\0\4\7\1\114\15\7\30\0\3\7\1\0"+
-    "\4\7\1\115\15\7\30\0\3\7\1\0\1\7\1\116"+
-    "\20\7\30\0\3\7\1\0\12\7\1\117\7\7\30\0"+
-    "\3\7\1\0\4\7\1\120\15\7\30\0\3\7\1\0"+
-    "\16\7\1\121\3\7\30\0\3\7\1\0\1\7\1\122"+
-    "\20\7\30\0\3\7\1\0\10\7\1\123\11\7\30\0"+
-    "\3\7\1\0\21\7\1\124\30\0\3\7\1\0\7\7"+
-    "\1\125\12\7\30\0\3\7\1\0\3\7\1\126\16\7"+
-    "\30\0\3\7\1\0\7\7\1\127\12\7\30\0\3\7"+
-    "\1\0\7\7\1\130\12\7\30\0\3\7\1\0\2\7"+
-    "\1\131\17\7\30\0\3\7\1\0\3\7\1\132\16\7"+
-    "\30\0\3\7\1\0\2\7\1\133\17\7\30\0\3\7"+
-    "\1\0\2\7\1\134\17\7\30\0\3\7\1\0\20\7"+
-    "\1\135\1\7\30\0\3\7\1\0\4\7\1\136\15\7"+
-    "\30\0\3\7\1\0\21\7\1\137\22\0";
+    "\1\7\1\20\2\7\1\21\1\7\1\22\1\23\1\7"+
+    "\1\24\1\7\1\25\1\26\1\27\1\30\1\31\1\32"+
+    "\1\33\1\34\1\35\1\36\1\37\1\40\1\41\1\42"+
+    "\1\43\1\44\1\45\62\0\1\46\40\0\1\47\55\0"+
+    "\1\50\16\0\3\7\1\0\23\7\30\0\2\10\1\51"+
+    "\53\0\2\52\1\51\53\0\2\51\53\0\3\7\1\0"+
+    "\1\7\1\53\21\7\27\0\3\7\1\0\4\7\1\54"+
+    "\5\7\1\55\10\7\27\0\3\7\1\0\13\7\1\56"+
+    "\7\7\27\0\3\7\1\0\4\7\1\57\4\7\1\60"+
+    "\11\7\27\0\3\7\1\0\2\7\1\61\12\7\1\62"+
+    "\5\7\27\0\3\7\1\0\12\7\1\63\10\7\27\0"+
+    "\3\7\1\0\15\7\1\64\5\7\27\0\3\7\1\0"+
+    "\6\7\1\65\13\7\1\66\27\0\3\7\1\0\2\7"+
+    "\1\67\7\7\1\70\10\7\27\0\3\7\1\0\13\7"+
+    "\1\71\7\7\66\0\1\72\55\0\1\73\55\0\1\74"+
+    "\10\0\1\75\1\0\53\75\1\76\4\46\1\77\51\46"+
+    "\6\0\3\7\1\0\2\7\1\100\20\7\27\0\3\7"+
+    "\1\0\5\7\1\101\15\7\27\0\3\7\1\0\16\7"+
+    "\1\102\4\7\27\0\3\7\1\0\7\7\1\103\13\7"+
+    "\27\0\3\7\1\0\20\7\1\104\2\7\27\0\3\7"+
+    "\1\0\3\7\1\105\17\7\27\0\3\7\1\0\13\7"+
+    "\1\106\7\7\27\0\3\7\1\0\6\7\1\107\14\7"+
+    "\27\0\3\7\1\0\4\7\1\110\16\7\27\0\3\7"+
+    "\1\0\2\7\1\111\20\7\27\0\3\7\1\0\6\7"+
+    "\1\112\14\7\27\0\3\7\1\0\20\7\1\113\2\7"+
+    "\27\0\3\7\1\0\16\7\1\114\4\7\21\0\4\46"+
+    "\1\77\1\115\50\46\6\0\3\7\1\0\1\116\22\7"+
+    "\27\0\3\7\1\0\3\7\1\117\17\7\27\0\3\7"+
+    "\1\0\3\7\1\120\17\7\27\0\3\7\1\0\4\7"+
+    "\1\121\16\7\27\0\3\7\1\0\4\7\1\122\16\7"+
+    "\27\0\3\7\1\0\1\7\1\123\21\7\27\0\3\7"+
+    "\1\0\12\7\1\124\10\7\27\0\3\7\1\0\7\7"+
+    "\1\125\13\7\27\0\3\7\1\0\4\7\1\126\16\7"+
+    "\27\0\3\7\1\0\16\7\1\127\4\7\27\0\3\7"+
+    "\1\0\1\7\1\130\21\7\27\0\3\7\1\0\10\7"+
+    "\1\131\12\7\27\0\3\7\1\0\21\7\1\132\1\7"+
+    "\27\0\3\7\1\0\7\7\1\133\13\7\27\0\3\7"+
+    "\1\0\3\7\1\134\17\7\27\0\3\7\1\0\7\7"+
+    "\1\135\13\7\27\0\3\7\1\0\7\7\1\136\13\7"+
+    "\27\0\3\7\1\0\2\7\1\137\20\7\27\0\3\7"+
+    "\1\0\3\7\1\140\17\7\27\0\3\7\1\0\2\7"+
+    "\1\141\20\7\27\0\3\7\1\0\2\7\1\142\20\7"+
+    "\27\0\3\7\1\0\20\7\1\143\2\7\27\0\3\7"+
+    "\1\0\4\7\1\144\16\7\27\0\3\7\1\0\21\7"+
+    "\1\145\1\7\21\0";
 
   private static int [] zzUnpackTrans() {
-    int [] result = new int[2622];
+    int [] result = new int[2806];
     int offset = 0;
     offset = zzUnpackTrans(ZZ_TRANS_PACKED_0, offset, result);
     return result;
@@ -227,12 +234,12 @@ public class Scanner implements sym, java_cup.runtime.Scanner {
   private static final int [] ZZ_ATTRIBUTE = zzUnpackAttribute();
 
   private static final String ZZ_ATTRIBUTE_PACKED_0 =
-    "\1\0\2\11\1\1\1\11\15\1\7\11\2\1\1\11"+
-    "\3\1\4\11\1\1\1\0\2\11\1\1\1\0\14\1"+
-    "\5\11\1\0\1\11\1\0\12\1\1\11\27\1";
+    "\1\0\2\11\1\1\1\11\17\1\7\11\2\1\1\11"+
+    "\1\1\5\11\1\1\1\0\2\11\1\1\1\0\17\1"+
+    "\3\11\1\0\1\11\1\0\15\1\1\11\30\1";
 
   private static int [] zzUnpackAttribute() {
-    int [] result = new int[95];
+    int [] result = new int[101];
     int offset = 0;
     offset = zzUnpackAttribute(ZZ_ATTRIBUTE_PACKED_0, offset, result);
     return result;
@@ -383,7 +390,7 @@ public class Scanner implements sym, java_cup.runtime.Scanner {
     char [] map = new char[0x110000];
     int i = 0;  /* index in packed string  */
     int j = 0;  /* index in unpacked array */
-    while (i < 160) {
+    while (i < 158) {
       int  count = packed.charAt(i++);
       char value = packed.charAt(i++);
       do map[j++] = value; while (--count > 0);
@@ -751,184 +758,188 @@ public class Scanner implements sym, java_cup.runtime.Scanner {
           case 1: 
             { throw new RuntimeException("Illegal character \""+yytext()+"\" at line "+yyline+", column "+yycolumn);
             }
-          case 45: break;
+          case 46: break;
           case 2: 
             { /* ignore */
             }
-          case 46: break;
+          case 47: break;
           case 3: 
             { return symbol(LT);
             }
-          case 47: break;
+          case 48: break;
           case 4: 
             { return symbol(DIV);
             }
-          case 48: break;
+          case 49: break;
           case 5: 
             { return symbol(GT);
             }
-          case 49: break;
+          case 50: break;
           case 6: 
             { return symbol(IDENTIFIER, yytext());
             }
-          case 50: break;
+          case 51: break;
           case 7: 
             { verify_int(yytext());
                                     return symbol(INTEGER_LITERAL, new Integer(yytext()));
             }
-          case 51: break;
+          case 52: break;
           case 8: 
             { return symbol(LPAREN);
             }
-          case 52: break;
+          case 53: break;
           case 9: 
             { return symbol(RPAREN);
             }
-          case 53: break;
+          case 54: break;
           case 10: 
             { return symbol(LBRACE);
             }
-          case 54: break;
+          case 55: break;
           case 11: 
             { return symbol(RBRACE);
             }
-          case 55: break;
+          case 56: break;
           case 12: 
             { return symbol(LBRACK);
             }
-          case 56: break;
+          case 57: break;
           case 13: 
             { return symbol(RBRACK);
             }
-          case 57: break;
+          case 58: break;
           case 14: 
             { return symbol(SEMICOLON);
             }
-          case 58: break;
+          case 59: break;
           case 15: 
             { return symbol(EQ);
             }
-          case 59: break;
+          case 60: break;
           case 16: 
             { return symbol(COMMA);
             }
-          case 60: break;
-          case 17: 
-            { return symbol(NOT);
-            }
           case 61: break;
-          case 18: 
+          case 17: 
             { return symbol(PLUS);
             }
           case 62: break;
-          case 19: 
+          case 18: 
             { return symbol(MINUS);
             }
           case 63: break;
-          case 20: 
+          case 19: 
             { return symbol(MULT);
             }
           case 64: break;
-          case 21: 
+          case 20: 
             { return symbol(MOD);
             }
           case 65: break;
+          case 21: 
+            { return symbol(POW);
+            }
+          case 66: break;
           case 22: 
             { return symbol(LTEQ);
             }
-          case 66: break;
+          case 67: break;
           case 23: 
             { return symbol(GTEQ);
             }
-          case 67: break;
+          case 68: break;
           case 24: 
             { verify_real(yytext());
                                     return symbol(FLOATING_POINT_LITERAL, new Float(yytext()));
             }
-          case 68: break;
+          case 69: break;
           case 25: 
             { return symbol(DO);
             }
-          case 69: break;
+          case 70: break;
           case 26: 
             { return symbol(IF);
             }
-          case 70: break;
+          case 71: break;
           case 27: 
             { return symbol(ASSIGN);
             }
-          case 71: break;
+          case 72: break;
           case 28: 
             { return symbol(EQEQ);
             }
-          case 72: break;
+          case 73: break;
           case 29: 
             { return symbol(NOTEQ);
             }
-          case 73: break;
-          case 30: 
-            { return symbol(ANDAND);
-            }
           case 74: break;
-          case 31: 
-            { return symbol(OROR);
-            }
-          case 75: break;
-          case 32: 
+          case 30: 
             { verify_string(yytext());
                                     return symbol(STRING_LITERAL, new String(
                                     	yytext().substring(1, yytext().length()-1)
                                     ));
             }
-          case 76: break;
-          case 33: 
+          case 75: break;
+          case 31: 
             { return symbol(DECVAR);
             }
-          case 77: break;
-          case 34: 
+          case 76: break;
+          case 32: 
             { return symbol(END);
             }
+          case 77: break;
+          case 33: 
+            { return symbol(SIN);
+            }
           case 78: break;
+          case 34: 
+            { return symbol(COS);
+            }
+          case 79: break;
           case 35: 
             { /**/
             }
-          case 79: break;
+          case 80: break;
           case 36: 
             { return symbol(ELSE);
             }
-          case 80: break;
+          case 81: break;
           case 37: 
             { return symbol(THEN);
             }
-          case 81: break;
-          case 38: 
-            { return symbol(TRUNC);
-            }
           case 82: break;
-          case 39: 
-            { return symbol(FLOAT);
+          case 38: 
+            { return symbol(SQRT);
             }
           case 83: break;
-          case 40: 
-            { return symbol(WHILE);
+          case 39: 
+            { return symbol(TRUNC);
             }
           case 84: break;
-          case 41: 
-            { return symbol(PRINT);
+          case 40: 
+            { return symbol(FLOAT);
             }
           case 85: break;
-          case 42: 
-            { return symbol(ENDVAR);
+          case 41: 
+            { return symbol(WHILE);
             }
           case 86: break;
-          case 43: 
-            { return symbol(INTEGER);
+          case 42: 
+            { return symbol(PRINT);
             }
           case 87: break;
-          case 44: 
-            { return symbol(PLUSTRUNC);
+          case 43: 
+            { return symbol(ENDVAR);
             }
           case 88: break;
+          case 44: 
+            { return symbol(INTEGER);
+            }
+          case 89: break;
+          case 45: 
+            { return symbol(PLUSTRUNC);
+            }
+          case 90: break;
           default:
             zzScanError(ZZ_NO_MATCH);
         }

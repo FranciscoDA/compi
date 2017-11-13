@@ -173,6 +173,29 @@ public class TasmDos16Writer implements Writer {
 		writer.println("\tfSetRC RC_NEAREST");
 	}
 	@Override
+	public void doSine() {
+		writer.println("\tfsin");
+	}
+	@Override
+	public void doCosine() {
+		writer.println("\tfcos");
+	}
+	@Override
+	public void doSqrt() {
+		writer.println("\tfsqrt");
+	}
+	@Override
+	public void doModulo() {
+		writer.println("\tfxch");
+		writer.println("\tfprem");
+		writer.println("\tfxch");
+		writer.println("fstp st0");
+	}
+	@Override
+	public void doPower() {
+		writer.println("\tfpow");
+	}
+	@Override
 	public void beginCode() {
 		for (SymbolTableEntry entry : symbolTable.values())
 		{

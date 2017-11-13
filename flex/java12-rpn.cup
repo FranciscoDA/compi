@@ -59,7 +59,8 @@ parser code  {:
   			case PLUS:
   			case MINUS:
   			case DIV:
-  			case MULT: {
+  			case MULT:
+  			case POW: {
   				SymbolTableEntry.TypeName a = typeStack.pop();
   				SymbolTableEntry.TypeName b = typeStack.pop();
   				if (a == SymbolTableEntry.TypeName.FLOAT || b == SymbolTableEntry.TypeName.FLOAT)
@@ -68,11 +69,21 @@ parser code  {:
   					typeStack.push(SymbolTableEntry.TypeName.INTEGER);
   				break;
   			}
-  			case TRUNC: {
+  			case MOD:
+  				typeStack.pop();
   				typeStack.pop();
   				typeStack.push(SymbolTableEntry.TypeName.INTEGER);
   				break;
-  			}
+  			case TRUNC:
+  				typeStack.pop();
+  				typeStack.push(SymbolTableEntry.TypeName.INTEGER);
+  				break;
+  			case SQRT:
+  			case SIN:
+  			case COS:
+  				typeStack.pop();
+  				typeStack.push(SymbolTableEntry.TypeName.FLOAT);
+  				break;
   			}
   		}
   	}
@@ -101,15 +112,12 @@ terminal PRINT;
 
 terminal TRUNC;
 terminal PLUSTRUNC;
+terminal SIN,COS,SQRT;
 
-
-terminal PLUS, MINUS, COMP, NOT, DIV, MOD;
+terminal PLUS, MINUS, COMP, DIV, MOD, POW;
 terminal LT, GT, LTEQ, GTEQ; // relational_expression
 terminal EQEQ, NOTEQ; // equality_expression
 terminal EQ;
-
-terminal ANDAND; // conditional_and_expression
-terminal OROR; // conditional_or_expression
 
 terminal java.lang.Integer INTEGER_LITERAL;
 terminal java.lang.Float FLOATING_POINT_LITERAL;
@@ -126,7 +134,7 @@ non terminal rpn.LiteralExpression  literal;
 non terminal LinkedList<SymbolTableEntry> declaration_block, declaration_list;
 non terminal LinkedList<SymbolTableEntry> type_declaration_outer, type_declaration_inner;
 
-non terminal LinkedList<rpn.Node> expression, term, factor;
+non terminal LinkedList<rpn.Node> expression, term, factor, basexp;
 non terminal LinkedList<rpn.Node> condition;
 
 non terminal LinkedList<rpn.Node> statement, statement_list;
@@ -222,20 +230,18 @@ expression ::=
 	;
 
 term ::=
-	term:e1 MULT factor:e2                 {:
-	                                          e1.addAll(e2);
-	                                          e1.add(rpn.Operation.MULT);
-	                                          RESULT = e1;
-	                                       :}
-	| term:e1 DIV factor:e2                {:
-	                                          e1.addAll(e2);
-	                                          e1.add(rpn.Operation.DIV);
-	                                          RESULT = e1;
-	                                       :}
+	term:e1 MULT factor:e2                 {: e1.addAll(e2); e1.add(rpn.Operation.MULT); RESULT = e1; :}
+	| term:e1 DIV factor:e2                {: e1.addAll(e2); e1.add(rpn.Operation.DIV); RESULT = e1; :}
+    | term:e1 MOD factor:e2                {: e1.addAll(e2); e1.add(rpn.Operation.MOD); RESULT = e1; :}
 	| factor:e1                            {: RESULT = e1; :}
 	;
 
 factor ::=
+	basexp:e1 POW factor:e2                {: e1.addAll(e2); e1.add(rpn.Operation.POW); RESULT = e1; :}
+	| basexp: e1                           {: RESULT = e1; :}
+	;
+
+basexp ::=
 	IDENTIFIER:ident                       {:
 	                                          LinkedList<rpn.Node> e1 = new LinkedList<>();
 	                                          e1.addLast(new rpn.VariableExpression(ident));
@@ -249,6 +255,9 @@ factor ::=
 	                                          e1.addLast(lit);
 	                                          RESULT = e1;
 	                                       :}
+    | SIN LPAREN expression:e1 RPAREN      {: e1.addLast(rpn.Operation.SIN); RESULT = e1; :}
+    | COS LPAREN expression:e1 RPAREN      {: e1.addLast(rpn.Operation.COS); RESULT = e1; :}
+    | SQRT LPAREN expression:e1 RPAREN     {: e1.addLast(rpn.Operation.SQRT); RESULT = e1; :}
 	| function_call:plustrunc              {: RESULT = plustrunc; :}
 	| LPAREN expression:e1 RPAREN          {: RESULT = e1; :}
 	;

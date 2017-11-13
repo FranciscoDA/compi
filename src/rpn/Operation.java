@@ -6,8 +6,14 @@ public enum Operation implements Node {
 	MINUS,
 	DIV,
 	MULT,
+	MOD,
 	ASSIGN,
 	CMP,
+	POW,
+	
+	COS,
+	SIN,
+	SQRT,
 	
 	/* etc */
 	PRINTSTR,

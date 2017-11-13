@@ -138,6 +138,9 @@ FLit2    = \. [0-9]+
   "PRINT"                        { return symbol(PRINT); }
   "PLUSTRUNC"                    { return symbol(PLUSTRUNC); }
   "TRUNC"                        { return symbol(TRUNC); }
+  "SIN"                        { return symbol(SIN); }
+  "COS"                        { return symbol(COS); }
+  "SQRT"                        { return symbol(SQRT); }
   "("                            { return symbol(LPAREN); }
   ")"                            { return symbol(RPAREN); }
   "{"                            { return symbol(LBRACE); }
@@ -153,19 +156,19 @@ FLit2    = \. [0-9]+
   
   ">"                            { return symbol(GT); }
   "<"                            { return symbol(LT); }
-  "!"                            { return symbol(NOT); }
+
   "=="                           { return symbol(EQEQ); }
   "<="                           { return symbol(LTEQ); }
   ">="                           { return symbol(GTEQ); }
   "!="                           { return symbol(NOTEQ); }
-  "&&"                           { return symbol(ANDAND); }
-  "||"                           { return symbol(OROR); }
+
   "+"                            { return symbol(PLUS); }
   "-"                            { return symbol(MINUS); }
   "*"                            { return symbol(MULT); }
   "/"                            { return symbol(DIV); }
   "%"                            { return symbol(MOD); }
-  
+  "^"                            { return symbol(POW); }
+
   /* string literal */
   "\"" [^\"\n\r]* "\""                    {
                                     verify_string(yytext());

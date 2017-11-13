@@ -102,6 +102,21 @@ public class Main {
 				case TRUNC:
 					writer.doTrunc();
 					break;
+				case SIN:
+					writer.doSine();
+					break;
+				case COS:
+					writer.doCosine();
+					break;
+				case SQRT:
+					writer.doSqrt();
+					break;
+				case MOD:
+					writer.doModulo();
+					break;
+				case POW:
+					writer.doPower();
+					break;
 				}
 			}
 			else if (node instanceof rpn.Control) {

@@ -2,6 +2,7 @@ VAR
 	[FIB_A, FIB_B] = [INTEGER, INTEGER]
 	[PI, DIAMETRO] = [FLOAT, FLOAT]
 	[e, termino] = [FLOAT, FLOAT]
+	[angulo] = [FLOAT]
 	[CONTADOR, CONTADOR2] = [INTEGER, INTEGER]
 ENDVAR
 
@@ -64,6 +65,21 @@ PRINT "Redondeo de 0.00006: ", 0.00006
 PRINT "Redondeo de 0.00009: ", 0.00009
 
 PRINT ""
-PRINT "Prueba 6 (Plustrunc):"
-PRINT "---------------------"
-PRINT PLUSTRUNC([TRUNC(1.5), TRUNC(10.1), TRUNC(100.9)])
+PRINT "Prueba 6 (Surtidos):"
+PRINT "--------------------"
+PRINT "PLUSTRUNC ", "1.5, 10.1, 100.9 = ", PLUSTRUNC([TRUNC(1.5), TRUNC(10.1), TRUNC(100.9)])
+PRINT "12345 % 7 = ", 12345 % 7
+PRINT "SQRT(2) = ", SQRT(2)
+PRINT "2^0.5 = ", 2^0.5
+PRINT "2^3^2 = ", "2^(3^2) = ", 2^3^2
+
+PRINT ""
+PRINT "Prueba 7 (Trigonometria):"
+PRINT "-------------------------"
+CONTADOR := 0
+PRINT "Radianes   ", "Grados   ", "Seno   ", "Coseno"
+WHILE CONTADOR < 8 DO
+	angulo := PI * CONTADOR / 4
+	PRINT angulo, " ", angulo*180/PI, " ", SIN(angulo), " ", COS(angulo)
+	CONTADOR := CONTADOR + 1
+END WHILE

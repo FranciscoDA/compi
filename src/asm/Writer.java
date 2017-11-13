@@ -50,6 +50,11 @@ public interface Writer {
 	
 	void doCompare();
 	void doTrunc();
+	void doSine();
+	void doCosine();
+	void doSqrt();
+	void doModulo();
+	void doPower();
 	
 	void doJMP(String label);
 	void doJG(String label);

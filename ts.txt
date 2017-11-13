@@ -1,6 +1,7 @@
             DIAMETRO               FLOAT                 ---                 ---
                    e               FLOAT                 ---                 ---
                   PI               FLOAT                 ---                 ---
+              angulo               FLOAT                 ---                 ---
              termino               FLOAT                 ---                 ---
             CONTADOR             INTEGER                 ---                 ---
                FIB_A             INTEGER                 ---                 ---
@@ -9,10 +10,17 @@
                  ---              CteInt                   0                 ---
                  ---              CteInt                   1                 ---
                  ---              CteInt                   2                 ---
+                 ---              CteInt                   3                 ---
+                 ---              CteInt                   4                 ---
+                 ---              CteInt                 180                 ---
                  ---              CteInt                   5                 ---
+                 ---              CteInt                   7                 ---
+                 ---              CteInt                   8                 ---
+                 ---              CteInt               12345                 ---
                  ---              CteInt                  10                 ---
                  ---             CteReal                 1.0                 ---
                  ---             CteReal                 1.5                 ---
+                 ---             CteReal                 0.5                 ---
                  ---             CteReal           3.1415927                 ---
                  ---             CteReal               100.9                 ---
                  ---             CteReal              5.0E-5                 ---
@@ -24,6 +32,7 @@
                  ---           CteStringPrueba 1 (Fibonacci):                  21
                  ---           CteString                                       0
                  ---           CteStringredondean con precision de                   27
+                 ---           CteString          PLUSTRUNC                   10
                  ---           CteStringRedondeo de 0.00005:                   21
                  ---           CteStringRedondeo de 0.00006:                   21
                  ---           CteStringTodos los numeros se                   21
@@ -32,24 +41,36 @@
                  ---           CteString                FIB(                   4
                  ---           CteString                ) =                    4
                  ---           CteStringPrueba 4 (Negativos):                  21
+                 ---           CteString 1.5, 10.1, 100.9 =                   19
                  ---           CteString--------------------------                  26
                  ---           CteStringNearest Integer (even)                  22
                  ---           CteStringPrueba 3 (Nro. de Euler):                  25
                  ---           CteStringPrueba 2 (Circunferencia):                  26
                  ---           CteString   Neg x Neg x Neg:                   17
                  ---           CteString           4 digitos                   9
+                 ---           CteString                                       1
                  ---           CteStringPrueba 5 (Redondeo):                  20
-                 ---           CteStringPrueba 6 (Plustrunc):                  21
                  ---           CteString---------------------                  21
                  ---           CteString--------------------                  20
+                 ---           CteString          2^(3^2) =                   10
+                 ---           CteString            2^3^2 =                    8
                  ---           CteString-------------------------                  25
                  ---           CteString                 e (                   3
                  ---           CteString  Modo de redondeo:                   18
+                 ---           CteString        12345 % 7 =                   12
+                 ---           CteString         Radianes                     11
                  ---           CteString    Circunferencia:                   16
+                 ---           CteString             Seno                      7
                  ---           CteString              Area:                    6
                  ---           CteString            Simple:                    8
+                 ---           CteString            2^0.5 =                    8
                  ---           CteString             Radio:                    7
+                 ---           CteString              Coseno                   6
                  ---           CteString         Neg x Pos:                   11
+                 ---           CteString          SQRT(2) =                   10
+                 ---           CteStringPrueba 7 (Trigonometria):                  25
+                 ---           CteString           Grados                      9
                  ---           CteString          Diametro:                   10
                  ---           CteStringRedondeo de 0.00004:                   21
                  ---           CteStringRedondeo de 0.00001:                   21
+                 ---           CteStringPrueba 6 (Surtidos):                  20
