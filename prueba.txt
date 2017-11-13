@@ -77,9 +77,9 @@ PRINT ""
 PRINT "Prueba 7 (Trigonometria):"
 PRINT "-------------------------"
 CONTADOR := 0
-PRINT "Radianes   ", "Grados   ", "Seno   ", "Coseno"
+PRINT "Radianes   ", "Grados     ", "Seno       ", "Coseno  "
 WHILE CONTADOR < 8 DO
 	angulo := PI * CONTADOR / 4
-	PRINT angulo, " ", angulo*180/PI, " ", SIN(angulo), " ", COS(angulo)
+	PRINT angulo, "   ", angulo*180/PI, "   ", SIN(angulo), "   ", COS(angulo)
 	CONTADOR := CONTADOR + 1
 END WHILE

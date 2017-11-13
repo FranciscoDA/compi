@@ -14,7 +14,7 @@ _start:
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
-	mov ecx, CTE_STR_21 ; value=---------------------
+	mov ecx, CTE_STR_23 ; value=---------------------
 	mov edx, 21 ; msg length
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
@@ -94,7 +94,7 @@ _start:
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
-	mov ecx, CTE_STR_16 ; value=Prueba 2 (Circunferencia):
+	mov ecx, CTE_STR_18 ; value=Prueba 2 (Circunferencia):
 	mov edx, 26 ; msg length
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
@@ -104,7 +104,7 @@ _start:
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
-	mov ecx, CTE_STR_13 ; value=--------------------------
+	mov ecx, CTE_STR_14 ; value=--------------------------
 	mov edx, 26 ; msg length
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
@@ -124,7 +124,7 @@ _start:
 	mov ebx, 1 ; fd=stdout
 	int 0x80
 	fld dword [VAR_DIAMETRO]
-	ftoa 14, BUFFER_CONVERSION, 4
+	ftoa 14, BUFFER_CONVERSION
 	mov ecx, BUFFER_CONVERSION
 	mov edx, edi
 	mov eax, 0x4 ; sys_write
@@ -135,7 +135,7 @@ _start:
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
-	mov ecx, CTE_STR_35 ; value=Radio: 
+	mov ecx, CTE_STR_37 ; value=Radio: 
 	mov edx, 7 ; msg length
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
@@ -143,7 +143,7 @@ _start:
 	fld dword [VAR_DIAMETRO]
 	fild word [CTE_INT_2] ; value=2
 	fdivp
-	ftoa 14, BUFFER_CONVERSION, 4
+	ftoa 14, BUFFER_CONVERSION
 	mov ecx, BUFFER_CONVERSION
 	mov edx, edi
 	mov eax, 0x4 ; sys_write
@@ -154,7 +154,7 @@ _start:
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
-	mov ecx, CTE_STR_30 ; value=Circunferencia: 
+	mov ecx, CTE_STR_33 ; value=Circunferencia: 
 	mov edx, 16 ; msg length
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
@@ -162,7 +162,7 @@ _start:
 	fld dword [VAR_PI]
 	fld dword [VAR_DIAMETRO]
 	fmulp
-	ftoa 14, BUFFER_CONVERSION, 4
+	ftoa 14, BUFFER_CONVERSION
 	mov ecx, BUFFER_CONVERSION
 	mov edx, edi
 	mov eax, 0x4 ; sys_write
@@ -173,7 +173,7 @@ _start:
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
-	mov ecx, CTE_STR_32 ; value=Area: 
+	mov ecx, CTE_STR_34 ; value=Area: 
 	mov edx, 6 ; msg length
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
@@ -187,7 +187,7 @@ _start:
 	fmulp
 	fild word [CTE_INT_2] ; value=2
 	fdivp
-	ftoa 14, BUFFER_CONVERSION, 4
+	ftoa 14, BUFFER_CONVERSION
 	mov ecx, BUFFER_CONVERSION
 	mov edx, edi
 	mov eax, 0x4 ; sys_write
@@ -208,7 +208,7 @@ _start:
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
-	mov ecx, CTE_STR_15 ; value=Prueba 3 (Nro. de Euler):
+	mov ecx, CTE_STR_16 ; value=Prueba 3 (Nro. de Euler):
 	mov edx, 25 ; msg length
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
@@ -218,7 +218,7 @@ _start:
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
-	mov ecx, CTE_STR_25 ; value=-------------------------
+	mov ecx, CTE_STR_28 ; value=-------------------------
 	mov edx, 25 ; msg length
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
@@ -270,7 +270,7 @@ _start:
 	fstp dword [VAR_e]
 	jmp LABEL_4
 	LABEL_5:
-	mov ecx, CTE_STR_26 ; value=e (
+	mov ecx, CTE_STR_29 ; value=e (
 	mov edx, 3 ; msg length
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
@@ -288,7 +288,7 @@ _start:
 	mov ebx, 1 ; fd=stdout
 	int 0x80
 	fld dword [VAR_e]
-	ftoa 14, BUFFER_CONVERSION, 4
+	ftoa 14, BUFFER_CONVERSION
 	mov ecx, BUFFER_CONVERSION
 	mov edx, edi
 	mov eax, 0x4 ; sys_write
@@ -319,7 +319,7 @@ _start:
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
-	mov ecx, CTE_STR_21 ; value=---------------------
+	mov ecx, CTE_STR_23 ; value=---------------------
 	mov edx, 21 ; msg length
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
@@ -329,7 +329,7 @@ _start:
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
-	mov ecx, CTE_STR_33 ; value=Simple: 
+	mov ecx, CTE_STR_35 ; value=Simple: 
 	mov edx, 8 ; msg length
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
@@ -348,7 +348,7 @@ _start:
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
-	mov ecx, CTE_STR_17 ; value=Neg x Neg x Neg: 
+	mov ecx, CTE_STR_19 ; value=Neg x Neg x Neg: 
 	mov edx, 17 ; msg length
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
@@ -375,7 +375,7 @@ _start:
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
-	mov ecx, CTE_STR_37 ; value=Neg x Pos: 
+	mov ecx, CTE_STR_38 ; value=Neg x Pos: 
 	mov edx, 11 ; msg length
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
@@ -406,7 +406,7 @@ _start:
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
-	mov ecx, CTE_STR_20 ; value=Prueba 5 (Redondeo):
+	mov ecx, CTE_STR_22 ; value=Prueba 5 (Redondeo):
 	mov edx, 20 ; msg length
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
@@ -416,7 +416,7 @@ _start:
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
-	mov ecx, CTE_STR_22 ; value=--------------------
+	mov ecx, CTE_STR_24 ; value=--------------------
 	mov edx, 20 ; msg length
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
@@ -436,7 +436,7 @@ _start:
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
-	mov ecx, CTE_STR_18 ; value=4 digitos
+	mov ecx, CTE_STR_20 ; value=4 digitos
 	mov edx, 9 ; msg length
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
@@ -446,12 +446,12 @@ _start:
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
-	mov ecx, CTE_STR_27 ; value=Modo de redondeo: 
+	mov ecx, CTE_STR_30 ; value=Modo de redondeo: 
 	mov edx, 18 ; msg length
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
-	mov ecx, CTE_STR_14 ; value=Nearest Integer (even)
+	mov ecx, CTE_STR_15 ; value=Nearest Integer (even)
 	mov edx, 22 ; msg length
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
@@ -467,7 +467,7 @@ _start:
 	mov ebx, 1 ; fd=stdout
 	int 0x80
 	fld dword [CTE_FLT_7] ; value=1.0E-5
-	ftoa 14, BUFFER_CONVERSION, 4
+	ftoa 14, BUFFER_CONVERSION
 	mov ecx, BUFFER_CONVERSION
 	mov edx, edi
 	mov eax, 0x4 ; sys_write
@@ -484,7 +484,7 @@ _start:
 	mov ebx, 1 ; fd=stdout
 	int 0x80
 	fld dword [CTE_FLT_8] ; value=4.0E-5
-	ftoa 14, BUFFER_CONVERSION, 4
+	ftoa 14, BUFFER_CONVERSION
 	mov ecx, BUFFER_CONVERSION
 	mov edx, edi
 	mov eax, 0x4 ; sys_write
@@ -501,7 +501,7 @@ _start:
 	mov ebx, 1 ; fd=stdout
 	int 0x80
 	fld dword [CTE_FLT_5] ; value=5.0E-5
-	ftoa 14, BUFFER_CONVERSION, 4
+	ftoa 14, BUFFER_CONVERSION
 	mov ecx, BUFFER_CONVERSION
 	mov edx, edi
 	mov eax, 0x4 ; sys_write
@@ -518,7 +518,7 @@ _start:
 	mov ebx, 1 ; fd=stdout
 	int 0x80
 	fld dword [CTE_FLT_6] ; value=6.0E-5
-	ftoa 14, BUFFER_CONVERSION, 4
+	ftoa 14, BUFFER_CONVERSION
 	mov ecx, BUFFER_CONVERSION
 	mov edx, edi
 	mov eax, 0x4 ; sys_write
@@ -535,7 +535,7 @@ _start:
 	mov ebx, 1 ; fd=stdout
 	int 0x80
 	fld dword [CTE_FLT_10] ; value=9.0E-5
-	ftoa 14, BUFFER_CONVERSION, 4
+	ftoa 14, BUFFER_CONVERSION
 	mov ecx, BUFFER_CONVERSION
 	mov edx, edi
 	mov eax, 0x4 ; sys_write
@@ -566,7 +566,7 @@ _start:
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
-	mov ecx, CTE_STR_22 ; value=--------------------
+	mov ecx, CTE_STR_24 ; value=--------------------
 	mov edx, 20 ; msg length
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
@@ -581,7 +581,7 @@ _start:
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
-	mov ecx, CTE_STR_12 ; value=1.5, 10.1, 100.9 = 
+	mov ecx, CTE_STR_13 ; value=1.5, 10.1, 100.9 = 
 	mov edx, 19 ; msg length
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
@@ -611,7 +611,7 @@ _start:
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
-	mov ecx, CTE_STR_28 ; value=12345 % 7 = 
+	mov ecx, CTE_STR_31 ; value=12345 % 7 = 
 	mov edx, 12 ; msg length
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
@@ -633,14 +633,14 @@ fstp st0
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
-	mov ecx, CTE_STR_38 ; value=SQRT(2) = 
+	mov ecx, CTE_STR_39 ; value=SQRT(2) = 
 	mov edx, 10 ; msg length
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
 	fild word [CTE_INT_2] ; value=2
 	fsqrt
-	ftoa 14, BUFFER_CONVERSION, 4
+	ftoa 14, BUFFER_CONVERSION
 	mov ecx, BUFFER_CONVERSION
 	mov edx, edi
 	mov eax, 0x4 ; sys_write
@@ -651,7 +651,7 @@ fstp st0
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
-	mov ecx, CTE_STR_34 ; value=2^0.5 = 
+	mov ecx, CTE_STR_36 ; value=2^0.5 = 
 	mov edx, 8 ; msg length
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
@@ -659,7 +659,7 @@ fstp st0
 	fild word [CTE_INT_2] ; value=2
 	fld dword [CTE_FLT_2] ; value=0.5
 	fpow
-	ftoa 14, BUFFER_CONVERSION, 4
+	ftoa 14, BUFFER_CONVERSION
 	mov ecx, BUFFER_CONVERSION
 	mov edx, edi
 	mov eax, 0x4 ; sys_write
@@ -670,12 +670,12 @@ fstp st0
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
-	mov ecx, CTE_STR_24 ; value=2^3^2 = 
+	mov ecx, CTE_STR_27 ; value=2^3^2 = 
 	mov edx, 8 ; msg length
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
-	mov ecx, CTE_STR_23 ; value=2^(3^2) = 
+	mov ecx, CTE_STR_25 ; value=2^(3^2) = 
 	mov edx, 10 ; msg length
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
@@ -706,7 +706,7 @@ fstp st0
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
-	mov ecx, CTE_STR_39 ; value=Prueba 7 (Trigonometria):
+	mov ecx, CTE_STR_40 ; value=Prueba 7 (Trigonometria):
 	mov edx, 25 ; msg length
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
@@ -716,7 +716,7 @@ fstp st0
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
-	mov ecx, CTE_STR_25 ; value=-------------------------
+	mov ecx, CTE_STR_28 ; value=-------------------------
 	mov edx, 25 ; msg length
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
@@ -728,23 +728,23 @@ fstp st0
 	int 0x80
 	fild word [CTE_INT_0] ; value=0
 	fistp word [VAR_CONTADOR]
-	mov ecx, CTE_STR_29 ; value=Radianes   
+	mov ecx, CTE_STR_32 ; value=Radianes   
 	mov edx, 11 ; msg length
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
-	mov ecx, CTE_STR_40 ; value=Grados   
-	mov edx, 9 ; msg length
+	mov ecx, CTE_STR_26 ; value=Grados     
+	mov edx, 11 ; msg length
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
-	mov ecx, CTE_STR_31 ; value=Seno   
-	mov edx, 7 ; msg length
+	mov ecx, CTE_STR_12 ; value=Seno       
+	mov edx, 11 ; msg length
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
-	mov ecx, CTE_STR_36 ; value=Coseno
-	mov edx, 6 ; msg length
+	mov ecx, CTE_STR_17 ; value=Coseno  
+	mov edx, 8 ; msg length
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
@@ -769,14 +769,14 @@ fstp st0
 	fdivp
 	fstp dword [VAR_angulo]
 	fld dword [VAR_angulo]
-	ftoa 14, BUFFER_CONVERSION, 4
+	ftoa 14, BUFFER_CONVERSION
 	mov ecx, BUFFER_CONVERSION
 	mov edx, edi
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
-	mov ecx, CTE_STR_19 ; value= 
-	mov edx, 1 ; msg length
+	mov ecx, CTE_STR_21 ; value=   
+	mov edx, 3 ; msg length
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
@@ -785,33 +785,33 @@ fstp st0
 	fmulp
 	fld dword [VAR_PI]
 	fdivp
-	ftoa 14, BUFFER_CONVERSION, 4
+	ftoa 14, BUFFER_CONVERSION
 	mov ecx, BUFFER_CONVERSION
 	mov edx, edi
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
-	mov ecx, CTE_STR_19 ; value= 
-	mov edx, 1 ; msg length
+	mov ecx, CTE_STR_21 ; value=   
+	mov edx, 3 ; msg length
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
 	fld dword [VAR_angulo]
 	fsin
-	ftoa 14, BUFFER_CONVERSION, 4
+	ftoa 14, BUFFER_CONVERSION
 	mov ecx, BUFFER_CONVERSION
 	mov edx, edi
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
-	mov ecx, CTE_STR_19 ; value= 
-	mov edx, 1 ; msg length
+	mov ecx, CTE_STR_21 ; value=   
+	mov edx, 3 ; msg length
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
 	fld dword [VAR_angulo]
 	fcos
-	ftoa 14, BUFFER_CONVERSION, 4
+	ftoa 14, BUFFER_CONVERSION
 	mov ecx, BUFFER_CONVERSION
 	mov edx, edi
 	mov eax, 0x4 ; sys_write
@@ -900,63 +900,63 @@ CTE_STR_10:
 CTE_STR_11:
 	db "Prueba 4 (Negativos):"
 CTE_STR_12:
-	db "1.5, 10.1, 100.9 = "
+	db "Seno       "
 CTE_STR_13:
-	db "--------------------------"
+	db "1.5, 10.1, 100.9 = "
 CTE_STR_14:
-	db "Nearest Integer (even)"
+	db "--------------------------"
 CTE_STR_15:
-	db "Prueba 3 (Nro. de Euler):"
+	db "Nearest Integer (even)"
 CTE_STR_16:
-	db "Prueba 2 (Circunferencia):"
+	db "Prueba 3 (Nro. de Euler):"
 CTE_STR_17:
-	db "Neg x Neg x Neg: "
+	db "Coseno  "
 CTE_STR_18:
-	db "4 digitos"
+	db "Prueba 2 (Circunferencia):"
 CTE_STR_19:
-	db " "
+	db "Neg x Neg x Neg: "
 CTE_STR_20:
-	db "Prueba 5 (Redondeo):"
+	db "4 digitos"
 CTE_STR_21:
-	db "---------------------"
+	db "   "
 CTE_STR_22:
-	db "--------------------"
+	db "Prueba 5 (Redondeo):"
 CTE_STR_23:
-	db "2^(3^2) = "
+	db "---------------------"
 CTE_STR_24:
-	db "2^3^2 = "
+	db "--------------------"
 CTE_STR_25:
-	db "-------------------------"
+	db "2^(3^2) = "
 CTE_STR_26:
-	db "e ("
+	db "Grados     "
 CTE_STR_27:
-	db "Modo de redondeo: "
+	db "2^3^2 = "
 CTE_STR_28:
-	db "12345 % 7 = "
+	db "-------------------------"
 CTE_STR_29:
-	db "Radianes   "
+	db "e ("
 CTE_STR_30:
-	db "Circunferencia: "
+	db "Modo de redondeo: "
 CTE_STR_31:
-	db "Seno   "
+	db "12345 % 7 = "
 CTE_STR_32:
-	db "Area: "
+	db "Radianes   "
 CTE_STR_33:
-	db "Simple: "
+	db "Circunferencia: "
 CTE_STR_34:
-	db "2^0.5 = "
+	db "Area: "
 CTE_STR_35:
-	db "Radio: "
+	db "Simple: "
 CTE_STR_36:
-	db "Coseno"
+	db "2^0.5 = "
 CTE_STR_37:
-	db "Neg x Pos: "
+	db "Radio: "
 CTE_STR_38:
-	db "SQRT(2) = "
+	db "Neg x Pos: "
 CTE_STR_39:
-	db "Prueba 7 (Trigonometria):"
+	db "SQRT(2) = "
 CTE_STR_40:
-	db "Grados   "
+	db "Prueba 7 (Trigonometria):"
 CTE_STR_41:
 	db "Diametro: "
 CTE_STR_42:

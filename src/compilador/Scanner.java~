@@ -348,26 +348,25 @@ public class Scanner implements sym, java_cup.runtime.Scanner {
     return result;
   }
 
-  private Float verifyReal(String x) throws Exception {
-      Float f = Float.parseFloat(x);
+  private Exception verifyReal(String x) {
+      float f = Float.parseFloat(x);
       if (f < -MAX_FLOAT || f > MAX_FLOAT) {
-          throw new Exception("fp real number range exceeded");
+          return new Exception("fp real number range exceeded");
       }
-      return f;
+      return null;
   }
-  private Integer verifyInt(String x) throws Exception {
-      Integer i = Integer.parseInt(x);
+  private Exception verifyInt(String x) {
+      int i = Integer.parseInt(x);
       if (i < -MAX_INT || i > MAX_INT) {
-          throw new Exception("Integer out of range");
+          return new Exception("Integer out of range");
       }
-      return i;
+      return null;
   }
-  private String verifyString(String x) throws Exception {
-      x = x.substring(1, x.length()-1);
+  private Exception verifyString(String x) throws Exception {
       if (x.length() > MAX_STRING) {
-          throw new Exception("Maximum string length exceeded");
+          return new Exception("Maximum string length exceeded");
       }
-      return x;
+      return null;
   }
 
 
@@ -782,12 +781,12 @@ public class Scanner implements sym, java_cup.runtime.Scanner {
             }
           case 51: break;
           case 7: 
-            { try {
-                                      return symbol(INTEGER_LITERAL, verifyInt(yytext()));
-                                    } catch (Exception e) {
+            { Exception e = verifyInt(yytext());
+                                    if (e == null) {
                                       e.printStackTrace();
                                       return null;
                                     }
+                                    return symbol(INTEGER_LITERAL, new Integer(yytext()));
             }
           case 52: break;
           case 8: 
@@ -855,12 +854,12 @@ public class Scanner implements sym, java_cup.runtime.Scanner {
             }
           case 68: break;
           case 24: 
-            { try {
-                                      return symbol(FLOATING_POINT_LITERAL, verifyReal(yytext()));
-                                    } catch (Exception e) {
+            { Exception e = verifyReal(yytext());
+                                    if (e == null) {
                                       e.printStackTrace();
                                       return null;
                                     }
+                                    return symbol(FLOATING_POINT_LITERAL, new Float(yytext()));
             }
           case 69: break;
           case 25: 
@@ -884,12 +883,14 @@ public class Scanner implements sym, java_cup.runtime.Scanner {
             }
           case 74: break;
           case 30: 
-            { try {
-                                      return symbol(STRING_LITERAL, verifyString(yytext()));
-                                    } catch (Exception e) {
+            { Exception e = verifyString(yytext());
+                                    if (e == null) {
                                       e.printStackTrace();
                                       return null;
                                     }
+                                    return symbol(STRING_LITERAL, new String(
+                                    	yytext().substring(1, yytext().length()-1)
+                                    ));
             }
           case 75: break;
           case 31: 

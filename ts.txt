@@ -41,18 +41,21 @@
                  ---           CteString                FIB(                   4
                  ---           CteString                ) =                    4
                  ---           CteStringPrueba 4 (Negativos):                  21
+                 ---           CteString         Seno                         11
                  ---           CteString 1.5, 10.1, 100.9 =                   19
                  ---           CteString--------------------------                  26
                  ---           CteStringNearest Integer (even)                  22
                  ---           CteStringPrueba 3 (Nro. de Euler):                  25
+                 ---           CteString            Coseno                     8
                  ---           CteStringPrueba 2 (Circunferencia):                  26
                  ---           CteString   Neg x Neg x Neg:                   17
                  ---           CteString           4 digitos                   9
-                 ---           CteString                                       1
+                 ---           CteString                                       3
                  ---           CteStringPrueba 5 (Redondeo):                  20
                  ---           CteString---------------------                  21
                  ---           CteString--------------------                  20
                  ---           CteString          2^(3^2) =                   10
+                 ---           CteString         Grados                       11
                  ---           CteString            2^3^2 =                    8
                  ---           CteString-------------------------                  25
                  ---           CteString                 e (                   3
@@ -60,16 +63,13 @@
                  ---           CteString        12345 % 7 =                   12
                  ---           CteString         Radianes                     11
                  ---           CteString    Circunferencia:                   16
-                 ---           CteString             Seno                      7
                  ---           CteString              Area:                    6
                  ---           CteString            Simple:                    8
                  ---           CteString            2^0.5 =                    8
                  ---           CteString             Radio:                    7
-                 ---           CteString              Coseno                   6
                  ---           CteString         Neg x Pos:                   11
                  ---           CteString          SQRT(2) =                   10
                  ---           CteStringPrueba 7 (Trigonometria):                  25
-                 ---           CteString           Grados                      9
                  ---           CteString          Diametro:                   10
                  ---           CteStringRedondeo de 0.00004:                   21
                  ---           CteStringRedondeo de 0.00001:                   21

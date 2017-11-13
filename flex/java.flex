@@ -19,6 +19,7 @@
    this could be optimized */
 
 package compilador;
+import java.lang.Exception;
 import java_cup.runtime.*;
 
 %%
@@ -68,25 +69,26 @@ import java_cup.runtime.*;
     return result;
   }
 
-  private boolean verify_real(String x) {
-      float f = Float.parseFloat(x);
+  private Float verifyReal(String x) throws Exception {
+      Float f = Float.parseFloat(x);
       if (f < -MAX_FLOAT || f > MAX_FLOAT) {
-          throw new NumberFormatException();
+          throw new Exception("fp real number range exceeded");
       }
-      return true;
+      return f;
   }
-  private boolean verify_int(String x) {
-      int i = Integer.parseInt(x);
+  private Integer verifyInt(String x) throws Exception {
+      Integer i = Integer.parseInt(x);
       if (i < -MAX_INT || i > MAX_INT) {
-          throw new NumberFormatException();
+          throw new Exception("Integer out of range");
       }
-      return true;
+      return i;
   }
-  private boolean verify_string(String x) {
+  private String verifyString(String x) throws Exception {
+      x = x.substring(1, x.length()-1);
       if (x.length() > MAX_STRING) {
-          throw new NumberFormatException();
+          throw new Exception("Maximum string length exceeded");
       }
-      return true;
+      return x;
   }
 
 %}
@@ -170,11 +172,13 @@ FLit2    = \. [0-9]+
   "^"                            { return symbol(POW); }
 
   /* string literal */
-  "\"" [^\"\n\r]* "\""                    {
-                                    verify_string(yytext());
-                                    return symbol(STRING_LITERAL, new String(
-                                    	yytext().substring(1, yytext().length()-1)
-                                    ));
+  "\"" [^\"\n\r]* "\""           {
+                                    try {
+                                      return symbol(STRING_LITERAL, verifyString(yytext()));
+                                    } catch (Exception e) {
+                                      e.printStackTrace();
+                                      return null;
+                                    }
                                  }
 
   /* numeric literals */
@@ -182,13 +186,21 @@ FLit2    = \. [0-9]+
 
   
   {DecIntegerLiteral}            {
-                                    verify_int(yytext());
-                                    return symbol(INTEGER_LITERAL, new Integer(yytext()));
+                                    try {
+                                      return symbol(INTEGER_LITERAL, verifyInt(yytext()));
+                                    } catch (Exception e) {
+                                      e.printStackTrace();
+                                      return null;
+                                    }
                                  }
 
   {FloatLiteral}                 {
-                                    verify_real(yytext());
-                                    return symbol(FLOATING_POINT_LITERAL, new Float(yytext()));
+                                    try {
+                                      return symbol(FLOATING_POINT_LITERAL, verifyReal(yytext()));
+                                    } catch (Exception e) {
+                                      e.printStackTrace();
+                                      return null;
+                                    }
                                  }
   
   {Identifier}                   { return symbol(IDENTIFIER, yytext()); }

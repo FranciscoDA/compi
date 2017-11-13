@@ -317,11 +317,11 @@ ASSIGN
 CONTADOR
 "Radianes   "
 PRINTSTR
-"Grados   "
+"Grados     "
 PRINTSTR
-"Seno   "
+"Seno       "
 PRINTSTR
-"Coseno"
+"Coseno  "
 PRINTSTR
 PRINTLF
 LABEL_6:
@@ -339,7 +339,7 @@ ASSIGN
 angulo
 angulo
 PRINTFLOAT
-" "
+"   "
 PRINTSTR
 angulo
 180
@@ -347,12 +347,12 @@ MULT
 PI
 DIV
 PRINTFLOAT
-" "
+"   "
 PRINTSTR
 angulo
 SIN
 PRINTFLOAT
-" "
+"   "
 PRINTSTR
 angulo
 COS

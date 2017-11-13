@@ -45,35 +45,35 @@
 	CTE_STR_9 db "FIB(", '$'
 	CTE_STR_10 db ") = ", '$'
 	CTE_STR_11 db "Prueba 4 (Negativos):", '$'
-	CTE_STR_12 db "1.5, 10.1, 100.9 = ", '$'
-	CTE_STR_13 db "--------------------------", '$'
-	CTE_STR_14 db "Nearest Integer (even)", '$'
-	CTE_STR_15 db "Prueba 3 (Nro. de Euler):", '$'
-	CTE_STR_16 db "Prueba 2 (Circunferencia):", '$'
-	CTE_STR_17 db "Neg x Neg x Neg: ", '$'
-	CTE_STR_18 db "4 digitos", '$'
-	CTE_STR_19 db " ", '$'
-	CTE_STR_20 db "Prueba 5 (Redondeo):", '$'
-	CTE_STR_21 db "---------------------", '$'
-	CTE_STR_22 db "--------------------", '$'
-	CTE_STR_23 db "2^(3^2) = ", '$'
-	CTE_STR_24 db "2^3^2 = ", '$'
-	CTE_STR_25 db "-------------------------", '$'
-	CTE_STR_26 db "e (", '$'
-	CTE_STR_27 db "Modo de redondeo: ", '$'
-	CTE_STR_28 db "12345 % 7 = ", '$'
-	CTE_STR_29 db "Radianes   ", '$'
-	CTE_STR_30 db "Circunferencia: ", '$'
-	CTE_STR_31 db "Seno   ", '$'
-	CTE_STR_32 db "Area: ", '$'
-	CTE_STR_33 db "Simple: ", '$'
-	CTE_STR_34 db "2^0.5 = ", '$'
-	CTE_STR_35 db "Radio: ", '$'
-	CTE_STR_36 db "Coseno", '$'
-	CTE_STR_37 db "Neg x Pos: ", '$'
-	CTE_STR_38 db "SQRT(2) = ", '$'
-	CTE_STR_39 db "Prueba 7 (Trigonometria):", '$'
-	CTE_STR_40 db "Grados   ", '$'
+	CTE_STR_12 db "Seno       ", '$'
+	CTE_STR_13 db "1.5, 10.1, 100.9 = ", '$'
+	CTE_STR_14 db "--------------------------", '$'
+	CTE_STR_15 db "Nearest Integer (even)", '$'
+	CTE_STR_16 db "Prueba 3 (Nro. de Euler):", '$'
+	CTE_STR_17 db "Coseno  ", '$'
+	CTE_STR_18 db "Prueba 2 (Circunferencia):", '$'
+	CTE_STR_19 db "Neg x Neg x Neg: ", '$'
+	CTE_STR_20 db "4 digitos", '$'
+	CTE_STR_21 db "   ", '$'
+	CTE_STR_22 db "Prueba 5 (Redondeo):", '$'
+	CTE_STR_23 db "---------------------", '$'
+	CTE_STR_24 db "--------------------", '$'
+	CTE_STR_25 db "2^(3^2) = ", '$'
+	CTE_STR_26 db "Grados     ", '$'
+	CTE_STR_27 db "2^3^2 = ", '$'
+	CTE_STR_28 db "-------------------------", '$'
+	CTE_STR_29 db "e (", '$'
+	CTE_STR_30 db "Modo de redondeo: ", '$'
+	CTE_STR_31 db "12345 % 7 = ", '$'
+	CTE_STR_32 db "Radianes   ", '$'
+	CTE_STR_33 db "Circunferencia: ", '$'
+	CTE_STR_34 db "Area: ", '$'
+	CTE_STR_35 db "Simple: ", '$'
+	CTE_STR_36 db "2^0.5 = ", '$'
+	CTE_STR_37 db "Radio: ", '$'
+	CTE_STR_38 db "Neg x Pos: ", '$'
+	CTE_STR_39 db "SQRT(2) = ", '$'
+	CTE_STR_40 db "Prueba 7 (Trigonometria):", '$'
 	CTE_STR_41 db "Diametro: ", '$'
 	CTE_STR_42 db "Redondeo de 0.00004: ", '$'
 	CTE_STR_43 db "Redondeo de 0.00001: ", '$'
@@ -89,7 +89,7 @@
 	mov dx, CTE_ESPECIAL_LF ; line break
 	mov ah, 09h
 	int 21h
-	mov dx, CTE_STR_21 ; value=---------------------
+	mov dx, CTE_STR_23 ; value=---------------------
 	mov ah, 09h
 	int 21h
 	mov dx, CTE_ESPECIAL_LF ; line break
@@ -143,13 +143,13 @@
 	mov dx, CTE_ESPECIAL_LF ; line break
 	mov ah, 09h
 	int 21h
-	mov dx, CTE_STR_16 ; value=Prueba 2 (Circunferencia):
+	mov dx, CTE_STR_18 ; value=Prueba 2 (Circunferencia):
 	mov ah, 09h
 	int 21h
 	mov dx, CTE_ESPECIAL_LF ; line break
 	mov ah, 09h
 	int 21h
-	mov dx, CTE_STR_13 ; value=--------------------------
+	mov dx, CTE_STR_14 ; value=--------------------------
 	mov ah, 09h
 	int 21h
 	mov dx, CTE_ESPECIAL_LF ; line break
@@ -166,7 +166,7 @@
 	mov dx, CTE_ESPECIAL_LF ; line break
 	mov ah, 09h
 	int 21h
-	mov dx, CTE_STR_35 ; value=Radio: 
+	mov dx, CTE_STR_37 ; value=Radio: 
 	mov ah, 09h
 	int 21h
 	fld dword [VAR_DIAMETRO]
@@ -175,7 +175,7 @@
 	mov dx, CTE_ESPECIAL_LF ; line break
 	mov ah, 09h
 	int 21h
-	mov dx, CTE_STR_30 ; value=Circunferencia: 
+	mov dx, CTE_STR_33 ; value=Circunferencia: 
 	mov ah, 09h
 	int 21h
 	fld dword [VAR_PI]
@@ -184,7 +184,7 @@
 	mov dx, CTE_ESPECIAL_LF ; line break
 	mov ah, 09h
 	int 21h
-	mov dx, CTE_STR_32 ; value=Area: 
+	mov dx, CTE_STR_34 ; value=Area: 
 	mov ah, 09h
 	int 21h
 	fld dword [VAR_PI]
@@ -205,13 +205,13 @@
 	mov dx, CTE_ESPECIAL_LF ; line break
 	mov ah, 09h
 	int 21h
-	mov dx, CTE_STR_15 ; value=Prueba 3 (Nro. de Euler):
+	mov dx, CTE_STR_16 ; value=Prueba 3 (Nro. de Euler):
 	mov ah, 09h
 	int 21h
 	mov dx, CTE_ESPECIAL_LF ; line break
 	mov ah, 09h
 	int 21h
-	mov dx, CTE_STR_25 ; value=-------------------------
+	mov dx, CTE_STR_28 ; value=-------------------------
 	mov ah, 09h
 	int 21h
 	mov dx, CTE_ESPECIAL_LF ; line break
@@ -259,7 +259,7 @@
 	fstp dword [VAR_e]
 	jmp LABEL_4
 	LABEL_5:
-	mov dx, CTE_STR_26 ; value=e (
+	mov dx, CTE_STR_29 ; value=e (
 	mov ah, 09h
 	int 21h
 	fild word [VAR_CONTADOR]
@@ -282,13 +282,13 @@
 	mov dx, CTE_ESPECIAL_LF ; line break
 	mov ah, 09h
 	int 21h
-	mov dx, CTE_STR_21 ; value=---------------------
+	mov dx, CTE_STR_23 ; value=---------------------
 	mov ah, 09h
 	int 21h
 	mov dx, CTE_ESPECIAL_LF ; line break
 	mov ah, 09h
 	int 21h
-	mov dx, CTE_STR_33 ; value=Simple: 
+	mov dx, CTE_STR_35 ; value=Simple: 
 	mov ah, 09h
 	int 21h
 	fild word [CTE_INT_0] ; value=0
@@ -297,7 +297,7 @@
 	mov dx, CTE_ESPECIAL_LF ; line break
 	mov ah, 09h
 	int 21h
-	mov dx, CTE_STR_17 ; value=Neg x Neg x Neg: 
+	mov dx, CTE_STR_19 ; value=Neg x Neg x Neg: 
 	mov ah, 09h
 	int 21h
 	fild word [CTE_INT_0] ; value=0
@@ -314,7 +314,7 @@
 	mov dx, CTE_ESPECIAL_LF ; line break
 	mov ah, 09h
 	int 21h
-	mov dx, CTE_STR_37 ; value=Neg x Pos: 
+	mov dx, CTE_STR_38 ; value=Neg x Pos: 
 	mov ah, 09h
 	int 21h
 	fild word [CTE_INT_0] ; value=0
@@ -331,13 +331,13 @@
 	mov dx, CTE_ESPECIAL_LF ; line break
 	mov ah, 09h
 	int 21h
-	mov dx, CTE_STR_20 ; value=Prueba 5 (Redondeo):
+	mov dx, CTE_STR_22 ; value=Prueba 5 (Redondeo):
 	mov ah, 09h
 	int 21h
 	mov dx, CTE_ESPECIAL_LF ; line break
 	mov ah, 09h
 	int 21h
-	mov dx, CTE_STR_22 ; value=--------------------
+	mov dx, CTE_STR_24 ; value=--------------------
 	mov ah, 09h
 	int 21h
 	mov dx, CTE_ESPECIAL_LF ; line break
@@ -349,16 +349,16 @@
 	mov dx, CTE_STR_2 ; value=redondean con precision de 
 	mov ah, 09h
 	int 21h
-	mov dx, CTE_STR_18 ; value=4 digitos
+	mov dx, CTE_STR_20 ; value=4 digitos
 	mov ah, 09h
 	int 21h
 	mov dx, CTE_ESPECIAL_LF ; line break
 	mov ah, 09h
 	int 21h
-	mov dx, CTE_STR_27 ; value=Modo de redondeo: 
+	mov dx, CTE_STR_30 ; value=Modo de redondeo: 
 	mov ah, 09h
 	int 21h
-	mov dx, CTE_STR_14 ; value=Nearest Integer (even)
+	mov dx, CTE_STR_15 ; value=Nearest Integer (even)
 	mov ah, 09h
 	int 21h
 	mov dx, CTE_ESPECIAL_LF ; line break
@@ -411,7 +411,7 @@
 	mov dx, CTE_ESPECIAL_LF ; line break
 	mov ah, 09h
 	int 21h
-	mov dx, CTE_STR_22 ; value=--------------------
+	mov dx, CTE_STR_24 ; value=--------------------
 	mov ah, 09h
 	int 21h
 	mov dx, CTE_ESPECIAL_LF ; line break
@@ -420,7 +420,7 @@
 	mov dx, CTE_STR_3 ; value=PLUSTRUNC 
 	mov ah, 09h
 	int 21h
-	mov dx, CTE_STR_12 ; value=1.5, 10.1, 100.9 = 
+	mov dx, CTE_STR_13 ; value=1.5, 10.1, 100.9 = 
 	mov ah, 09h
 	int 21h
 	fld dword [CTE_FLT_1] ; value=1.5
@@ -440,7 +440,7 @@
 	mov dx, CTE_ESPECIAL_LF ; line break
 	mov ah, 09h
 	int 21h
-	mov dx, CTE_STR_28 ; value=12345 % 7 = 
+	mov dx, CTE_STR_31 ; value=12345 % 7 = 
 	mov ah, 09h
 	int 21h
 	fild word [CTE_INT_9] ; value=12345
@@ -452,7 +452,7 @@ fstp st0
 	mov dx, CTE_ESPECIAL_LF ; line break
 	mov ah, 09h
 	int 21h
-	mov dx, CTE_STR_38 ; value=SQRT(2) = 
+	mov dx, CTE_STR_39 ; value=SQRT(2) = 
 	mov ah, 09h
 	int 21h
 	fild word [CTE_INT_2] ; value=2
@@ -460,7 +460,7 @@ fstp st0
 	mov dx, CTE_ESPECIAL_LF ; line break
 	mov ah, 09h
 	int 21h
-	mov dx, CTE_STR_34 ; value=2^0.5 = 
+	mov dx, CTE_STR_36 ; value=2^0.5 = 
 	mov ah, 09h
 	int 21h
 	fild word [CTE_INT_2] ; value=2
@@ -469,10 +469,10 @@ fstp st0
 	mov dx, CTE_ESPECIAL_LF ; line break
 	mov ah, 09h
 	int 21h
-	mov dx, CTE_STR_24 ; value=2^3^2 = 
+	mov dx, CTE_STR_27 ; value=2^3^2 = 
 	mov ah, 09h
 	int 21h
-	mov dx, CTE_STR_23 ; value=2^(3^2) = 
+	mov dx, CTE_STR_25 ; value=2^(3^2) = 
 	mov ah, 09h
 	int 21h
 	fild word [CTE_INT_2] ; value=2
@@ -489,13 +489,13 @@ fstp st0
 	mov dx, CTE_ESPECIAL_LF ; line break
 	mov ah, 09h
 	int 21h
-	mov dx, CTE_STR_39 ; value=Prueba 7 (Trigonometria):
+	mov dx, CTE_STR_40 ; value=Prueba 7 (Trigonometria):
 	mov ah, 09h
 	int 21h
 	mov dx, CTE_ESPECIAL_LF ; line break
 	mov ah, 09h
 	int 21h
-	mov dx, CTE_STR_25 ; value=-------------------------
+	mov dx, CTE_STR_28 ; value=-------------------------
 	mov ah, 09h
 	int 21h
 	mov dx, CTE_ESPECIAL_LF ; line break
@@ -503,16 +503,16 @@ fstp st0
 	int 21h
 	fild word [CTE_INT_0] ; value=0
 	fistp word [VAR_CONTADOR]
-	mov dx, CTE_STR_29 ; value=Radianes   
+	mov dx, CTE_STR_32 ; value=Radianes   
 	mov ah, 09h
 	int 21h
-	mov dx, CTE_STR_40 ; value=Grados   
+	mov dx, CTE_STR_26 ; value=Grados     
 	mov ah, 09h
 	int 21h
-	mov dx, CTE_STR_31 ; value=Seno   
+	mov dx, CTE_STR_12 ; value=Seno       
 	mov ah, 09h
 	int 21h
-	mov dx, CTE_STR_36 ; value=Coseno
+	mov dx, CTE_STR_17 ; value=Coseno  
 	mov ah, 09h
 	int 21h
 	mov dx, CTE_ESPECIAL_LF ; line break
@@ -534,7 +534,7 @@ fstp st0
 	fdivp
 	fstp dword [VAR_angulo]
 	fld dword [VAR_angulo]
-	mov dx, CTE_STR_19 ; value= 
+	mov dx, CTE_STR_21 ; value=   
 	mov ah, 09h
 	int 21h
 	fld dword [VAR_angulo]
@@ -542,12 +542,12 @@ fstp st0
 	fmulp
 	fld dword [VAR_PI]
 	fdivp
-	mov dx, CTE_STR_19 ; value= 
+	mov dx, CTE_STR_21 ; value=   
 	mov ah, 09h
 	int 21h
 	fld dword [VAR_angulo]
 	fsin
-	mov dx, CTE_STR_19 ; value= 
+	mov dx, CTE_STR_21 ; value=   
 	mov ah, 09h
 	int 21h
 	fld dword [VAR_angulo]

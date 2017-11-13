@@ -1,6 +1,7 @@
 
 section .data
 VAR_TEN dd 10.0
+VAR_PRECISION dw 4
 
 section .bss
 CW_IN resw 1
@@ -65,9 +66,9 @@ section .text
 	%endif
 	%%loop:
 	dec edi
-	mov al, [%1+esi]
-	xchg al, [%1+edi]
-	xchg al, [%1+esi]
+	mov dl, [%1+esi]
+	xchg dl, [%1+edi]
+	xchg dl, [%1+esi]
 	inc esi
 	cmp edi, esi
 	jle %%finish
@@ -114,9 +115,8 @@ section .text
 ;Convert the fp number at the top of the stack into a string
 ; %1 = buffer size
 ; %2 = output buffer variable
-; %3 = precision
 ; st0 = number
-%macro ftoa 3
+%macro ftoa 2
 	section .bss
 	%%BUF resw 1
 	section .text
@@ -135,15 +135,17 @@ section .text
 
 	%%nonegative:
 	; float specific part: take the decimal part and place separator
+	mov ecx, [VAR_PRECISION]
 	fld1
-	%rep %3
+	%%multloop:
 		fmul dword [VAR_TEN]
-	%endrep
+	loop %%multloop
 	fmulp ; st0=dividend*(10^%3)
 	fSetRC RC_NEAREST
 	frndint
 	fSetRC RC_ZERO
-	%rep %3
+	mov ecx, [VAR_PRECISION]
+	%%divloop:
 		fld dword [VAR_TEN]
 		fld st1 ; st2=dividend*(10^%3) st1=10 st0=dividend*(10^%3)
 		fprem
@@ -153,7 +155,7 @@ section .text
 		mov dl, [%%BUF]
 		add dl, '0'
 		writeToBuffer %1, %2, %%exit
-	%endrep
+	loop %%divloop
 	mov dl, '.'
 	writeToBuffer %1, %2, %%exit
 	; end float specific part
@@ -240,7 +242,7 @@ section .text
 	faddp ; st0=f2x
 	fild word [%%TMP] ; st1=f2x st0=integers
 	fxch ; st1=integers st1=f2x
-	fscale ; st1=integers st1=f2x*2^integers
+	fscale ; st1=integers st0=f2x*2^integers
 	fxch
 	fstp st0 ; st0=result
 %endmacro
