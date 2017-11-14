@@ -8,6 +8,8 @@ CW_IN resw 1
 
 section .text
 
+%include "macros/strnreverse.asm"
+
 ;conditional jump instructions expect status word in ax
 %macro fjg 1
 	test ax, 0000000100000000b ; c0;
@@ -50,39 +52,6 @@ section .text
 %define RC_POSITIVE 0x0800 ; round towards positive inf
 %define RC_ZERO 0x0C00 ; round towards zero
 
-;===================================================
-;Reverse string at memory address in range [esi;edi)
-; %1 = variable with string to reverse
-; esi = first index of string
-; edi = last index +1
-%macro strnreverse 1
-	; if in 64 bit mode, push rdi,rsi else assume 32 bit and push edi,esi
-	%if __BITS__ == 64
-		push rdi
-		push rsi
-	%else
-		push edi
-		push esi
-	%endif
-	%%loop:
-	dec edi
-	mov dl, [%1+esi]
-	xchg dl, [%1+edi]
-	xchg dl, [%1+esi]
-	inc esi
-	cmp edi, esi
-	jle %%finish
-	jmp %%loop
-	%%finish:
-	%if __BITS__ == 64
-		pop rsi
-		pop rdi
-	%else
-		pop esi
-		pop edi
-	%endif
-%endmacro
-
 ;================================================================
 ;Convert the integer number at the top of the stack into a string
 ; %1 = buffer size
@@ -108,7 +77,17 @@ section .text
 	%%exit:
 	fstp st0 ; pop the dividend
 	fSetRC RC_NEAREST ; restore control word
-	strnreverse %2 ; reverse the resulting string
+
+	push esi
+	push ecx
+	mov ecx, edi
+	sub ecx, esi
+	lea esi, [%2]
+	push ecx
+	push esi
+	call strnreverse
+	pop ecx
+	pop esi
 %endmacro
 
 ;===========================================================
@@ -165,7 +144,18 @@ section .text
 	%%exit:
 	fstp st0 ;
 	fSetRC RC_NEAREST ; restore rounding mode
-	strnreverse %2 ; reverse the resulting string
+
+	push esi
+	push ecx
+	mov ecx, edi
+	sub ecx, esi
+	lea esi, [%2+esi]
+	push ecx
+	push esi
+	call strnreverse
+	pop ecx
+	pop esi
+	;strnreverse %2 ; reverse the resulting string
 
 	%%trimzeros:
 	dec edi

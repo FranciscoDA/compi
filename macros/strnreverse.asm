@@ -10,17 +10,17 @@ strnreverse:
 	mov ecx, [ebp + __BITS__/8*3]
 
 	.loop:
-	cmp ecx, 1
-	jbe .finish
-	dec ecx
-	mov dl, [esi+ecx]
-	xchg dl, [esi]
-	mov [esi+ecx], dl
-	inc esi
-	dec ecx
+		cmp ecx, 1
+		jbe .return
+		dec ecx
+		mov dl, [esi+ecx]
+		xchg dl, [esi]
+		mov [esi+ecx], dl
+		inc esi
+		dec ecx
 	jmp .loop
-	.finish:
 
+	.return:
 	mov esp, ebp
 	pop ebp
 	ret __BITS__/8*2
