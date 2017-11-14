@@ -1,5 +1,7 @@
-; compile with: nasm -felf64 programa-nasm64.asm && ld programa-nasm64.o
-; 64-bit linux only
+; 32-bit linux only:
+; compile with: nasm -felf32 programa-nasm.asm && ld programa-nasm.o
+; 64-bit linux only:
+; compile with: nasm -felf32 programa-nasm.asm && ld -melf_i386 programa-nasm.o
 global _start
 section .text
 %include "macros/nasm.asm"

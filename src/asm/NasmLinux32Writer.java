@@ -22,9 +22,10 @@ public class NasmLinux32Writer extends TasmDos16Writer {
 		if (filename.contains(".")) { // remove file extension
 			filename = filename.substring(0, filename.lastIndexOf('.'));
 		}
-		
+		writer.println("; 32-bit linux only:");
 		writer.println("; compile with: nasm -felf32 " + filename  + ".asm && ld " + filename + ".o");
-		writer.println("; 32-bit linux only");
+		writer.println("; 64-bit linux only:");
+		writer.println("; compile with: nasm -felf32 " + filename  + ".asm && ld -melf_i386 " + filename + ".o");
 		writer.println("global _start");
 		writer.println("section .text");
 	} 

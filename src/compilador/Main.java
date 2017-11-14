@@ -21,8 +21,7 @@ public class Main {
 	private final static Path TS_PATH = Paths.get("ts.txt");
 	private final static Path INTERMEDIATE_PATH = Paths.get("intermedio.txt");
 	private final static Path TASM_OUT_PATH = Paths.get("programa-tasm.asm");
-	private final static Path NASM32_OUT_PATH = Paths.get("programa-nasm32.asm");
-	private final static Path NASM64_OUT_PATH = Paths.get("programa-nasm64.asm"); 
+	private final static Path NASM_OUT_PATH = Paths.get("programa-nasm.asm"); 
 
 	public static void outputSymbolTable(HashMap<String, SymbolTableEntry> symbolTable,
 			HashSet<Integer> integerTable,
@@ -175,8 +174,7 @@ public class Main {
 
 				asm.Writer writers[] = {
 						new TasmDos16Writer(TASM_OUT_PATH),
-						new NasmLinux32Writer(NASM32_OUT_PATH),
-						new NasmLinux64Writer(NASM64_OUT_PATH)
+						new NasmLinux32Writer(NASM_OUT_PATH),
 						};
 				System.out.println("Parsing OK");
 				for (asm.Writer w : writers) {
