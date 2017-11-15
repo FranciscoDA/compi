@@ -57,9 +57,12 @@ _start:
 	fild word [VAR_CONTADOR]
 	fild word [CTE_INT_1] ; value=1
 	faddp
-	itoa 14, BUFFER_CONVERSION
+lea ebx, [BUFFER_CONVERSION]
+push ebx
+push 14
+call itoa
 	mov ecx, BUFFER_CONVERSION
-	mov edx, edi
+	mov edx, eax
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
@@ -69,9 +72,12 @@ _start:
 	mov ebx, 1 ; fd=stdout
 	int 0x80
 	fild word [VAR_FIB_B]
-	itoa 14, BUFFER_CONVERSION
+lea ebx, [BUFFER_CONVERSION]
+push ebx
+push 14
+call itoa
 	mov ecx, BUFFER_CONVERSION
-	mov edx, edi
+	mov edx, eax
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
@@ -126,9 +132,14 @@ _start:
 	mov ebx, 1 ; fd=stdout
 	int 0x80
 	fld dword [VAR_DIAMETRO]
-	ftoa 14, BUFFER_CONVERSION
+push 4
+push 10
+lea ebx, [BUFFER_CONVERSION]
+push ebx
+push 14
+call ftoa
 	mov ecx, BUFFER_CONVERSION
-	mov edx, edi
+	mov edx, eax
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
@@ -145,9 +156,14 @@ _start:
 	fld dword [VAR_DIAMETRO]
 	fild word [CTE_INT_2] ; value=2
 	fdivp
-	ftoa 14, BUFFER_CONVERSION
+push 4
+push 10
+lea ebx, [BUFFER_CONVERSION]
+push ebx
+push 14
+call ftoa
 	mov ecx, BUFFER_CONVERSION
-	mov edx, edi
+	mov edx, eax
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
@@ -164,9 +180,14 @@ _start:
 	fld dword [VAR_PI]
 	fld dword [VAR_DIAMETRO]
 	fmulp
-	ftoa 14, BUFFER_CONVERSION
+push 4
+push 10
+lea ebx, [BUFFER_CONVERSION]
+push ebx
+push 14
+call ftoa
 	mov ecx, BUFFER_CONVERSION
-	mov edx, edi
+	mov edx, eax
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
@@ -189,9 +210,14 @@ _start:
 	fmulp
 	fild word [CTE_INT_2] ; value=2
 	fdivp
-	ftoa 14, BUFFER_CONVERSION
+push 4
+push 10
+lea ebx, [BUFFER_CONVERSION]
+push ebx
+push 14
+call ftoa
 	mov ecx, BUFFER_CONVERSION
-	mov edx, edi
+	mov edx, eax
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
@@ -278,9 +304,12 @@ _start:
 	mov ebx, 1 ; fd=stdout
 	int 0x80
 	fild word [VAR_CONTADOR]
-	itoa 14, BUFFER_CONVERSION
+lea ebx, [BUFFER_CONVERSION]
+push ebx
+push 14
+call itoa
 	mov ecx, BUFFER_CONVERSION
-	mov edx, edi
+	mov edx, eax
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
@@ -290,9 +319,14 @@ _start:
 	mov ebx, 1 ; fd=stdout
 	int 0x80
 	fld dword [VAR_e]
-	ftoa 14, BUFFER_CONVERSION
+push 4
+push 10
+lea ebx, [BUFFER_CONVERSION]
+push ebx
+push 14
+call ftoa
 	mov ecx, BUFFER_CONVERSION
-	mov edx, edi
+	mov edx, eax
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
@@ -339,9 +373,12 @@ _start:
 	fild word [CTE_INT_0] ; value=0
 	fild word [CTE_INT_6] ; value=5
 	fsubp
-	itoa 14, BUFFER_CONVERSION
+lea ebx, [BUFFER_CONVERSION]
+push ebx
+push 14
+call itoa
 	mov ecx, BUFFER_CONVERSION
-	mov edx, edi
+	mov edx, eax
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
@@ -366,9 +403,12 @@ _start:
 	fild word [CTE_INT_1] ; value=1
 	fsubp
 	fmulp
-	itoa 14, BUFFER_CONVERSION
+lea ebx, [BUFFER_CONVERSION]
+push ebx
+push 14
+call itoa
 	mov ecx, BUFFER_CONVERSION
-	mov edx, edi
+	mov edx, eax
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
@@ -387,9 +427,12 @@ _start:
 	fsubp
 	fild word [CTE_INT_10] ; value=10
 	fmulp
-	itoa 14, BUFFER_CONVERSION
+lea ebx, [BUFFER_CONVERSION]
+push ebx
+push 14
+call itoa
 	mov ecx, BUFFER_CONVERSION
-	mov edx, edi
+	mov edx, eax
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
@@ -469,9 +512,14 @@ _start:
 	mov ebx, 1 ; fd=stdout
 	int 0x80
 	fld dword [CTE_FLT_7] ; value=1.0E-5
-	ftoa 14, BUFFER_CONVERSION
+push 4
+push 10
+lea ebx, [BUFFER_CONVERSION]
+push ebx
+push 14
+call ftoa
 	mov ecx, BUFFER_CONVERSION
-	mov edx, edi
+	mov edx, eax
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
@@ -486,9 +534,14 @@ _start:
 	mov ebx, 1 ; fd=stdout
 	int 0x80
 	fld dword [CTE_FLT_8] ; value=4.0E-5
-	ftoa 14, BUFFER_CONVERSION
+push 4
+push 10
+lea ebx, [BUFFER_CONVERSION]
+push ebx
+push 14
+call ftoa
 	mov ecx, BUFFER_CONVERSION
-	mov edx, edi
+	mov edx, eax
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
@@ -503,9 +556,14 @@ _start:
 	mov ebx, 1 ; fd=stdout
 	int 0x80
 	fld dword [CTE_FLT_5] ; value=5.0E-5
-	ftoa 14, BUFFER_CONVERSION
+push 4
+push 10
+lea ebx, [BUFFER_CONVERSION]
+push ebx
+push 14
+call ftoa
 	mov ecx, BUFFER_CONVERSION
-	mov edx, edi
+	mov edx, eax
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
@@ -520,9 +578,14 @@ _start:
 	mov ebx, 1 ; fd=stdout
 	int 0x80
 	fld dword [CTE_FLT_6] ; value=6.0E-5
-	ftoa 14, BUFFER_CONVERSION
+push 4
+push 10
+lea ebx, [BUFFER_CONVERSION]
+push ebx
+push 14
+call ftoa
 	mov ecx, BUFFER_CONVERSION
-	mov edx, edi
+	mov edx, eax
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
@@ -537,9 +600,14 @@ _start:
 	mov ebx, 1 ; fd=stdout
 	int 0x80
 	fld dword [CTE_FLT_10] ; value=9.0E-5
-	ftoa 14, BUFFER_CONVERSION
+push 4
+push 10
+lea ebx, [BUFFER_CONVERSION]
+push ebx
+push 14
+call ftoa
 	mov ecx, BUFFER_CONVERSION
-	mov edx, edi
+	mov edx, eax
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
@@ -602,9 +670,12 @@ _start:
 	frndint
 	fSetRC RC_NEAREST
 	faddp
-	itoa 14, BUFFER_CONVERSION
+lea ebx, [BUFFER_CONVERSION]
+push ebx
+push 14
+call itoa
 	mov ecx, BUFFER_CONVERSION
-	mov edx, edi
+	mov edx, eax
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
@@ -624,9 +695,12 @@ _start:
 	fprem
 	fxch
 fstp st0
-	itoa 14, BUFFER_CONVERSION
+lea ebx, [BUFFER_CONVERSION]
+push ebx
+push 14
+call itoa
 	mov ecx, BUFFER_CONVERSION
-	mov edx, edi
+	mov edx, eax
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
@@ -642,9 +716,14 @@ fstp st0
 	int 0x80
 	fild word [CTE_INT_2] ; value=2
 	fsqrt
-	ftoa 14, BUFFER_CONVERSION
+push 4
+push 10
+lea ebx, [BUFFER_CONVERSION]
+push ebx
+push 14
+call ftoa
 	mov ecx, BUFFER_CONVERSION
-	mov edx, edi
+	mov edx, eax
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
@@ -661,9 +740,14 @@ fstp st0
 	fild word [CTE_INT_2] ; value=2
 	fld dword [CTE_FLT_2] ; value=0.5
 	fpow
-	ftoa 14, BUFFER_CONVERSION
+push 4
+push 10
+lea ebx, [BUFFER_CONVERSION]
+push ebx
+push 14
+call ftoa
 	mov ecx, BUFFER_CONVERSION
-	mov edx, edi
+	mov edx, eax
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
@@ -687,9 +771,12 @@ fstp st0
 	fild word [CTE_INT_2] ; value=2
 	fpow
 	fpow
-	itoa 14, BUFFER_CONVERSION
+lea ebx, [BUFFER_CONVERSION]
+push ebx
+push 14
+call itoa
 	mov ecx, BUFFER_CONVERSION
-	mov edx, edi
+	mov edx, eax
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
@@ -771,9 +858,14 @@ fstp st0
 	fdivp
 	fstp dword [VAR_angulo]
 	fld dword [VAR_angulo]
-	ftoa 14, BUFFER_CONVERSION
+push 4
+push 10
+lea ebx, [BUFFER_CONVERSION]
+push ebx
+push 14
+call ftoa
 	mov ecx, BUFFER_CONVERSION
-	mov edx, edi
+	mov edx, eax
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
@@ -787,9 +879,14 @@ fstp st0
 	fmulp
 	fld dword [VAR_PI]
 	fdivp
-	ftoa 14, BUFFER_CONVERSION
+push 4
+push 10
+lea ebx, [BUFFER_CONVERSION]
+push ebx
+push 14
+call ftoa
 	mov ecx, BUFFER_CONVERSION
-	mov edx, edi
+	mov edx, eax
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
@@ -800,9 +897,14 @@ fstp st0
 	int 0x80
 	fld dword [VAR_angulo]
 	fsin
-	ftoa 14, BUFFER_CONVERSION
+push 4
+push 10
+lea ebx, [BUFFER_CONVERSION]
+push ebx
+push 14
+call ftoa
 	mov ecx, BUFFER_CONVERSION
-	mov edx, edi
+	mov edx, eax
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80
@@ -813,9 +915,14 @@ fstp st0
 	int 0x80
 	fld dword [VAR_angulo]
 	fcos
-	ftoa 14, BUFFER_CONVERSION
+push 4
+push 10
+lea ebx, [BUFFER_CONVERSION]
+push ebx
+push 14
+call ftoa
 	mov ecx, BUFFER_CONVERSION
-	mov edx, edi
+	mov edx, eax
 	mov eax, 0x4 ; sys_write
 	mov ebx, 1 ; fd=stdout
 	int 0x80

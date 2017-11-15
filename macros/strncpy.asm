@@ -1,5 +1,5 @@
-;==================================================
-;Copy string from source [esi;edi) to dest variable
+;========================================
+;Copy string from source to dest variable
 ;Source and destination may overlap
 ; char* destination
 ; char* source
@@ -7,9 +7,10 @@
 strncpy:
 	push ebp
 	mov ebp, esp
-	pop edi
-	pop esi
-	pop ecx
+
+	mov edi, [ebp + __BITS__/8*2]
+	mov esi, [ebp + __BITS__/8*3]
+	mov ecx, [ebp + __BITS__/8*4]
 
 	cmp edi, esi
 	jg .r2lstart
@@ -41,5 +42,6 @@ strncpy:
 	dec esi
 	jmp .r2lloop
 	.done:
+	mov esp, ebp
 	pop ebp
-	ret
+	ret __BITS__/8*3

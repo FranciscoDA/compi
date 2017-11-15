@@ -1,13 +1,14 @@
-;===================================================
-;Reverse string at memory address in range [esi;edi)
-; char* source
-; int count
+
+section .text
+;=====================================================
+;Reverse string at memory address in place
+;Signature: void strnreverse (int count, char* source)
 strnreverse:
 	push ebp
 	mov ebp, esp
 
-	mov esi, [ebp + __BITS__/8*2]
 	mov ecx, [ebp + __BITS__/8*3]
+	mov esi, [ebp + __BITS__/8*2]
 
 	.loop:
 		cmp ecx, 1

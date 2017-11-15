@@ -50,16 +50,24 @@ public class NasmLinux32Writer extends TasmDos16Writer {
 	}
 	@Override
 	public void doPrintInteger() {
-		writer.println("\titoa " + (CONVERSION_BUFFER_SIZE-1) + ", " + CONVERSION_BUFFER_NAME);
+		writer.println("lea ebx, [" + CONVERSION_BUFFER_NAME + "]");
+		writer.println("push ebx");
+		writer.println("push " + (CONVERSION_BUFFER_SIZE-1));
+		writer.println("call itoa");
 		writer.println("\tmov ecx, " + CONVERSION_BUFFER_NAME);
-		writer.println("\tmov edx, edi");
+		writer.println("\tmov edx, eax");
 		doPrintString();
 	}
 	@Override
 	public void doPrintFloat() {
-		writer.println("\tftoa " + (CONVERSION_BUFFER_SIZE-1) + ", " + CONVERSION_BUFFER_NAME);
+		writer.println("push 4");
+		writer.println("push 10");
+		writer.println("lea ebx, [" + CONVERSION_BUFFER_NAME + "]");
+		writer.println("push ebx");
+		writer.println("push " + (CONVERSION_BUFFER_SIZE-1));
+		writer.println("call ftoa");
 		writer.println("\tmov ecx, " + CONVERSION_BUFFER_NAME);
-		writer.println("\tmov edx, edi");
+		writer.println("\tmov edx, eax");
 		doPrintString();
 	}
 	@Override
