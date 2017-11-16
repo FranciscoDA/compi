@@ -3,7 +3,7 @@ section .text
 ;=====================================================
 ;Reverse string at memory address in place
 ;Signature: void strnreverse (int count, char* source)
-strnreverse:
+strnrev:
 	push ebp
 	mov ebp, esp
 

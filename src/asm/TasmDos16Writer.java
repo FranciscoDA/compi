@@ -4,10 +4,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 
 import compilador.SymbolTableEntry;
 
@@ -40,8 +38,10 @@ public class TasmDos16Writer implements Writer {
 	}
 
 	public void beginProgram() {
+		writer.println("INCLUDE macros/tasm.asm");
 		writer.println(".MODEL LARGE");
 		writer.println(".386");
+		writer.println(".387");
 		writer.println(".STACK 200h");
 		writer.println(".DATA");
 	}
@@ -78,7 +78,7 @@ public class TasmDos16Writer implements Writer {
 	}
 	@Override
 	public void loadStringLiteral(String value) {
-		writer.println("\tmov dx, " + SLIT_PREFIX + mapStringToIndex.get(value) + " ; value=" + value);
+		writer.println("\tlea dx, [" + SLIT_PREFIX + mapStringToIndex.get(value) + "] ; value=" + value);
 	}
 	@Override
 	public void loadFloatVariable(String varName) {
@@ -111,15 +111,31 @@ public class TasmDos16Writer implements Writer {
 	}
 	@Override
 	public void doPrintInteger() {
-		
+		writer.println("lea bx, [" + CONVERSION_BUFFER_NAME + "]");
+		writer.println("push bx");
+		writer.println("push " + (CONVERSION_BUFFER_SIZE-1));
+		writer.println("call itoa");
+		writer.println("add bx, ax");
+		writer.println("mov byte ptr [bx], '$'");
+		writer.println("\tlea dx, [" + CONVERSION_BUFFER_NAME + "]");
+		doPrintString();
 	}
 	@Override
 	public void doPrintFloat() {
-		
+		writer.println("push 4");
+		writer.println("push 10");
+		writer.println("lea bx, [" + CONVERSION_BUFFER_NAME + "]");
+		writer.println("push bx");
+		writer.println("push " + (CONVERSION_BUFFER_SIZE-1));
+		writer.println("call ftoa");
+		writer.println("add bx, ax");
+		writer.println("mov byte ptr [bx], '$'");
+		writer.println("\tlea dx, [" + CONVERSION_BUFFER_NAME + "]");
+		doPrintString();
 	}
 	@Override
 	public void doPrintLF() {
-		writer.println("\tmov dx, " + NEWLINE_NAME + " ; line break");
+		writer.println("\tlea dx, [" + NEWLINE_NAME + "] ; line break");
 		doPrintString();
 	}
 	@Override
@@ -230,9 +246,13 @@ public class TasmDos16Writer implements Writer {
 		writer.println("\taux_float dd ?");
 
 		writer.println(".CODE");
+		writer.println("MAIN");
 	}
 	@Override
 	public void endCode() {
+		writer.println("\tmov ax, 4C00h ; sys_exit");
+		writer.println("\tint 21h");
+		writer.println("END MAIN");
 	}
 	@Override
 	public void endProgram() {

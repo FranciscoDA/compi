@@ -114,7 +114,7 @@ ftoa:
 	lea esi, [ebx+esi]
 	push ecx
 	push esi
-	call strnreverse
+	call strnrev
 	pop ecx
 	pop edi
 
@@ -170,7 +170,7 @@ itoa:
 	lea esi, [ebx+esi]
 	push ecx
 	push esi
-	call strnreverse
+	call strnrev
 	popad
 	mov eax, edi ; set return value
 

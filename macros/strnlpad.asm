@@ -1,7 +1,7 @@
 ;========================================
 ;Left-pad a string with character in dl
 ;Signature: void strnleftpad(int count, char* src, int minWidth, char padChar)
-strnleftpad:
+strnlpad:
 	push ebp
 	mov ebp, esp
 
