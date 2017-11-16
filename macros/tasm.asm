@@ -1,6 +1,7 @@
 
-INCLUDE macros/strnrev.asm
-INCLUDE macros/strncpy.asm
-INCLUDE macros/strnlpad.asm
-INCLUDE macros/fpu.asm
-INCLUDE macros/numbers.asm
+INCLUDE macros/tasm/fpu.asm
+INCLUDE macros/tasm/buffer.asm
+INCLUDE macros/tasm/strnrev.asm
+INCLUDE macros/tasm/strncpy.asm
+INCLUDE macros/tasm/strnlpad.asm
+INCLUDE macros/tasm/numbers.asm
