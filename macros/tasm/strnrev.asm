@@ -7,8 +7,8 @@ strnrev:
 	push bp
 	mov bp, sp
 
-	mov cx, [bp + __BITS__/8*3]
-	mov si, [bp + __BITS__/8*2]
+	mov cx, [bp + WORD_SIZE*3]
+	mov si, [bp + WORD_SIZE*2]
 
 	.loop:
 		cmp cx, 1
@@ -24,4 +24,4 @@ strnrev:
 	.return:
 	mov sp, bp
 	pop bp
-	ret __BITS__/8*2
+	ret WORD_SIZE*2

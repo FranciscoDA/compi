@@ -1,4 +1,6 @@
 
+DEFINE WORD_SIZE 2
+
 INCLUDE macros/tasm/fpu.asm
 INCLUDE macros/tasm/buffer.asm
 INCLUDE macros/tasm/strnrev.asm

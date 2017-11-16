@@ -1,4 +1,6 @@
 
+%define WORD_SIZE __BITS__/8
+
 %include "macros/nasm/fpu.asm"
 %include "macros/nasm/buffer.asm"
 %include "macros/nasm/strnrev.asm"

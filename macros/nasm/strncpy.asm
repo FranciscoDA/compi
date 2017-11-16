@@ -8,9 +8,9 @@ strncpy:
 	push ebp
 	mov ebp, esp
 
-	mov edi, [ebp + __BITS__/8*2]
-	mov esi, [ebp + __BITS__/8*3]
-	mov ecx, [ebp + __BITS__/8*4]
+	mov edi, [ebp + WORD_SIZE*2]
+	mov esi, [ebp + WORD_SIZE*3]
+	mov ecx, [ebp + WORD_SIZE*4]
 
 	cmp edi, esi
 	jg .r2lstart
@@ -44,4 +44,4 @@ strncpy:
 	.done:
 	mov esp, ebp
 	pop ebp
-	ret __BITS__/8*3
+	ret WORD_SIZE*3

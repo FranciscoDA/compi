@@ -10,9 +10,9 @@ section .text
 ftoa:
 	push ebp
 	mov ebp, esp
-	sub esp, __BITS__/8*1 ; 1 local
+	sub esp, WORD_SIZE*1 ; 1 local
 
-	mov ebx, [ebp + __BITS__/8*3] ; ebx=buf
+	mov ebx, [ebp + WORD_SIZE*3] ; ebx=buf
 
 	mov esi, 0
 	mov edi, 0
@@ -24,11 +24,11 @@ ftoa:
 	mov dl, '-'
 	inc esi ; dont reverse minus sign
 	fchs ; st0 = -st0
-	writeToBuffer [ebp + __BITS__/8*2], ebx, edi, .return
+	writeToBuffer [ebp + WORD_SIZE*2], ebx, edi, .return
 
 	.nonegative:
 	; float specific part: take the decimal part and place separator
-	mov eax, [ebp + __BITS__/8*5] ; eax=precision
+	mov eax, [ebp + WORD_SIZE*5] ; eax=precision
 	fld1
 	.multloop:
 		cmp eax, 0
@@ -42,19 +42,19 @@ ftoa:
 	fSetRC RC_NEAREST
 	frndint
 	fSetRC RC_ZERO
-	mov eax, [ebp + __BITS__/8*5] ; eax=precision
+	mov eax, [ebp + WORD_SIZE*5] ; eax=precision
 	.divloop:
 		cmp eax, 0
 		jle .breakdivloop
-		__digtoa [ebp + __BITS__/8*2], ebx, edi, .return
+		__digtoa [ebp + WORD_SIZE*2], ebx, edi, .return
 		dec eax
 	jmp .divloop
 	.breakdivloop:
 	mov dl, '.'
-	writeToBuffer [ebp + __BITS__/8*2], ebx, edi, .return
+	writeToBuffer [ebp + WORD_SIZE*2], ebx, edi, .return
 	; end float specific part
 
-	__itoa [ebp + __BITS__/8*2], ebx, edi, .return
+	__itoa [ebp + WORD_SIZE*2], ebx, edi, .return
 
 	.return:
 
@@ -87,7 +87,7 @@ ftoa:
 	mov eax, edi
 	mov esp, ebp
 	pop ebp
-	ret __BITS__/8*4
+	ret WORD_SIZE*4
 
 ;====================================================================
 ; Converts an integer operand at the top of the fpu stack into
@@ -100,8 +100,8 @@ itoa:
 	mov esi, 0
 	mov edi, 0
 
-	mov ecx, [ebp + __BITS__/8*2] ; ecx bufSize
-	mov ebx, [ebp + __BITS__/8*3] ; ebx=buf
+	mov ecx, [ebp + WORD_SIZE*2] ; ecx bufSize
+	mov ebx, [ebp + WORD_SIZE*3] ; ebx=buf
 
 	ftst
 	fstsw ax
@@ -131,4 +131,4 @@ itoa:
 
 	mov esp, ebp
 	pop ebp
-	ret __BITS__/8*2
+	ret WORD_SIZE*2

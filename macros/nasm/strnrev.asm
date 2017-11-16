@@ -7,8 +7,8 @@ strnrev:
 	push ebp
 	mov ebp, esp
 
-	mov ecx, [ebp + __BITS__/8*3]
-	mov esi, [ebp + __BITS__/8*2]
+	mov ecx, [ebp + WORD_SIZE*3]
+	mov esi, [ebp + WORD_SIZE*2]
 
 	.loop:
 		cmp ecx, 1
@@ -24,4 +24,4 @@ strnrev:
 	.return:
 	mov esp, ebp
 	pop ebp
-	ret __BITS__/8*2
+	ret WORD_SIZE*2

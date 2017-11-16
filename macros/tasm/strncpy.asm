@@ -8,9 +8,9 @@ strncpy:
 	push bp
 	mov bp, sp
 
-	mov di, [bp + __BITS__/8*2]
-	mov si, [bp + __BITS__/8*3]
-	mov cx, [bp + __BITS__/8*4]
+	mov di, [bp + WORD_SIZE*2]
+	mov si, [bp + WORD_SIZE*3]
+	mov cx, [bp + WORD_SIZE*4]
 
 	cmp di, si
 	jg .r2lstart
@@ -44,4 +44,4 @@ strncpy:
 	.done:
 	mov sp, bp
 	pop bp
-	ret __BITS__/8*3
+	ret WORD_SIZE*3
