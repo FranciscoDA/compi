@@ -1,63 +1,27 @@
-<project name="compilador" default="run">
-	<!-- location of development tools necessary for the build -->
-	<property name="lib.dir" value="jflex/lib"/>
-    
-	<!-- override these if you want to use your own versions -->
-	<property name="bootstrap.jflex.jar" value="${lib.dir}/jflex-1.6.1.jar" />
-	<property name="cup.jar" value="${lib.dir}/java-cup-11a.jar" />
+<project name="compi" default="run">
+	<taskdef classname="jflex.anttask.JFlexTask" name="jflex" classpath="jflex/lib/jflex-1.6.1.jar"/>
+	<taskdef classname="java_cup.anttask.CUPTask" name="cup" classpath="jflex/lib/java-cup-11a.jar"/>
 	
-	<taskdef classname="jflex.anttask.JFlexTask" name="jflex">
-		<classpath>
-			<pathelement location="${bootstrap.jflex.jar}"/>
-		</classpath>
-  	</taskdef>
-	<taskdef classname="java_cup.anttask.CUPTask" name="cup">
-		<classpath>
-			<pathelement location="${cup.jar}"/>
-		</classpath>  	
-	</taskdef>
-
-	<target name="build" depends="realclean,compile" />
-	
-	<path id="framework">
-		<pathelement location="${bootstrap.jflex.jar}"/>
-		<pathelement location="${cup.jar}"/>
-	</path>
-
-	<target name="run" depends="compile">
-		<java classname="compilador.Main" fork="false">
+	<target name="build" depends="scanner,cup">
+		<javac srcdir="src" destdir="bin" includeantruntime="false">
 			<classpath>
-				<pathelement location="bin" />
+				<pathelement location="jflex/lib/java-cup-11a.jar"></pathelement>
 			</classpath>
-			<classpath refid="framework" />
+		</javac>
+	</target>
+	<target name="run" depends="build">
+		<java dir="." classname="compilador.Main">
+			<classpath>
+				<pathelement location="jflex/lib/java-cup-11a.jar"></pathelement>
+				<pathelement path="bin"></pathelement>
+			</classpath>
 		</java>
 	</target>
-
-  <target name="compile" depends="scanner,cup">
-    <javac srcdir="src" destdir="bin">
-    	<classpath refid="framework" />
-	</javac>
-  </target>
-
-  <target name="scanner" depends="cup">
-  	<jflex file="${basedir}/flex/java.flex" destdir="src" />
-  </target>
-  <target name="cup">
-    <cup srcfile="${basedir}/flex/java12-rpn.cup" interface="true" destdir="${basedir}/src"/>
-  </target>
-
-  <target name="genclean">
-    <delete file="src/compilador/Scanner.java"/>
-    <delete file="src/compilador/sym.java" />
-    <delete file="src/compilador/parser.java" />
-  </target>
-
-  <target name="clean">
-    <delete>
-      <fileset dir="." includes="**/*~"/>
-      <fileset dir="." includes="**/*.class"/>
-    </delete>
-  </target>
-
-  <target name="realclean" depends="clean,genclean" />
+	
+	<target name="scanner">
+		<jflex file="flex/java.flex" destdir="src"></jflex>
+	</target>
+	<target name="cup">
+		<cup srcfile="flex/java12-rpn.cup" interface="yes" destdir="src"></cup>
+	</target>
 </project>
