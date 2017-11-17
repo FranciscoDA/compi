@@ -7,18 +7,19 @@ strnrev:
 	push ebp
 	mov ebp, esp
 
-	mov ecx, [ebp + WORD_SIZE*3]
+	mov edi, [ebp + WORD_SIZE*3]
 	mov esi, [ebp + WORD_SIZE*2]
+	add edi, esi
+	dec edi
 
 	.loop:
-		cmp ecx, 1
+		cmp edi, esi
 		jbe .return
-		dec ecx
-		mov dl, [esi+ecx]
+		mov dl, [edi]
 		xchg dl, [esi]
-		mov [esi+ecx], dl
+		mov [edi], dl
 		inc esi
-		dec ecx
+		dec edi
 	jmp .loop
 
 	.return:

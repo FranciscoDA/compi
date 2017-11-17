@@ -38,11 +38,11 @@ public class TasmDos16Writer implements Writer {
 	}
 
 	public void beginProgram() {
-		writer.println("INCLUDE macros/tasm.asm");
 		writer.println(".MODEL LARGE");
 		writer.println(".386");
 		writer.println(".387");
 		writer.println(".STACK 200h");
+		writer.println("INCLUDE macros/tasm.asm");
 		writer.println(".DATA");
 	}
 
@@ -205,7 +205,7 @@ public class TasmDos16Writer implements Writer {
 		writer.println("\tfxch");
 		writer.println("\tfprem");
 		writer.println("\tfxch");
-		writer.println("fstp st0");
+		writer.println("\tfstp st(0)");
 	}
 	@Override
 	public void doPower() {
@@ -246,7 +246,7 @@ public class TasmDos16Writer implements Writer {
 		writer.println("\taux_float dd ?");
 
 		writer.println(".CODE");
-		writer.println("MAIN");
+		writer.println("MAIN:");
 	}
 	@Override
 	public void endCode() {

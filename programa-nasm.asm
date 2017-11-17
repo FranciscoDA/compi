@@ -694,7 +694,7 @@ call itoa
 	fxch
 	fprem
 	fxch
-fstp st0
+	fstp st0
 lea ebx, [BUFFER_CONVERSION]
 push ebx
 push 14

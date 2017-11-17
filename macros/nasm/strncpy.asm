@@ -13,34 +13,28 @@ strncpy:
 	mov ecx, [ebp + WORD_SIZE*4]
 
 	cmp edi, esi
-	jg .r2lstart
+	jg .r2lloop
 
 	; copy left-to-right
 	.l2rloop:
-	cmp ecx, 0
-	jbe .done
-	mov dl, [esi]
-	mov [edi], dl
-	dec ecx
-	inc esi
-	inc edi
+		cmp ecx, 0
+		jbe .done
+		mov dl, [esi]
+		mov [edi], dl
+		dec ecx
+		inc esi
+		inc edi
 	jmp .l2rloop
 
-	.r2lstart:
-	add edi, ecx
-	dec edi
-	add esi, ecx
-	dec esi
 	; copy right-to left
 	.r2lloop:
-	cmp ecx, 0
-	jbe .done
-	mov dl, [esi]
-	mov [edi], dl
-	dec ecx
-	dec edi
-	dec esi
+		cmp ecx, 0
+		jbe .done
+		mov dl, [esi+ecx]
+		mov [edi+ecx], dl
+		dec ecx
 	jmp .r2lloop
+
 	.done:
 	mov esp, ebp
 	pop ebp

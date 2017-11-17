@@ -1,27 +1,31 @@
 
-section .text
+public strnrev
+
 ;=====================================================
 ;Reverse string at memory address in place
 ;Signature: void strnreverse (int count, char* source)
-strnrev:
+strnrev proc
+locals
 	push bp
 	mov bp, sp
 
-	mov cx, [bp + WORD_SIZE*3]
+	mov di, [bp + WORD_SIZE*3]
 	mov si, [bp + WORD_SIZE*2]
+	add di, si
+	dec di
 
-	.loop:
-		cmp cx, 1
-		jbe .return
-		dec cx
-		mov dl, [si+cx]
+	@@loop:
+		cmp di, si
+		jbe @@return
+		mov dl, [di]
 		xchg dl, [si]
-		mov [si+cx], dl
+		mov [di], dl
 		inc si
-		dec cx
-	jmp .loop
+		dec di
+	jmp @@loop
 
-	.return:
+	@@return:
 	mov sp, bp
 	pop bp
 	ret WORD_SIZE*2
+strnrev endp

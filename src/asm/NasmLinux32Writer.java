@@ -59,6 +59,13 @@ public class NasmLinux32Writer extends TasmDos16Writer {
 		doPrintString();
 	}
 	@Override
+	public void doModulo() {
+		writer.println("\tfxch");
+		writer.println("\tfprem");
+		writer.println("\tfxch");
+		writer.println("\tfstp st0");
+	}
+	@Override
 	public void doPrintFloat() {
 		writer.println("push 4");
 		writer.println("push 10");

@@ -1,8 +1,8 @@
-INCLUDE macros/tasm.asm
 .MODEL LARGE
 .386
 .387
 .STACK 200h
+INCLUDE macros/tasm.asm
 .DATA
 	VAR_DIAMETRO dd ?
 	VAR_e dd ?
@@ -85,7 +85,7 @@ INCLUDE macros/tasm.asm
 	aux_int dw ?
 	aux_float dd ?
 .CODE
-MAIN
+MAIN:
 	lea dx, [CTE_STR_0] ; value=Prueba 1 (Fibonacci):
 	mov ah, 09h
 	int 21h
@@ -624,7 +624,7 @@ mov byte ptr [bx], '$'
 	fxch
 	fprem
 	fxch
-fstp st0
+	fstp st(0)
 lea bx, [BUFFER_CONVERSION]
 push bx
 push 14

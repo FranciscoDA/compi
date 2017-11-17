@@ -1,64 +1,70 @@
 
-section .data
+public ftoa, itoa
+
+.DATA
 VAR_TEN dd 10.0
 
-section .text
+.CODE
+
 ;====================================================================
 ; Converts a floating point operand at the top of the fpu stack into
 ; a string and returns the length of the formatted string in ax
 ; Signature: int ftoa (int bufSize, char* buf, int minWidth, int precision)
-ftoa:
-	push bp
+ftoa proc
+locals
+	push ebp
 	mov bp, sp
 	sub sp, WORD_SIZE*1 ; 1 local
 
 	mov bx, [bp + WORD_SIZE*3] ; bx=buf
+	mov cx, [bp + WORD_SIZE*2] ; cx=bufSize
 
 	mov si, 0
 	mov di, 0
 
 	ftst
 	fstsw ax
-	fjle ax, .nonegative
+	fjle ax, @@nonegative
 
 	mov dl, '-'
 	inc si ; dont reverse minus sign
 	fchs ; st0 = -st0
-	writeToBuffer [bp + WORD_SIZE*2], bx, di, .return
+	writeToBuffer cx, bx, di, @@return
 
-	.nonegative:
+	@@nonegative:
 	; float specific part: take the decimal part and place separator
 	mov ax, [bp + WORD_SIZE*5] ; ax=precision
 	fld1
-	.multloop:
+	@@multloop:
 		cmp ax, 0
-		jle .breakmultloop
+		jle @@breakmultloop
 		fmul dword [VAR_TEN]
 		dec ax
-	jmp .multloop
-	.breakmultloop:
+	jmp @@multloop
+	@@breakmultloop:
 
 	fmulp ; st0=dividend*(10^%3)
 	fSetRC RC_NEAREST
 	frndint
 	fSetRC RC_ZERO
 	mov ax, [bp + WORD_SIZE*5] ; ax=precision
-	.divloop:
+	mov cx, [bp + WORD_SIZE*2]
+	@@divloop:
 		cmp ax, 0
-		jle .breakdivloop
-		__digtoa [bp + WORD_SIZE*2], bx, di, .return
+		jle @@breakdivloop
+		__digtoa cx, bx, di, @@return
 		dec ax
-	jmp .divloop
-	.breakdivloop:
+	jmp @@divloop
+	@@breakdivloop:
 	mov dl, '.'
-	writeToBuffer [bp + WORD_SIZE*2], bx, di, .return
+	writeToBuffer cx, bx, di, @@return
 	; end float specific part
 
-	__itoa [bp + WORD_SIZE*2], bx, di, .return
+	__itoa cx, bx, di, @@return
 
-	.return:
+	@@return:
 
-	fstp st0 ;
+	fstp st(0) ;
 	fSetRC RC_NEAREST ; restore rounding mode
 
 
@@ -73,27 +79,29 @@ ftoa:
 	pop cx
 	pop di
 
-	.trimzeros:
+	@@trimzeros:
 		dec di
 		mov dl, [bx+di]
 		cmp dl, '0'
-	je .trimzeros
+	je @@trimzeros
 	cmp dl, '.'
-	jne .restorecount
+	jne @@restorecount
 	inc di
-	.restorecount:
+	@@restorecount:
 	inc di
 
 	mov ax, di
 	mov sp, bp
 	pop bp
 	ret WORD_SIZE*4
+ftoa endp
 
 ;====================================================================
 ; Converts an integer operand at the top of the fpu stack into
 ; a string and returns the length of the formatted string in ax
 ; Signature: int ftoa (int bufSize, char* buf)
-itoa:
+itoa proc
+locals
 	push bp
 	mov bp, sp
 
@@ -105,18 +113,18 @@ itoa:
 
 	ftst
 	fstsw ax
-	fjle ax, .nonegative
+	fjle ax, @@nonegative
 
 	mov dl, '-'
 	inc si ; dont reverse minus sign
 	fchs ; st0 = -st0
-	writeToBuffer cx, bx, di, .return
+	writeToBuffer cx, bx, di, @@return
 
-	.nonegative:
-	__itoa cx, bx, di, .return
+	@@nonegative:
+	__itoa cx, bx, di, @@return
 
-	.return:
-	fstp st0 ; pop the dividend
+	@@return:
+	fstp st(0) ; pop the dividend
 	fSetRC RC_NEAREST ; restore control word
 
 	pushad
@@ -132,3 +140,4 @@ itoa:
 	mov sp, bp
 	pop bp
 	ret WORD_SIZE*2
+itoa endp
