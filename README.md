@@ -8,7 +8,15 @@
  * Agregar los .jar de JFlex al proyecto creado: Project > Properties > Java Build Path > Libraries > Add JARs...
    * jflex/lib/java-cup-11a.jar
    * jflex/lib/jflex-1.6.1.jar
- * Compilar ejecutando el archivo build.xml (click derecho > run as > Ant Build)
+
+## Compilacion y ejecucion (Eclipse/Linux)
+ * Compilar y ejecutar el compilador ejecutando el archivo build.xml (click derecho > run as > Ant Build)
+ * Compilar y enlazar el programa: `nasm -nasm -wt -felf32 programa-nasm.asm && ld -melf_i386 programa-nasm.o`
+ * Ejecutar el programa: `./a.out`
+## Compilacion y ejecucion (CLI/Linux)
+ * Compilar y ejecutar el compilador: `./ant run`
+ * Compilar y enlazar el programa: `nasm -nasm -wt -felf32 programa-nasm.asm && ld -melf_i386 programa-nasm.o`
+ * Ejecutar el programa: `./a.out`
 
 ## Links
 
