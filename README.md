@@ -9,17 +9,25 @@
    * jflex/lib/java-cup-11a.jar
    * jflex/lib/jflex-1.6.1.jar
 
-## Compilacion y ejecucion (Eclipse/Linux)
- * Compilar y ejecutar el compilador ejecutando el archivo build.xml (click derecho > run as > Ant Build)
- * Compilar y enlazar el programa: `nasm -nasm -wt -felf32 programa-nasm.asm && ld -melf_i386 programa-nasm.o`
+## Compilación a assembly (Eclipse)
+ * Realizar el setup
+ * Click derecho en el archivo build.xml
+ * Run as > Ant Build
+
+## Compilación a assembly (CLI)
+ * Ejecutar en la línea de comandos: `ant run`
+
+## Compilación a ejecutable (Linux+NASM)
+ * Instalar NASM: `sudo apt-get install nasm` o `pacman -S nasm`, etc.
+ * Compilar el objeto: `nasm -nasm -wt -felf32 programa-nasm.asm`
+ * Enlazar el ejecutable: `ld -melf_i386 programa-nasm.o`
  * Ejecutar el programa: `./a.out`
-## Compilacion y ejecucion (CLI/Linux)
- * Compilar y ejecutar el compilador: `./ant run`
- * Compilar y enlazar el programa: `nasm -nasm -wt -felf32 programa-nasm.asm && ld -melf_i386 programa-nasm.o`
- * Ejecutar el programa: `./a.out`
+
+## Compilación a ejecutable (DOSBox+TASM4):
+ * Compilar el objeto: `tasm PROGRA~1.ASM`
+ * Enlazar el ejecutable: `tlink PROGRA~1.OBJ`
 
 ## Links
-
  * Instrucciones x87 FPU: http://linasm.sourceforge.net/docs/instructions/fpu.php
  * Manual NASM: http://www.nasm.us/doc/nasmdoc0.html
  * Simply FPU: http://www.website.masmforum.com/tutorials/fptute/
