@@ -28,7 +28,6 @@ public class TasmDos16Writer implements Writer {
 	protected final String ILIT_PREFIX = "CTE_INT_";
 	protected final String FLIT_PREFIX = "CTE_FLT_";
 	protected final String SLIT_PREFIX = "CTE_STR_";
-	protected final String NEWLINE_NAME = "CTE_ESPECIAL_LF";
 	protected final String CONVERSION_BUFFER_NAME = "BUFFER_CONVERSION";
 	protected final int CONVERSION_BUFFER_SIZE = 15;
 	
@@ -40,7 +39,6 @@ public class TasmDos16Writer implements Writer {
 	public void beginProgram() {
 		writer.println(".MODEL LARGE");
 		writer.println(".386");
-		writer.println(".387");
 		writer.println(".STACK 200h");
 		writer.println("INCLUDE macros/tasm.asm");
 		writer.println(".DATA");
@@ -63,18 +61,14 @@ public class TasmDos16Writer implements Writer {
 		for (String st : stringTable)
 			mapStringToIndex.put(st, mapStringToIndex.size());
 	}
-	@Override
-	public Character[] getNewlineCharacters() {
-		return new Character[]{'\r', '\n'};
-	}
 
 	@Override
 	public void loadFloatLiteral(Float value) {
-		writer.println("\tfld dword [" + FLIT_PREFIX + mapFloatToIndex.get(value) + "] ; value=" + value);
+		writer.println("\tfld " + FLIT_PREFIX + mapFloatToIndex.get(value) + " ; value=" + value);
 	}
 	@Override
 	public void loadIntegerLiteral(Integer value) {
-		writer.println("\tfild word [" + ILIT_PREFIX + mapIntegerToIndex.get(value) + "] ; value=" + value);
+		writer.println("\tfild " + ILIT_PREFIX + mapIntegerToIndex.get(value) + " ; value=" + value);
 	}
 	@Override
 	public void loadStringLiteral(String value) {
@@ -82,11 +76,11 @@ public class TasmDos16Writer implements Writer {
 	}
 	@Override
 	public void loadFloatVariable(String varName) {
-		writer.println("\tfld dword [" + VARIABLE_PREFIX + varName + "]");
+		writer.println("\tfld " + VARIABLE_PREFIX + varName);
 	}
 	@Override
 	public void loadIntegerVariable(String varName) {
-		writer.println("\tfild word [" + VARIABLE_PREFIX + varName + "]");
+		writer.println("\tfild " + VARIABLE_PREFIX + varName);
 	}
 	@Override
 	public void doAdd() {
@@ -115,6 +109,7 @@ public class TasmDos16Writer implements Writer {
 		writer.println("push bx");
 		writer.println("push " + (CONVERSION_BUFFER_SIZE-1));
 		writer.println("call itoa");
+		writer.println("lea bx, [" + CONVERSION_BUFFER_NAME + "]");
 		writer.println("add bx, ax");
 		writer.println("mov byte ptr [bx], '$'");
 		writer.println("\tlea dx, [" + CONVERSION_BUFFER_NAME + "]");
@@ -135,8 +130,13 @@ public class TasmDos16Writer implements Writer {
 	}
 	@Override
 	public void doPrintLF() {
-		writer.println("\tlea dx, [" + NEWLINE_NAME + "] ; line break");
-		doPrintString();
+		writer.print(
+				"\tmov ah, 02h\n" +
+				"\tmov dl, 10\n" +
+				"\tint 21h\n" +
+				"\tmov dl, 13\n" +
+				"\tint 21h\n"
+				);
 	}
 	@Override
 	public void doCompare() {
@@ -231,15 +231,7 @@ public class TasmDos16Writer implements Writer {
 			writer.println("\t" + FLIT_PREFIX + mapFloatToIndex.get(f) + " dd " + f);
 		for (String s : stringTable)
 			writer.println("\t" + SLIT_PREFIX + mapStringToIndex.get(s) + " db \"" + s + "\", '$'");
-		
-		writer.print("\t" + NEWLINE_NAME + " db ");
-		for (int i = 0; i < getNewlineCharacters().length; i++) {
-			writer.print((int)getNewlineCharacters()[i]);
-			if (i < getNewlineCharacters().length - 1)
-				writer.print(", ");
-			else
-				writer.print(", '$'\n");
-		}
+	
 		writer.println("\t" + CONVERSION_BUFFER_NAME + " db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0");
 
 		writer.println("\taux_int dw ?");
@@ -247,6 +239,10 @@ public class TasmDos16Writer implements Writer {
 
 		writer.println(".CODE");
 		writer.println("MAIN:");
+		writer.println("\tmov ax, SEG " + CONVERSION_BUFFER_NAME);
+		writer.println("\tmov ds, ax");
+		writer.println("\tmov es, ax");
+		writer.println("\tfinit");
 	}
 	@Override
 	public void endCode() {
@@ -264,10 +260,10 @@ public class TasmDos16Writer implements Writer {
 		SymbolTableEntry entry = symbolTable.get(varName);
 		switch (entry.getType()) {
 		case FLOAT:
-			writer.println("\tfstp dword [" + VARIABLE_PREFIX + varName + "]");
+			writer.println("\tfstp " + VARIABLE_PREFIX + varName);
 			break;
 		case INTEGER:
-			writer.println("\tfistp word [" + VARIABLE_PREFIX + varName + "]");
+			writer.println("\tfistp " + VARIABLE_PREFIX + varName);
 			break;
 		}
 	}

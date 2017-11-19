@@ -6,14 +6,11 @@ import java.nio.file.Path;
 import compilador.SymbolTableEntry;
 
 public class NasmLinux32Writer extends TasmDos16Writer {
+	private final String NEWLINE_NAME = "CTE_ESPECIAL_LF";
+	
 	public NasmLinux32Writer(Path fpath) throws IOException
 	{
 		super(fpath);
-	}
-	
-	@Override
-	public Character[] getNewlineCharacters() {
-		return new Character[] {'\n'};
 	}
 	
 	@Override
@@ -35,7 +32,15 @@ public class NasmLinux32Writer extends TasmDos16Writer {
 		writer.println("%include \"macros/nasm.asm\"");
 		writer.println("_start:");
 	}
-	
+
+	@Override
+	public void loadFloatLiteral(Float value) {
+		writer.println("\tfld dword [" + FLIT_PREFIX + mapFloatToIndex.get(value) + "] ; value=" + value);
+	}
+	@Override
+	public void loadIntegerLiteral(Integer value) {
+		writer.println("\tfild word [" + ILIT_PREFIX + mapIntegerToIndex.get(value) + "] ; value=" + value);
+	}
 	@Override
 	public void loadStringLiteral(String value) {
 		writer.println("\tmov ecx, " + SLIT_PREFIX + mapStringToIndex.get(value) + " ; value=" + value);
@@ -80,8 +85,28 @@ public class NasmLinux32Writer extends TasmDos16Writer {
 	@Override
 	public void doPrintLF() {
 		writer.println("\tmov ecx, " + NEWLINE_NAME + " ; line break");
-		writer.println("\tmov edx, " + getNewlineCharacters().length + " ; length");
+		writer.println("\tmov edx, 1 ; length");
 		doPrintString();
+	}
+	@Override
+	public void loadFloatVariable(String varName) {
+		writer.println("\tfld dword [" + VARIABLE_PREFIX + varName + "]");
+	}
+	@Override
+	public void loadIntegerVariable(String varName) {
+		writer.println("\tfild word [" + VARIABLE_PREFIX + varName + "]");
+	}
+	@Override
+	public void doAssign(String varName) {
+		SymbolTableEntry entry = symbolTable.get(varName);
+		switch (entry.getType()) {
+		case FLOAT:
+			writer.println("\tfstp dword [" + VARIABLE_PREFIX + varName + "]");
+			break;
+		case INTEGER:
+			writer.println("\tfistp word [" + VARIABLE_PREFIX + varName + "]");
+			break;
+		}
 	}
 
 	@Override
@@ -98,14 +123,7 @@ public class NasmLinux32Writer extends TasmDos16Writer {
 		for (String s : stringTable)
 			writer.println(SLIT_PREFIX + mapStringToIndex.get(s) + ":\n\tdb \"" + s + "\"");
 
-		writer.print(NEWLINE_NAME + ":\n\tdb ");
-		for (int i = 0; i < getNewlineCharacters().length; i++) {
-			writer.print((int)getNewlineCharacters()[i]);
-			if (i < getNewlineCharacters().length - 1)
-				writer.print(",");
-			else
-				writer.print("\n");
-		}
+		writer.println(NEWLINE_NAME + ":\n\tdb 10");
 		writer.println("section .bss");
 		for (SymbolTableEntry entry : symbolTable.values()) {
 			switch(entry.getType())	{

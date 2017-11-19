@@ -1,13 +1,9 @@
 
-
-;public fjg, fjl, fje, fjne, fjge, fjle, fSetRC, fpow, RC_NEAREST, RC_NEGATIVE, RC_POSITIVE, RC_ZERO
-
 .DATA
 CW_IN dw ?
 TMP dw ?
 
 .CODE
-
 ;===========================
 ;Conditional fpu jump macros
 ; %1=16 bit register to compare
@@ -57,12 +53,12 @@ fpow MACRO
 	fxch ;st1=exponent st0=base
 	fyl2x ; st0=fyl2x
 
-	fist word [TMP]
-	fisub word [TMP] ; st0=decimals
+	fist TMP
+	fisub TMP ; st0=decimals
 	f2xm1 ; st0=f2xm1
 	fld1
 	faddp ; st0=f2x
-	fild word [TMP] ; st1=f2x st0=integers
+	fild TMP ; st1=f2x st0=integers
 	fxch ; st1=integers st1=f2x
 	fscale ; st1=integers st0=f2x*2^integers
 	fxch

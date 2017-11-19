@@ -1,6 +1,5 @@
 .MODEL LARGE
 .386
-.387
 .STACK 200h
 INCLUDE macros/tasm.asm
 .DATA
@@ -80,57 +79,65 @@ INCLUDE macros/tasm.asm
 	CTE_STR_42 db "Redondeo de 0.00004: ", '$'
 	CTE_STR_43 db "Redondeo de 0.00001: ", '$'
 	CTE_STR_44 db "Prueba 6 (Surtidos):", '$'
-	CTE_ESPECIAL_LF db 13, 10, '$'
 	BUFFER_CONVERSION db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 	aux_int dw ?
 	aux_float dd ?
 .CODE
 MAIN:
+	mov ax, SEG BUFFER_CONVERSION
+	mov ds, ax
+	mov es, ax
+	finit
 	lea dx, [CTE_STR_0] ; value=Prueba 1 (Fibonacci):
 	mov ah, 09h
 	int 21h
-	lea dx, [CTE_ESPECIAL_LF] ; line break
-	mov ah, 09h
+	mov ah, 02h
+	mov dl, 10
+	int 21h
+	mov dl, 13
 	int 21h
 	lea dx, [CTE_STR_23] ; value=---------------------
 	mov ah, 09h
 	int 21h
-	lea dx, [CTE_ESPECIAL_LF] ; line break
-	mov ah, 09h
+	mov ah, 02h
+	mov dl, 10
 	int 21h
-	fild word [CTE_INT_0] ; value=0
-	fistp word [VAR_CONTADOR]
-	fild word [CTE_INT_1] ; value=1
-	fistp word [VAR_FIB_A]
-	fild word [CTE_INT_0] ; value=0
-	fistp word [VAR_FIB_B]
+	mov dl, 13
+	int 21h
+	fild CTE_INT_0 ; value=0
+	fistp VAR_CONTADOR
+	fild CTE_INT_1 ; value=1
+	fistp VAR_FIB_A
+	fild CTE_INT_0 ; value=0
+	fistp VAR_FIB_B
 	LABEL_0:
-	fild word [VAR_CONTADOR]
-	fild word [CTE_INT_10] ; value=10
+	fild VAR_CONTADOR
+	fild CTE_INT_10 ; value=10
 	fcompp
 	fstsw ax
 	test ax, 0000000100000000b ; c0
 	jnz LABEL_1
 	test ax, 0100000000000000b ; c3
 	jnz LABEL_1
-	fild word [VAR_FIB_A]
-	fild word [VAR_FIB_B]
+	fild VAR_FIB_A
+	fild VAR_FIB_B
 	faddp
-	fistp word [VAR_FIB_A]
-	fild word [VAR_FIB_A]
-	fild word [VAR_FIB_B]
+	fistp VAR_FIB_A
+	fild VAR_FIB_A
+	fild VAR_FIB_B
 	fsubp
-	fistp word [VAR_FIB_B]
+	fistp VAR_FIB_B
 	lea dx, [CTE_STR_9] ; value=FIB(
 	mov ah, 09h
 	int 21h
-	fild word [VAR_CONTADOR]
-	fild word [CTE_INT_1] ; value=1
+	fild VAR_CONTADOR
+	fild CTE_INT_1 ; value=1
 	faddp
 lea bx, [BUFFER_CONVERSION]
 push bx
 push 14
 call itoa
+lea bx, [BUFFER_CONVERSION]
 add bx, ax
 mov byte ptr [bx], '$'
 	lea dx, [BUFFER_CONVERSION]
@@ -139,51 +146,60 @@ mov byte ptr [bx], '$'
 	lea dx, [CTE_STR_10] ; value=) = 
 	mov ah, 09h
 	int 21h
-	fild word [VAR_FIB_B]
+	fild VAR_FIB_B
 lea bx, [BUFFER_CONVERSION]
 push bx
 push 14
 call itoa
+lea bx, [BUFFER_CONVERSION]
 add bx, ax
 mov byte ptr [bx], '$'
 	lea dx, [BUFFER_CONVERSION]
 	mov ah, 09h
 	int 21h
-	lea dx, [CTE_ESPECIAL_LF] ; line break
-	mov ah, 09h
+	mov ah, 02h
+	mov dl, 10
 	int 21h
-	fild word [VAR_CONTADOR]
-	fild word [CTE_INT_1] ; value=1
+	mov dl, 13
+	int 21h
+	fild VAR_CONTADOR
+	fild CTE_INT_1 ; value=1
 	faddp
-	fistp word [VAR_CONTADOR]
+	fistp VAR_CONTADOR
 	jmp LABEL_0
 	LABEL_1:
 	lea dx, [CTE_STR_1] ; value=
 	mov ah, 09h
 	int 21h
-	lea dx, [CTE_ESPECIAL_LF] ; line break
-	mov ah, 09h
+	mov ah, 02h
+	mov dl, 10
+	int 21h
+	mov dl, 13
 	int 21h
 	lea dx, [CTE_STR_18] ; value=Prueba 2 (Circunferencia):
 	mov ah, 09h
 	int 21h
-	lea dx, [CTE_ESPECIAL_LF] ; line break
-	mov ah, 09h
+	mov ah, 02h
+	mov dl, 10
+	int 21h
+	mov dl, 13
 	int 21h
 	lea dx, [CTE_STR_14] ; value=--------------------------
 	mov ah, 09h
 	int 21h
-	lea dx, [CTE_ESPECIAL_LF] ; line break
-	mov ah, 09h
+	mov ah, 02h
+	mov dl, 10
 	int 21h
-	fld dword [CTE_FLT_3] ; value=3.1415927
-	fstp dword [VAR_PI]
-	fild word [CTE_INT_6] ; value=5
-	fstp dword [VAR_DIAMETRO]
+	mov dl, 13
+	int 21h
+	fld CTE_FLT_3 ; value=3.1415927
+	fstp VAR_PI
+	fild CTE_INT_6 ; value=5
+	fstp VAR_DIAMETRO
 	lea dx, [CTE_STR_41] ; value=Diametro: 
 	mov ah, 09h
 	int 21h
-	fld dword [VAR_DIAMETRO]
+	fld VAR_DIAMETRO
 push 4
 push 10
 lea bx, [BUFFER_CONVERSION]
@@ -195,14 +211,16 @@ mov byte ptr [bx], '$'
 	lea dx, [BUFFER_CONVERSION]
 	mov ah, 09h
 	int 21h
-	lea dx, [CTE_ESPECIAL_LF] ; line break
-	mov ah, 09h
+	mov ah, 02h
+	mov dl, 10
+	int 21h
+	mov dl, 13
 	int 21h
 	lea dx, [CTE_STR_37] ; value=Radio: 
 	mov ah, 09h
 	int 21h
-	fld dword [VAR_DIAMETRO]
-	fild word [CTE_INT_2] ; value=2
+	fld VAR_DIAMETRO
+	fild CTE_INT_2 ; value=2
 	fdivp
 push 4
 push 10
@@ -215,14 +233,16 @@ mov byte ptr [bx], '$'
 	lea dx, [BUFFER_CONVERSION]
 	mov ah, 09h
 	int 21h
-	lea dx, [CTE_ESPECIAL_LF] ; line break
-	mov ah, 09h
+	mov ah, 02h
+	mov dl, 10
+	int 21h
+	mov dl, 13
 	int 21h
 	lea dx, [CTE_STR_33] ; value=Circunferencia: 
 	mov ah, 09h
 	int 21h
-	fld dword [VAR_PI]
-	fld dword [VAR_DIAMETRO]
+	fld VAR_PI
+	fld VAR_DIAMETRO
 	fmulp
 push 4
 push 10
@@ -235,20 +255,22 @@ mov byte ptr [bx], '$'
 	lea dx, [BUFFER_CONVERSION]
 	mov ah, 09h
 	int 21h
-	lea dx, [CTE_ESPECIAL_LF] ; line break
-	mov ah, 09h
+	mov ah, 02h
+	mov dl, 10
+	int 21h
+	mov dl, 13
 	int 21h
 	lea dx, [CTE_STR_34] ; value=Area: 
 	mov ah, 09h
 	int 21h
-	fld dword [VAR_PI]
-	fld dword [VAR_DIAMETRO]
+	fld VAR_PI
+	fld VAR_DIAMETRO
 	fmulp
-	fild word [CTE_INT_2] ; value=2
+	fild CTE_INT_2 ; value=2
 	fdivp
-	fld dword [VAR_DIAMETRO]
+	fld VAR_DIAMETRO
 	fmulp
-	fild word [CTE_INT_2] ; value=2
+	fild CTE_INT_2 ; value=2
 	fdivp
 push 4
 push 10
@@ -261,77 +283,86 @@ mov byte ptr [bx], '$'
 	lea dx, [BUFFER_CONVERSION]
 	mov ah, 09h
 	int 21h
-	lea dx, [CTE_ESPECIAL_LF] ; line break
-	mov ah, 09h
+	mov ah, 02h
+	mov dl, 10
+	int 21h
+	mov dl, 13
 	int 21h
 	lea dx, [CTE_STR_1] ; value=
 	mov ah, 09h
 	int 21h
-	lea dx, [CTE_ESPECIAL_LF] ; line break
-	mov ah, 09h
+	mov ah, 02h
+	mov dl, 10
+	int 21h
+	mov dl, 13
 	int 21h
 	lea dx, [CTE_STR_16] ; value=Prueba 3 (Nro. de Euler):
 	mov ah, 09h
 	int 21h
-	lea dx, [CTE_ESPECIAL_LF] ; line break
-	mov ah, 09h
+	mov ah, 02h
+	mov dl, 10
+	int 21h
+	mov dl, 13
 	int 21h
 	lea dx, [CTE_STR_28] ; value=-------------------------
 	mov ah, 09h
 	int 21h
-	lea dx, [CTE_ESPECIAL_LF] ; line break
-	mov ah, 09h
+	mov ah, 02h
+	mov dl, 10
 	int 21h
-	fild word [CTE_INT_1] ; value=1
-	fistp word [VAR_CONTADOR]
-	fild word [CTE_INT_1] ; value=1
-	fstp dword [VAR_e]
+	mov dl, 13
+	int 21h
+	fild CTE_INT_1 ; value=1
+	fistp VAR_CONTADOR
+	fild CTE_INT_1 ; value=1
+	fstp VAR_e
 	LABEL_4:
-	fild word [VAR_CONTADOR]
-	fild word [CTE_INT_10] ; value=10
+	fild VAR_CONTADOR
+	fild CTE_INT_10 ; value=10
 	fcompp
 	fstsw ax
 	test ax, 0000000100000000b ; c0
 	jnz LABEL_5
-	fld dword [CTE_FLT_0] ; value=1.0
-	fstp dword [VAR_termino]
-	fild word [CTE_INT_1] ; value=1
-	fistp word [VAR_CONTADOR2]
+	fld CTE_FLT_0 ; value=1.0
+	fstp VAR_termino
+	fild CTE_INT_1 ; value=1
+	fistp VAR_CONTADOR2
 	LABEL_2:
-	fild word [VAR_CONTADOR2]
-	fild word [VAR_CONTADOR]
+	fild VAR_CONTADOR2
+	fild VAR_CONTADOR
 	fcompp
 	fstsw ax
 	test ax, 0000000100000000b ; c0
 	jnz LABEL_3
-	fld dword [VAR_termino]
-	fild word [VAR_CONTADOR2]
+	fld VAR_termino
+	fild VAR_CONTADOR2
 	fdivp
-	fstp dword [VAR_termino]
-	fild word [VAR_CONTADOR2]
-	fild word [CTE_INT_1] ; value=1
+	fstp VAR_termino
+	fild VAR_CONTADOR2
+	fild CTE_INT_1 ; value=1
 	faddp
-	fistp word [VAR_CONTADOR2]
+	fistp VAR_CONTADOR2
 	jmp LABEL_2
 	LABEL_3:
-	fild word [VAR_CONTADOR]
-	fild word [CTE_INT_1] ; value=1
+	fild VAR_CONTADOR
+	fild CTE_INT_1 ; value=1
 	faddp
-	fistp word [VAR_CONTADOR]
-	fld dword [VAR_e]
-	fld dword [VAR_termino]
+	fistp VAR_CONTADOR
+	fld VAR_e
+	fld VAR_termino
 	faddp
-	fstp dword [VAR_e]
+	fstp VAR_e
 	jmp LABEL_4
 	LABEL_5:
 	lea dx, [CTE_STR_29] ; value=e (
 	mov ah, 09h
 	int 21h
-	fild word [VAR_CONTADOR]
+	fild VAR_CONTADOR
 lea bx, [BUFFER_CONVERSION]
 push bx
 push 14
 call itoa
+lea bx, [BUFFER_CONVERSION]
 add bx, ax
 mov byte ptr [bx], '$'
 	lea dx, [BUFFER_CONVERSION]
@@ -340,7 +371,7 @@ mov byte ptr [bx], '$'
 	lea dx, [CTE_STR_8] ; value= terminos): 
 	mov ah, 09h
 	int 21h
-	fld dword [VAR_e]
+	fld VAR_e
 push 4
 push 10
 lea bx, [BUFFER_CONVERSION]
@@ -352,108 +383,131 @@ mov byte ptr [bx], '$'
 	lea dx, [BUFFER_CONVERSION]
 	mov ah, 09h
 	int 21h
-	lea dx, [CTE_ESPECIAL_LF] ; line break
-	mov ah, 09h
+	mov ah, 02h
+	mov dl, 10
+	int 21h
+	mov dl, 13
 	int 21h
 	lea dx, [CTE_STR_1] ; value=
 	mov ah, 09h
 	int 21h
-	lea dx, [CTE_ESPECIAL_LF] ; line break
-	mov ah, 09h
+	mov ah, 02h
+	mov dl, 10
+	int 21h
+	mov dl, 13
 	int 21h
 	lea dx, [CTE_STR_11] ; value=Prueba 4 (Negativos):
 	mov ah, 09h
 	int 21h
-	lea dx, [CTE_ESPECIAL_LF] ; line break
-	mov ah, 09h
+	mov ah, 02h
+	mov dl, 10
+	int 21h
+	mov dl, 13
 	int 21h
 	lea dx, [CTE_STR_23] ; value=---------------------
 	mov ah, 09h
 	int 21h
-	lea dx, [CTE_ESPECIAL_LF] ; line break
-	mov ah, 09h
+	mov ah, 02h
+	mov dl, 10
+	int 21h
+	mov dl, 13
 	int 21h
 	lea dx, [CTE_STR_35] ; value=Simple: 
 	mov ah, 09h
 	int 21h
-	fild word [CTE_INT_0] ; value=0
-	fild word [CTE_INT_6] ; value=5
+	fild CTE_INT_0 ; value=0
+	fild CTE_INT_6 ; value=5
 	fsubp
 lea bx, [BUFFER_CONVERSION]
 push bx
 push 14
 call itoa
+lea bx, [BUFFER_CONVERSION]
 add bx, ax
 mov byte ptr [bx], '$'
 	lea dx, [BUFFER_CONVERSION]
 	mov ah, 09h
 	int 21h
-	lea dx, [CTE_ESPECIAL_LF] ; line break
-	mov ah, 09h
+	mov ah, 02h
+	mov dl, 10
+	int 21h
+	mov dl, 13
 	int 21h
 	lea dx, [CTE_STR_19] ; value=Neg x Neg x Neg: 
 	mov ah, 09h
 	int 21h
-	fild word [CTE_INT_0] ; value=0
-	fild word [CTE_INT_6] ; value=5
+	fild CTE_INT_0 ; value=0
+	fild CTE_INT_6 ; value=5
 	fsubp
-	fild word [CTE_INT_0] ; value=0
-	fild word [CTE_INT_2] ; value=2
+	fild CTE_INT_0 ; value=0
+	fild CTE_INT_2 ; value=2
 	fsubp
 	fmulp
-	fild word [CTE_INT_0] ; value=0
-	fild word [CTE_INT_1] ; value=1
+	fild CTE_INT_0 ; value=0
+	fild CTE_INT_1 ; value=1
 	fsubp
 	fmulp
 lea bx, [BUFFER_CONVERSION]
 push bx
 push 14
 call itoa
+lea bx, [BUFFER_CONVERSION]
 add bx, ax
 mov byte ptr [bx], '$'
 	lea dx, [BUFFER_CONVERSION]
 	mov ah, 09h
 	int 21h
-	lea dx, [CTE_ESPECIAL_LF] ; line break
-	mov ah, 09h
+	mov ah, 02h
+	mov dl, 10
+	int 21h
+	mov dl, 13
 	int 21h
 	lea dx, [CTE_STR_38] ; value=Neg x Pos: 
 	mov ah, 09h
 	int 21h
-	fild word [CTE_INT_0] ; value=0
-	fild word [CTE_INT_6] ; value=5
+	fild CTE_INT_0 ; value=0
+	fild CTE_INT_6 ; value=5
 	fsubp
-	fild word [CTE_INT_10] ; value=10
+	fild CTE_INT_10 ; value=10
 	fmulp
 lea bx, [BUFFER_CONVERSION]
 push bx
 push 14
 call itoa
+lea bx, [BUFFER_CONVERSION]
 add bx, ax
 mov byte ptr [bx], '$'
 	lea dx, [BUFFER_CONVERSION]
 	mov ah, 09h
 	int 21h
-	lea dx, [CTE_ESPECIAL_LF] ; line break
-	mov ah, 09h
+	mov ah, 02h
+	mov dl, 10
+	int 21h
+	mov dl, 13
 	int 21h
 	lea dx, [CTE_STR_1] ; value=
 	mov ah, 09h
 	int 21h
-	lea dx, [CTE_ESPECIAL_LF] ; line break
-	mov ah, 09h
+	mov ah, 02h
+	mov dl, 10
+	int 21h
+	mov dl, 13
 	int 21h
 	lea dx, [CTE_STR_22] ; value=Prueba 5 (Redondeo):
 	mov ah, 09h
 	int 21h
-	lea dx, [CTE_ESPECIAL_LF] ; line break
-	mov ah, 09h
+	mov ah, 02h
+	mov dl, 10
+	int 21h
+	mov dl, 13
 	int 21h
 	lea dx, [CTE_STR_24] ; value=--------------------
 	mov ah, 09h
 	int 21h
-	lea dx, [CTE_ESPECIAL_LF] ; line break
-	mov ah, 09h
+	mov ah, 02h
+	mov dl, 10
+	int 21h
+	mov dl, 13
 	int 21h
 	lea dx, [CTE_STR_6] ; value=Todos los numeros se 
 	mov ah, 09h
@@ -464,8 +518,10 @@ mov byte ptr [bx], '$'
 	lea dx, [CTE_STR_20] ; value=4 digitos
 	mov ah, 09h
 	int 21h
-	lea dx, [CTE_ESPECIAL_LF] ; line break
-	mov ah, 09h
+	mov ah, 02h
+	mov dl, 10
+	int 21h
+	mov dl, 13
 	int 21h
 	lea dx, [CTE_STR_30] ; value=Modo de redondeo: 
 	mov ah, 09h
@@ -473,13 +529,15 @@ mov byte ptr [bx], '$'
 	lea dx, [CTE_STR_15] ; value=Nearest Integer (even)
 	mov ah, 09h
 	int 21h
-	lea dx, [CTE_ESPECIAL_LF] ; line break
-	mov ah, 09h
+	mov ah, 02h
+	mov dl, 10
+	int 21h
+	mov dl, 13
 	int 21h
 	lea dx, [CTE_STR_43] ; value=Redondeo de 0.00001: 
 	mov ah, 09h
 	int 21h
-	fld dword [CTE_FLT_7] ; value=1.0E-5
+	fld CTE_FLT_7 ; value=1.0E-5
 push 4
 push 10
 lea bx, [BUFFER_CONVERSION]
@@ -491,13 +549,15 @@ mov byte ptr [bx], '$'
 	lea dx, [BUFFER_CONVERSION]
 	mov ah, 09h
 	int 21h
-	lea dx, [CTE_ESPECIAL_LF] ; line break
-	mov ah, 09h
+	mov ah, 02h
+	mov dl, 10
+	int 21h
+	mov dl, 13
 	int 21h
 	lea dx, [CTE_STR_42] ; value=Redondeo de 0.00004: 
 	mov ah, 09h
 	int 21h
-	fld dword [CTE_FLT_8] ; value=4.0E-5
+	fld CTE_FLT_8 ; value=4.0E-5
 push 4
 push 10
 lea bx, [BUFFER_CONVERSION]
@@ -509,13 +569,15 @@ mov byte ptr [bx], '$'
 	lea dx, [BUFFER_CONVERSION]
 	mov ah, 09h
 	int 21h
-	lea dx, [CTE_ESPECIAL_LF] ; line break
-	mov ah, 09h
+	mov ah, 02h
+	mov dl, 10
+	int 21h
+	mov dl, 13
 	int 21h
 	lea dx, [CTE_STR_4] ; value=Redondeo de 0.00005: 
 	mov ah, 09h
 	int 21h
-	fld dword [CTE_FLT_5] ; value=5.0E-5
+	fld CTE_FLT_5 ; value=5.0E-5
 push 4
 push 10
 lea bx, [BUFFER_CONVERSION]
@@ -527,13 +589,15 @@ mov byte ptr [bx], '$'
 	lea dx, [BUFFER_CONVERSION]
 	mov ah, 09h
 	int 21h
-	lea dx, [CTE_ESPECIAL_LF] ; line break
-	mov ah, 09h
+	mov ah, 02h
+	mov dl, 10
+	int 21h
+	mov dl, 13
 	int 21h
 	lea dx, [CTE_STR_5] ; value=Redondeo de 0.00006: 
 	mov ah, 09h
 	int 21h
-	fld dword [CTE_FLT_6] ; value=6.0E-5
+	fld CTE_FLT_6 ; value=6.0E-5
 push 4
 push 10
 lea bx, [BUFFER_CONVERSION]
@@ -545,13 +609,15 @@ mov byte ptr [bx], '$'
 	lea dx, [BUFFER_CONVERSION]
 	mov ah, 09h
 	int 21h
-	lea dx, [CTE_ESPECIAL_LF] ; line break
-	mov ah, 09h
+	mov ah, 02h
+	mov dl, 10
+	int 21h
+	mov dl, 13
 	int 21h
 	lea dx, [CTE_STR_7] ; value=Redondeo de 0.00009: 
 	mov ah, 09h
 	int 21h
-	fld dword [CTE_FLT_10] ; value=9.0E-5
+	fld CTE_FLT_10 ; value=9.0E-5
 push 4
 push 10
 lea bx, [BUFFER_CONVERSION]
@@ -563,26 +629,34 @@ mov byte ptr [bx], '$'
 	lea dx, [BUFFER_CONVERSION]
 	mov ah, 09h
 	int 21h
-	lea dx, [CTE_ESPECIAL_LF] ; line break
-	mov ah, 09h
+	mov ah, 02h
+	mov dl, 10
+	int 21h
+	mov dl, 13
 	int 21h
 	lea dx, [CTE_STR_1] ; value=
 	mov ah, 09h
 	int 21h
-	lea dx, [CTE_ESPECIAL_LF] ; line break
-	mov ah, 09h
+	mov ah, 02h
+	mov dl, 10
+	int 21h
+	mov dl, 13
 	int 21h
 	lea dx, [CTE_STR_44] ; value=Prueba 6 (Surtidos):
 	mov ah, 09h
 	int 21h
-	lea dx, [CTE_ESPECIAL_LF] ; line break
-	mov ah, 09h
+	mov ah, 02h
+	mov dl, 10
+	int 21h
+	mov dl, 13
 	int 21h
 	lea dx, [CTE_STR_24] ; value=--------------------
 	mov ah, 09h
 	int 21h
-	lea dx, [CTE_ESPECIAL_LF] ; line break
-	mov ah, 09h
+	mov ah, 02h
+	mov dl, 10
+	int 21h
+	mov dl, 13
 	int 21h
 	lea dx, [CTE_STR_3] ; value=PLUSTRUNC 
 	mov ah, 09h
@@ -590,16 +664,16 @@ mov byte ptr [bx], '$'
 	lea dx, [CTE_STR_13] ; value=1.5, 10.1, 100.9 = 
 	mov ah, 09h
 	int 21h
-	fld dword [CTE_FLT_1] ; value=1.5
+	fld CTE_FLT_1 ; value=1.5
 	fSetRC RC_ZERO
 	frndint
 	fSetRC RC_NEAREST
-	fld dword [CTE_FLT_9] ; value=10.1
+	fld CTE_FLT_9 ; value=10.1
 	fSetRC RC_ZERO
 	frndint
 	fSetRC RC_NEAREST
 	faddp
-	fld dword [CTE_FLT_4] ; value=100.9
+	fld CTE_FLT_4 ; value=100.9
 	fSetRC RC_ZERO
 	frndint
 	fSetRC RC_NEAREST
@@ -608,19 +682,22 @@ lea bx, [BUFFER_CONVERSION]
 push bx
 push 14
 call itoa
+lea bx, [BUFFER_CONVERSION]
 add bx, ax
 mov byte ptr [bx], '$'
 	lea dx, [BUFFER_CONVERSION]
 	mov ah, 09h
 	int 21h
-	lea dx, [CTE_ESPECIAL_LF] ; line break
-	mov ah, 09h
+	mov ah, 02h
+	mov dl, 10
+	int 21h
+	mov dl, 13
 	int 21h
 	lea dx, [CTE_STR_31] ; value=12345 % 7 = 
 	mov ah, 09h
 	int 21h
-	fild word [CTE_INT_9] ; value=12345
-	fild word [CTE_INT_7] ; value=7
+	fild CTE_INT_9 ; value=12345
+	fild CTE_INT_7 ; value=7
 	fxch
 	fprem
 	fxch
@@ -629,18 +706,21 @@ lea bx, [BUFFER_CONVERSION]
 push bx
 push 14
 call itoa
+lea bx, [BUFFER_CONVERSION]
 add bx, ax
 mov byte ptr [bx], '$'
 	lea dx, [BUFFER_CONVERSION]
 	mov ah, 09h
 	int 21h
-	lea dx, [CTE_ESPECIAL_LF] ; line break
-	mov ah, 09h
+	mov ah, 02h
+	mov dl, 10
+	int 21h
+	mov dl, 13
 	int 21h
 	lea dx, [CTE_STR_39] ; value=SQRT(2) = 
 	mov ah, 09h
 	int 21h
-	fild word [CTE_INT_2] ; value=2
+	fild CTE_INT_2 ; value=2
 	fsqrt
 push 4
 push 10
@@ -653,14 +733,16 @@ mov byte ptr [bx], '$'
 	lea dx, [BUFFER_CONVERSION]
 	mov ah, 09h
 	int 21h
-	lea dx, [CTE_ESPECIAL_LF] ; line break
-	mov ah, 09h
+	mov ah, 02h
+	mov dl, 10
+	int 21h
+	mov dl, 13
 	int 21h
 	lea dx, [CTE_STR_36] ; value=2^0.5 = 
 	mov ah, 09h
 	int 21h
-	fild word [CTE_INT_2] ; value=2
-	fld dword [CTE_FLT_2] ; value=0.5
+	fild CTE_INT_2 ; value=2
+	fld CTE_FLT_2 ; value=0.5
 	fpow
 push 4
 push 10
@@ -673,8 +755,10 @@ mov byte ptr [bx], '$'
 	lea dx, [BUFFER_CONVERSION]
 	mov ah, 09h
 	int 21h
-	lea dx, [CTE_ESPECIAL_LF] ; line break
-	mov ah, 09h
+	mov ah, 02h
+	mov dl, 10
+	int 21h
+	mov dl, 13
 	int 21h
 	lea dx, [CTE_STR_27] ; value=2^3^2 = 
 	mov ah, 09h
@@ -682,43 +766,52 @@ mov byte ptr [bx], '$'
 	lea dx, [CTE_STR_25] ; value=2^(3^2) = 
 	mov ah, 09h
 	int 21h
-	fild word [CTE_INT_2] ; value=2
-	fild word [CTE_INT_3] ; value=3
-	fild word [CTE_INT_2] ; value=2
+	fild CTE_INT_2 ; value=2
+	fild CTE_INT_3 ; value=3
+	fild CTE_INT_2 ; value=2
 	fpow
 	fpow
 lea bx, [BUFFER_CONVERSION]
 push bx
 push 14
 call itoa
+lea bx, [BUFFER_CONVERSION]
 add bx, ax
 mov byte ptr [bx], '$'
 	lea dx, [BUFFER_CONVERSION]
 	mov ah, 09h
 	int 21h
-	lea dx, [CTE_ESPECIAL_LF] ; line break
-	mov ah, 09h
+	mov ah, 02h
+	mov dl, 10
+	int 21h
+	mov dl, 13
 	int 21h
 	lea dx, [CTE_STR_1] ; value=
 	mov ah, 09h
 	int 21h
-	lea dx, [CTE_ESPECIAL_LF] ; line break
-	mov ah, 09h
+	mov ah, 02h
+	mov dl, 10
+	int 21h
+	mov dl, 13
 	int 21h
 	lea dx, [CTE_STR_40] ; value=Prueba 7 (Trigonometria):
 	mov ah, 09h
 	int 21h
-	lea dx, [CTE_ESPECIAL_LF] ; line break
-	mov ah, 09h
+	mov ah, 02h
+	mov dl, 10
+	int 21h
+	mov dl, 13
 	int 21h
 	lea dx, [CTE_STR_28] ; value=-------------------------
 	mov ah, 09h
 	int 21h
-	lea dx, [CTE_ESPECIAL_LF] ; line break
-	mov ah, 09h
+	mov ah, 02h
+	mov dl, 10
 	int 21h
-	fild word [CTE_INT_0] ; value=0
-	fistp word [VAR_CONTADOR]
+	mov dl, 13
+	int 21h
+	fild CTE_INT_0 ; value=0
+	fistp VAR_CONTADOR
 	lea dx, [CTE_STR_32] ; value=Radianes   
 	mov ah, 09h
 	int 21h
@@ -731,25 +824,27 @@ mov byte ptr [bx], '$'
 	lea dx, [CTE_STR_17] ; value=Coseno  
 	mov ah, 09h
 	int 21h
-	lea dx, [CTE_ESPECIAL_LF] ; line break
-	mov ah, 09h
+	mov ah, 02h
+	mov dl, 10
+	int 21h
+	mov dl, 13
 	int 21h
 	LABEL_6:
-	fild word [VAR_CONTADOR]
-	fild word [CTE_INT_8] ; value=8
+	fild VAR_CONTADOR
+	fild CTE_INT_8 ; value=8
 	fcompp
 	fstsw ax
 	test ax, 0000000100000000b ; c0
 	jnz LABEL_7
 	test ax, 0100000000000000b ; c3
 	jnz LABEL_7
-	fld dword [VAR_PI]
-	fild word [VAR_CONTADOR]
+	fld VAR_PI
+	fild VAR_CONTADOR
 	fmulp
-	fild word [CTE_INT_4] ; value=4
+	fild CTE_INT_4 ; value=4
 	fdivp
-	fstp dword [VAR_angulo]
-	fld dword [VAR_angulo]
+	fstp VAR_angulo
+	fld VAR_angulo
 push 4
 push 10
 lea bx, [BUFFER_CONVERSION]
@@ -764,10 +859,10 @@ mov byte ptr [bx], '$'
 	lea dx, [CTE_STR_21] ; value=   
 	mov ah, 09h
 	int 21h
-	fld dword [VAR_angulo]
-	fild word [CTE_INT_5] ; value=180
+	fld VAR_angulo
+	fild CTE_INT_5 ; value=180
 	fmulp
-	fld dword [VAR_PI]
+	fld VAR_PI
 	fdivp
 push 4
 push 10
@@ -783,7 +878,7 @@ mov byte ptr [bx], '$'
 	lea dx, [CTE_STR_21] ; value=   
 	mov ah, 09h
 	int 21h
-	fld dword [VAR_angulo]
+	fld VAR_angulo
 	fsin
 push 4
 push 10
@@ -799,7 +894,7 @@ mov byte ptr [bx], '$'
 	lea dx, [CTE_STR_21] ; value=   
 	mov ah, 09h
 	int 21h
-	fld dword [VAR_angulo]
+	fld VAR_angulo
 	fcos
 push 4
 push 10
@@ -812,13 +907,15 @@ mov byte ptr [bx], '$'
 	lea dx, [BUFFER_CONVERSION]
 	mov ah, 09h
 	int 21h
-	lea dx, [CTE_ESPECIAL_LF] ; line break
-	mov ah, 09h
+	mov ah, 02h
+	mov dl, 10
 	int 21h
-	fild word [VAR_CONTADOR]
-	fild word [CTE_INT_1] ; value=1
+	mov dl, 13
+	int 21h
+	fild VAR_CONTADOR
+	fild CTE_INT_1 ; value=1
 	faddp
-	fistp word [VAR_CONTADOR]
+	fistp VAR_CONTADOR
 	jmp LABEL_6
 	LABEL_7:
 	mov ax, 4C00h ; sys_exit

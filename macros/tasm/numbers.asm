@@ -5,14 +5,12 @@ public ftoa, itoa
 VAR_TEN dd 10.0
 
 .CODE
-
 ;====================================================================
 ; Converts a floating point operand at the top of the fpu stack into
 ; a string and returns the length of the formatted string in ax
 ; Signature: int ftoa (int bufSize, char* buf, int minWidth, int precision)
-ftoa proc
-locals
-	push ebp
+ftoa:
+	push bp
 	mov bp, sp
 	sub sp, WORD_SIZE*1 ; 1 local
 
@@ -38,7 +36,7 @@ locals
 	@@multloop:
 		cmp ax, 0
 		jle @@breakmultloop
-		fmul dword [VAR_TEN]
+		fmul VAR_TEN
 		dec ax
 	jmp @@multloop
 	@@breakmultloop:
@@ -94,14 +92,12 @@ locals
 	mov sp, bp
 	pop bp
 	ret WORD_SIZE*4
-ftoa endp
 
 ;====================================================================
 ; Converts an integer operand at the top of the fpu stack into
 ; a string and returns the length of the formatted string in ax
 ; Signature: int ftoa (int bufSize, char* buf)
-itoa proc
-locals
+itoa:
 	push bp
 	mov bp, sp
 
@@ -118,7 +114,11 @@ locals
 	mov dl, '-'
 	inc si ; dont reverse minus sign
 	fchs ; st0 = -st0
-	writeToBuffer cx, bx, di, @@return
+
+	cmp di, cx
+	jae @@return
+	mov [bx + di], dl
+	inc di
 
 	@@nonegative:
 	__itoa cx, bx, di, @@return
@@ -140,4 +140,3 @@ locals
 	mov sp, bp
 	pop bp
 	ret WORD_SIZE*2
-itoa endp

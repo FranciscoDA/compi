@@ -13,7 +13,6 @@ public interface Writer {
 			HashSet<Float> floats,
 			HashSet<String> strings
 			);
-	Character[] getNewlineCharacters();
 
 	default void loadLiteral(Object literal) {
 		if (literal instanceof Integer)

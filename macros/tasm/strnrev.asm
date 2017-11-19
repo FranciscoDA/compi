@@ -1,11 +1,8 @@
 
-public strnrev
-
 ;=====================================================
 ;Reverse string at memory address in place
 ;Signature: void strnreverse (int count, char* source)
-strnrev proc
-locals
+strnrev:
 	push bp
 	mov bp, sp
 
@@ -28,4 +25,3 @@ locals
 	mov sp, bp
 	pop bp
 	ret WORD_SIZE*2
-strnrev endp
