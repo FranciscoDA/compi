@@ -23,6 +23,9 @@
 # JFlex distribution
 jflex/*
 
+# Tasm distribution
+tasm/*
+
 # JFlex temporary backups
 *~
 
@@ -33,6 +36,3 @@ hs_err_pid*
 # IntelliJ/Eclipse/Etc
 .*
 
-# Binary Compiled files
-*.o
-*.out

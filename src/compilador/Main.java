@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.PosixFilePermission;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -18,17 +19,24 @@ import asm.*;
 
 public class Main {
 	private final static Path PRUEBA_PATH = Paths.get("prueba.txt");
-	private final static Path TS_PATH = Paths.get("ts.txt");
-	private final static Path INTERMEDIATE_PATH = Paths.get("intermedio.txt");
-	private final static Path TASM_OUT_PATH = Paths.get("programa-tasm.asm");
-	private final static Path NASM_OUT_PATH = Paths.get("programa-nasm.asm"); 
+	private final static Path TS_PATH = Paths.get("gen/ts.txt");
+	private final static Path INTERMEDIATE_PATH = Paths.get("gen/intermedio.txt");
+	private final static Path TASM_OUT_PATH = Paths.get("gen/tasm-programa.asm");
+	private final static Path TASM_OBJ_PATH = Paths.get("gen/tasm-programa.obj");
+	private final static Path TASM_EXE_PATH = Paths.get("gen/tasm-exe.exe");
+	
+	private final static Path NASM_OUT_PATH = Paths.get("gen/nasm-programa.asm");
+	private final static Path NASM_OBJ_PATH = Paths.get("gen/nasm-programa.o");
+	private final static Path NASM_EXE_PATH = Paths.get("gen/nasm-exe");
+	private final static Path BASH_OUT_PATH = Paths.get("nasm-compile.sh");
+	private final static Path BATCH_OUT_PATH = Paths.get("tasm-compile.bat");
 
 	public static void outputSymbolTable(HashMap<String, SymbolTableEntry> symbolTable,
 			HashSet<Integer> integerTable,
 			HashSet<Float> floatTable,
 			HashSet<String> stringTable,
 			OutputStream output) {
-		PrintWriter pw =  new PrintWriter(output);
+		PrintWriter pw = new PrintWriter(output);
 		String fmt = "%20s%20s%20s%20s\n";
 		for (SymbolTableEntry e : symbolTable.values()) {
 			pw.printf(fmt, e.getName(), e.getType().toString(), "---", "---");
@@ -43,6 +51,40 @@ public class Main {
 			pw.printf(fmt, "---", "CteString", s, Integer.toString(s.length()));
 		}
 		pw.close();
+	}
+	public static void outputBashFile() {
+		PrintWriter pw;
+		try {
+			pw = new PrintWriter(Files.newOutputStream(BASH_OUT_PATH));
+			pw.println("nasm -felf32 -o " + NASM_OBJ_PATH + " " + NASM_OUT_PATH);
+			pw.println("ld -melf_i386 -o " + NASM_EXE_PATH + " " + NASM_OBJ_PATH);
+			pw.println("chmod ug+rwx " + NASM_EXE_PATH);
+			pw.close();
+			HashSet<PosixFilePermission> permissions = new HashSet<>();
+			permissions.add(PosixFilePermission.GROUP_EXECUTE);
+			permissions.add(PosixFilePermission.GROUP_READ);
+			permissions.add(PosixFilePermission.GROUP_WRITE);
+			permissions.add(PosixFilePermission.OWNER_EXECUTE);
+			permissions.add(PosixFilePermission.OWNER_READ);
+			permissions.add(PosixFilePermission.OWNER_WRITE);
+			Files.setAttribute(BASH_OUT_PATH, "posix:permissions", permissions);
+			System.out.println("Bash file: " + BASH_OUT_PATH);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	public static void outputBatchFile() {
+		PrintWriter pw;
+		try {
+			pw = new PrintWriter(Files.newOutputStream(BATCH_OUT_PATH));
+			pw.println("tasm\\tasm.exe " + TASM_OUT_PATH + " " + TASM_OBJ_PATH);
+			pw.println("tasm\\tlink.exe " + TASM_OBJ_PATH + " , " + TASM_EXE_PATH);
+			pw.close();
+			System.out.println("Batch file: " + BATCH_OUT_PATH);
+		}
+		catch (IOException e) {
+			
+		}
 	}
 	
 	public static void writeAssemblyCode(parser par, LinkedList<rpn.Node> program, asm.Writer writer) throws Exception {
@@ -157,6 +199,7 @@ public class Main {
 		}
 		writer.endCode();
 		writer.endProgram();
+		System.out.println(writer.getPlatformName() + ": " + writer.getOutputPath());
 	}
 
 	public static void main(String[] argv) {
@@ -172,15 +215,11 @@ public class Main {
 				outputSymbolTable(par.symbolTable, par.integerTable, par.floatTable, par.stringTable, Files.newOutputStream(TS_PATH));
 				rpn.Serializer.serialize(program, Files.newOutputStream(INTERMEDIATE_PATH));
 
-				asm.Writer writers[] = {
-						new TasmDos16Writer(TASM_OUT_PATH),
-						new NasmLinux32Writer(NASM_OUT_PATH),
-						};
 				System.out.println("Parsing OK");
-				for (asm.Writer w : writers) {
-					writeAssemblyCode(par, program, w);
-					System.out.println(w.getPlatformName() + ": " + w.getOutputPath());
-				}
+				writeAssemblyCode(par, program, new TasmDos16Writer(TASM_OUT_PATH));
+				writeAssemblyCode(par, program, new NasmLinux32Writer(NASM_OUT_PATH));
+				outputBashFile();
+				outputBatchFile();
 			}
 			catch (Exception e) {
 				e.printStackTrace();
