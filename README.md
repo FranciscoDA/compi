@@ -1,5 +1,12 @@
 # Compilador | Teoria I
 
+## Grupo 2 (PLUSTRUNC)
+
+Integrantes:
+ * Altoe, Francisco
+ * Rodríguez, Agustín
+ * Woinilovicz, Salvador
+
 ## Setup
  * clonar el repositorio:
 `git clone https://github.com/FranciscoDA/compi`
