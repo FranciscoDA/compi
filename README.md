@@ -9,23 +9,29 @@
    * jflex/lib/java-cup-11a.jar
    * jflex/lib/jflex-1.6.1.jar
 
-## Compilación a assembly (Eclipse)
+## Compilación a assembly (desde Eclipse)
  * Realizar el setup
  * Click derecho en el archivo build.xml
  * Run as > Ant Build
 
-## Compilación a assembly (CLI)
+## Compilación a assembly (desde la CLI)
  * Ejecutar en la línea de comandos: `ant run`
 
-## Compilación a ejecutable (Linux+NASM)
+## Compilación a ejecutable de 32 bits (con Linux+NASM)
  * Instalar NASM: `sudo apt-get install nasm` o `pacman -S nasm`, etc.
- * Compilar el objeto: `nasm -nasm -wt -felf32 programa-nasm.asm`
- * Enlazar el ejecutable: `ld -melf_i386 programa-nasm.o`
- * Ejecutar el programa: `./a.out`
+ * Compilar el objeto: `nasm -wt -felf32 -o gen/nasm-programa.o gen/nasm-programa.asm`
+ * Enlazar el ejecutable: `ld -melf_i386 -o gen/nasm-exe  nasm-programa.o`
+ * Ejecutar el programa: `gen/nasm-exe`
+O bien:
+ * Ejecutar el script bash: `./nasm-compile.sh`
 
-## Compilación a ejecutable (DOSBox+TASM4):
- * Compilar el objeto: `tasm PROGRA~1.ASM`
- * Enlazar el ejecutable: `tlink PROGRA~1.OBJ`
+## Compilación a ejecutable de 16 bits (con DOSBox+TASM4):
+ * Crear un directorio "tasm" dentro del directorio del proyecto, con los contenidos de la distribución de Turbo Assembler 4
+ * Compilar el objeto: `tasm\tasm.exe gen\TASM-PROGRAMA.ASM gen\TASM-PROGRAMA.OBJ`
+ * Enlazar el ejecutable: `tasm\tlink.exe gen\TASM-PROGRAMA.OBJ , gen\tasm-exe.exe`
+ * Ejecutar el programa: `gen\tasm-exe.exe`
+O bien:
+ * Ejecutar el script batch: `tasm-compile.bat`
 
 ## Links
  * Instrucciones x87 FPU: http://linasm.sourceforge.net/docs/instructions/fpu.php
