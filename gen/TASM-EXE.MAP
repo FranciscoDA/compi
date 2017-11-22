@@ -1,0 +1,9 @@
+
+ Start  Stop   Length Name               Class
+
+ 00000H 00AB9H 00ABAH TASM-P~1_TEXT      CODE
+ 00AC0H 00E06H 00347H _DATA              DATA
+ 00E10H 0100FH 00200H STACK              STACK
+
+Program entry point at 0000:0206
+
