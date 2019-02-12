@@ -7,6 +7,36 @@ Integrantes:
  * Rodríguez, Agustín
  * Woinilovicz, Salvador
 
+## Ejemplo de programa:
+
+Entrada:
+```
+VAR
+	[FIB_A, FIB_B] = [INTEGER, INTEGER]
+	[CONTADOR] = [INTEGER]
+ENDVAR
+
+PRINT "Prueba 1 (Fibonacci):"
+PRINT "---------------------"
+CONTADOR := 0
+FIB_A := 1
+FIB_B := 0
+WHILE CONTADOR < 10 DO
+	FIB_A := FIB_A + FIB_B
+	FIB_B := FIB_A - FIB_B
+	PRINT "FIB(", CONTADOR+1, ") = ", FIB_B
+	CONTADOR := CONTADOR + 1
+END WHILE
+```
+Salida:
+```
+FIB(1) = 1
+FIB(2) = 1
+FIB(3) = 2
+...
+```
+Ver archivo `prueba.txt` para más ejemplos.
+
 ## Setup
  * clonar el repositorio:
 `git clone https://github.com/FranciscoDA/compi`
